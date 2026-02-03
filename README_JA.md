@@ -27,7 +27,7 @@
 </p>
 
 <p align="center">
-| <a href="./README.md"><b>English</b></a> | <a href="./README_CN.md"><b>简体中文</b></a> | <b>日本語</b> |
+| <a href="./README.md"><b>English</b></a> | <a href="./README_CN.md"><b>简体中文</b></a> | <b>日本語</b> | <a href="./README_KO.md"><b>한국어</b></a> |
 </p>
 
 <p align="center">
@@ -370,7 +370,7 @@ make dev-frontend   # フロントエンドを起動（新しいターミナル�
 - ✅ Dockerイメージを再構築する必要がない
 - ✅ IDEブレークポイントデバッグをサポート
 
-**詳細ドキュメント：** [開発環境クイックスタート](./docs/开发指南.md)
+**詳細ドキュメント：** [開発環境クイックスタート](./docs/DevelopmentGuide.md)
 
 ### 📁 プロジェクトディレクトリ構造
 
