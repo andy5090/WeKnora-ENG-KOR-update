@@ -44,7 +44,7 @@ import { onMounted, defineProps, computed, ref, reactive } from "vue";
 import { sanitizeHTML } from '@/utils/security';
 import ContentPopup from './tool-results/ContentPopup.vue';
 const props = defineProps({
-    // 必填项
+    // Required field
     content: {
         type: String,
         required: false
@@ -59,17 +59,17 @@ const referBoxSwitch = () => {
     showReferBox.value = !showReferBox.value;
 };
 
-// 安全地处理内容
+// Safely process content
 const safeProcessContent = (content) => {
     if (!content) return '';
-    // 先进行安全清理，然后处理换行
+    // First perform security cleanup, then handle line breaks
     const sanitized = sanitizeHTML(content);
     return sanitized.replace(/\n/g, '<br/>');
 };
 
-// 获取 web_search 类型的 URL
+// Get web_search type URL
 const getWebSearchUrl = (item) => {
-    // 优先使用 metadata.url，其次使用 id（如果 id 是 URL）
+    // Prefer metadata.url, then use id (if id is URL)
     if (item.metadata?.url) {
         return item.metadata.url;
     }
@@ -79,16 +79,16 @@ const getWebSearchUrl = (item) => {
     return '#';
 };
 
-// 获取 web_search 类型的显示文本
+// Get web_search type display text
 const getWebSearchDisplayText = (item) => {
-    // 优先使用 knowledge_title，其次使用 metadata.title，最后使用 URL 的域名
+    // Prefer knowledge_title, then metadata.title, finally use URL domain
     if (item.knowledge_title) {
         return item.knowledge_title;
     }
     if (item.metadata?.title) {
         return item.metadata.title;
     }
-    // 如果都没有，使用 URL 的域名部分
+    // If none, use URL domain part
     const url = getWebSearchUrl(item);
     if (url && url !== '#') {
         try {

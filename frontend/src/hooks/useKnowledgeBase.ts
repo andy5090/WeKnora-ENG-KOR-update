@@ -39,7 +39,7 @@ export default function (knowledgeBaseId?: string) {
       .then((result: any) => {
         const { data, total: totalResult } = result;
     const cardList_ = data.map((item: any) => {
-      const rawName = item.file_name || item.title || item.source || '未命名文档'
+      const rawName = item.file_name || item.title || item.source || 'Untitled Document'
       const dotIndex = rawName.lastIndexOf('.')
       const displayName = dotIndex > 0 ? rawName.substring(0, dotIndex) : rawName
       const fileTypeSource = item.file_type || (item.type === 'manual' ? 'MANUAL' : '')
@@ -69,7 +69,7 @@ export default function (knowledgeBaseId?: string) {
     return delKnowledgeDetails(item.id)
       .then((result: any) => {
         if (result.success) {
-          MessagePlugin.info("知识删除成功！");
+          MessagePlugin.info("Knowledge deleted successfully!");
           if (onSuccess) {
             onSuccess();
           } else {
@@ -77,12 +77,12 @@ export default function (knowledgeBaseId?: string) {
           }
           return true;
         } else {
-          MessagePlugin.error("知识删除失败！");
+          MessagePlugin.error("Failed to delete knowledge!");
           return false;
         }
       })
       .catch(() => {
-        MessagePlugin.error("知识删除失败！");
+        MessagePlugin.error("Failed to delete knowledge!");
         return false;
       });
   };
@@ -96,7 +96,7 @@ export default function (knowledgeBaseId?: string) {
   };
   const requestMethod = (file: any, uploadInput: any) => {
     if (!(file instanceof File) || !uploadInput) {
-      MessagePlugin.error("文件类型错误！");
+      MessagePlugin.error("Invalid file type!");
       return;
     }
     
@@ -104,7 +104,7 @@ export default function (knowledgeBaseId?: string) {
       return;
     }
     
-    // 获取当前知识库ID
+    // Get current knowledge base ID
     let currentKbId: string | undefined = (route.params as any)?.kbId as string;
     if (!currentKbId && typeof window !== 'undefined') {
       const match = window.location.pathname.match(/knowledge-bases\/([^/]+)/);
@@ -114,28 +114,28 @@ export default function (knowledgeBaseId?: string) {
       currentKbId = knowledgeBaseId;
     }
     if (!currentKbId) {
-      MessagePlugin.error("缺少知识库ID");
+      MessagePlugin.error("Missing knowledge base ID");
       return;
     }
     
-    // 获取当前选中的分类ID
+    // Get currently selected category ID
     const uiStore = useUIStore();
     const tagIdToUpload = uiStore.selectedTagId !== '__untagged__' ? uiStore.selectedTagId : undefined;
     
     uploadKnowledgeFile(currentKbId, { file, tag_id: tagIdToUpload })
       .then((result: any) => {
         if (result.success) {
-          MessagePlugin.info("上传成功！");
+          MessagePlugin.info("Upload successful!");
           getKnowled({ page: 1, page_size: 35 }, currentKbId);
         } else {
-          const errorMessage = result.error?.message || result.message || "上传失败！";
-          MessagePlugin.error(result.code === 'duplicate_file' ? "文件已存在" : errorMessage);
+          const errorMessage = result.error?.message || result.message || "Upload failed!";
+          MessagePlugin.error(result.code === 'duplicate_file' ? "File already exists" : errorMessage);
         }
         uploadInput.value.value = "";
       })
       .catch((err: any) => {
-        const errorMessage = err.error?.message || err.message || "上传失败！";
-        MessagePlugin.error(err.code === 'duplicate_file' ? "文件已存在" : errorMessage);
+        const errorMessage = err.error?.message || err.message || "Upload failed!";
+        MessagePlugin.error(err.code === 'duplicate_file' ? "File already exists" : errorMessage);
         uploadInput.value.value = "";
       });
   };
@@ -154,7 +154,7 @@ export default function (knowledgeBaseId?: string) {
         if (result.success && result.data) {
           const { data } = result;
           Object.assign(details, {
-            title: data.file_name || data.title || data.source || '未命名文档',
+            title: data.file_name || data.title || data.source || 'Untitled Document',
             time: formatStringDate(new Date(data.updated_at)),
             id: data.id,
             type: data.type || 'file',

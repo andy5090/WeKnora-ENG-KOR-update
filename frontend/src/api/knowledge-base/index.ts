@@ -1,11 +1,8 @@
 import { get, post, put, del, postUpload, getDown } from "../../utils/request";
 
-// 知识库管理 API（列表、创建、获取、更新、删除、复制）
-export function listKnowledgeBases(params?: { agent_id?: string }) {
-  const query = new URLSearchParams();
-  if (params?.agent_id) query.set('agent_id', params.agent_id);
-  const qs = query.toString();
-  return get(qs ? `/api/v1/knowledge-bases?${qs}` : '/api/v1/knowledge-bases');
+// Knowledge base management API (list, create, get, update, delete, copy)
+export function listKnowledgeBases() {
+  return get(`/api/v1/knowledge-bases`);
 }
 
 export function createKnowledgeBase(data: { 
@@ -26,11 +23,8 @@ export function createKnowledgeBase(data: {
   return post(`/api/v1/knowledge-bases`, data);
 }
 
-export function getKnowledgeBaseById(id: string, options?: { agent_id?: string }) {
-  const query = new URLSearchParams();
-  if (options?.agent_id) query.set('agent_id', options.agent_id);
-  const qs = query.toString();
-  return get(qs ? `/api/v1/knowledge-bases/${id}?${qs}` : `/api/v1/knowledge-bases/${id}`);
+export function getKnowledgeBaseById(id: string) {
+  return get(`/api/v1/knowledge-bases/${id}`);
 }
 
 export function updateKnowledgeBase(id: string, data: { name: string; description?: string; config: any }) {
@@ -45,8 +39,8 @@ export function copyKnowledgeBase(data: { source_id: string; target_id?: string 
   return post(`/api/v1/knowledge-bases/copy`, data);
 }
 
-// 知识文件 API（基于具体知识库）
-// data.tag_id: 可选，指定知识所属的分类ID
+// Knowledge file API (based on specific knowledge base)
+// data.tag_id: optional, specifies the category ID the knowledge belongs to
 export function uploadKnowledgeFile(kbId: string, data: { file: File; tag_id?: string; [key: string]: any } = { file: new File([], '') }, onProgress?: (progressEvent: any) => void) {
   const formData = new FormData();
   Object.keys(data).forEach(key => {
@@ -55,14 +49,14 @@ export function uploadKnowledgeFile(kbId: string, data: { file: File; tag_id?: s
   return postUpload(`/api/v1/knowledge-bases/${kbId}/knowledge/file`, formData, onProgress);
 }
 
-// 从URL创建知识
-// data.tag_id: 可选，指定知识所属的分类ID
+// Create knowledge from URL
+// data.tag_id: optional, specifies the category ID the knowledge belongs to
 export function createKnowledgeFromURL(kbId: string, data: { url: string; enable_multimodel?: boolean; tag_id?: string }) {
   return post(`/api/v1/knowledge-bases/${kbId}/knowledge/url`, data);
 }
 
-// 手工创建知识
-// data.tag_id: 可选，指定知识所属的分类ID
+// Manually create knowledge
+// data.tag_id: optional, specifies the category ID the knowledge belongs to
 export function createManualKnowledge(kbId: string, data: { title: string; content: string; status: string; tag_id?: string }) {
   return post(`/api/v1/knowledge-bases/${kbId}/knowledge/manual`, data);
 }
@@ -87,11 +81,8 @@ export function listKnowledgeFiles(
   return get(`/api/v1/knowledge-bases/${kbId}/knowledge?${qs}`);
 }
 
-export function getKnowledgeDetails(id: string, options?: { agent_id?: string }) {
-  const query = new URLSearchParams();
-  if (options?.agent_id) query.set('agent_id', options.agent_id);
-  const qs = query.toString();
-  return get(qs ? `/api/v1/knowledge/${id}?${qs}` : `/api/v1/knowledge/${id}`);
+export function getKnowledgeDetails(id: string) {
+  return get(`/api/v1/knowledge/${id}`);
 }
 
 export function updateManualKnowledge(id: string, data: { title: string; content: string; status: string }) {
@@ -106,12 +97,8 @@ export function downKnowledgeDetails(id: string) {
   return getDown(`/api/v1/knowledge/${id}/download`);
 }
 
-/** @param idsQueryString - query string with ids (e.g. ids=xxx&ids=yyy) */
-export function batchQueryKnowledge(idsQueryString: string, kbId?: string, agentId?: string) {
-  let qs = idsQueryString;
-  if (kbId) qs += `&kb_id=${encodeURIComponent(kbId)}`;
-  if (agentId) qs += `&agent_id=${encodeURIComponent(agentId)}`;
-  return get(`/api/v1/knowledge/batch?${qs}`);
+export function batchQueryKnowledge(idsQueryString: string) {
+  return get(`/api/v1/knowledge/batch?${idsQueryString}`);
 }
 
 export function getKnowledgeDetailsCon(id: string, page: number) {
@@ -278,20 +265,10 @@ export function updateFAQImportResultDisplayStatus(knowledgeBaseId: string, disp
   });
 }
 
-export function searchKnowledge(
-  keyword: string,
-  offset = 0,
-  limit = 20,
-  fileTypes?: string[],
-  options?: { agent_id?: string }
-) {
-  const query = new URLSearchParams();
-  query.set('keyword', keyword);
-  query.set('offset', String(offset));
-  query.set('limit', String(limit));
+export function searchKnowledge(keyword: string, offset = 0, limit = 20, fileTypes?: string[]) {
+  let url = `/api/v1/knowledge/search?keyword=${encodeURIComponent(keyword)}&offset=${offset}&limit=${limit}`;
   if (fileTypes && fileTypes.length > 0) {
-    query.set('file_types', fileTypes.join(','));
+    url += `&file_types=${encodeURIComponent(fileTypes.join(','))}`;
   }
-  if (options?.agent_id) query.set('agent_id', options.agent_id);
-  return get(`/api/v1/knowledge/search?${query.toString()}`);
+  return get(url);
 }

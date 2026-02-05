@@ -29,37 +29,37 @@ const isFold = ref(false)
 const contentInnerRef = ref(null)
 const { t } = useI18n()
 const props = defineProps({
-    // 必填项
+    // Required field
     deepSession: {
         type: Object,
         required: false
     }
 });
 
-// 初始化时检查：如果 thinking 已完成（从历史记录加载），默认折叠
+// Check on initialization: if thinking is completed (loaded from history), collapse by default
 onMounted(() => {
     if (props.deepSession?.thinking === false) {
         isFold.value = true;
     }
 });
 
-// 监听 thinking 状态变化，自动折叠
+// Watch thinking state changes, auto-collapse
 watch(
     () => props.deepSession?.thinking,
     (newVal, oldVal) => {
-        // 当 thinking 从 true 变为 false 时，自动折叠 thinking 内容
-        // 只在流式输出场景下触发（oldVal 为 true）
+        // When thinking changes from true to false, auto-collapse thinking content
+        // Only trigger in streaming output scenario (oldVal is true)
         if (oldVal === true && newVal === false) {
             isFold.value = true;
         }
     }
 );
 
-// 监听内容变化，自动滚动到底部
+// Watch content changes, auto-scroll to bottom
 watch(
     () => props.deepSession?.thinkContent,
     () => {
-        // 只在 thinking 进行中时滚动
+        // Only scroll when thinking is in progress
         if (props.deepSession?.thinking) {
             nextTick(() => {
                 if (contentInnerRef.value) {
@@ -71,20 +71,20 @@ watch(
 );
 
 const toggleFold = () => {
-    // 只有 thinking 完成后才能折叠/展开
+    // Only can collapse/expand after thinking is completed
     if (!props.deepSession?.thinking) {
         isFold.value = !isFold.value;
     }
 }
 
-// 安全地处理思考内容，防止XSS攻击
+// Safely process thinking content to prevent XSS attacks
 const safeProcessThinkContent = (content) => {
     if (!content || typeof content !== 'string') return '';
     
-    // 先处理换行符
+    // First handle line breaks
     const contentWithBreaks = content.replace(/\n/g, '<br/>');
     
-    // 使用DOMPurify进行安全清理，允许基本的文本格式化标签
+    // Use DOMPurify for security cleanup, allow basic text formatting tags
     const cleanContent = sanitizeHTML(contentWithBreaks);
     
     return cleanContent;

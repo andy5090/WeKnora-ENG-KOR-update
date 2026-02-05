@@ -89,7 +89,7 @@ func (m *FAQChunkMetadata) Normalize() {
 	}
 }
 
-// FAQMetadata 解析 Chunk 中的 FAQ 元数据
+// FAQMetadata parses FAQ metadata in Chunk
 func (c *Chunk) FAQMetadata() (*FAQChunkMetadata, error) {
 	if c == nil || len(c.Metadata) == 0 {
 		return nil, nil
@@ -102,7 +102,7 @@ func (c *Chunk) FAQMetadata() (*FAQChunkMetadata, error) {
 	return &meta, nil
 }
 
-// SetFAQMetadata 设置 Chunk 的 FAQ 元数据
+// SetFAQMetadata sets FAQ metadata for Chunk
 func (c *Chunk) SetFAQMetadata(meta *FAQChunkMetadata) error {
 	if c == nil {
 		return nil

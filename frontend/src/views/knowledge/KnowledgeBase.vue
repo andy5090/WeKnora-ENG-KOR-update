@@ -8,13 +8,9 @@ import EmptyKnowledge from '@/components/empty-knowledge.vue';
 import { getSessionsList, createSessions, generateSessionsTitle } from "@/api/chat/index";
 import { useMenuStore } from '@/stores/menu';
 import { useUIStore } from '@/stores/ui';
-import { useOrganizationStore } from '@/stores/organization';
-import { useAuthStore } from '@/stores/auth';
 import KnowledgeBaseEditorModal from './KnowledgeBaseEditorModal.vue';
 const usemenuStore = useMenuStore();
 const uiStore = useUIStore();
-const orgStore = useOrganizationStore();
-const authStore = useAuthStore();
 const router = useRouter();
 import {
   batchQueryKnowledge,
@@ -36,62 +32,9 @@ const { t } = useI18n();
 const kbId = computed(() => (route.params as any).kbId as string || '');
 const kbInfo = ref<any>(null);
 const uploadInputRef = ref<HTMLInputElement | null>(null);
-const folderUploadInputRef = ref<HTMLInputElement | null>(null);
 const uploading = ref(false);
 const kbLoading = ref(false);
 const isFAQ = computed(() => (kbInfo.value?.type || '') === 'faq');
-
-// Permission control: check if current user owns this KB or has edit/manage permission
-const isOwner = computed(() => {
-  if (!kbInfo.value) return false;
-  // Check if the current user's tenant ID matches the KB's tenant ID
-  const userTenantId = authStore.effectiveTenantId;
-  return kbInfo.value.tenant_id === userTenantId;
-});
-
-// Can edit: owner, admin, or editor
-const canEdit = computed(() => {
-  return orgStore.canEditKB(kbId.value, isOwner.value);
-});
-
-// Can manage (delete, settings, etc.): owner or admin
-const canManage = computed(() => {
-  return orgStore.canManageKB(kbId.value, isOwner.value);
-});
-
-// Current KB's shared record (when accessed via organization share)
-const currentSharedKb = computed(() =>
-  orgStore.sharedKnowledgeBases.find((s) => s.knowledge_base?.id === kbId.value) ?? null,
-);
-
-// Effective permission: from direct org share list or from GET /knowledge-bases/:id (e.g. agent-visible KB)
-const effectiveKBPermission = computed(() => orgStore.getKBPermission(kbId.value) || kbInfo.value?.my_permission || '');
-
-// Display role label: owner or org role (admin/editor/viewer)
-const accessRoleLabel = computed(() => {
-  if (isOwner.value) return t('knowledgeBase.accessInfo.roleOwner');
-  const perm = effectiveKBPermission.value;
-  if (perm) return t(`organization.role.${perm}`);
-  return '--';
-});
-
-// Permission summary text for current role
-const accessPermissionSummary = computed(() => {
-  if (isOwner.value) return t('knowledgeBase.accessInfo.permissionOwner');
-  const perm = effectiveKBPermission.value;
-  if (perm === 'admin') return t('knowledgeBase.accessInfo.permissionAdmin');
-  if (perm === 'editor') return t('knowledgeBase.accessInfo.permissionEditor');
-  if (perm === 'viewer') return t('knowledgeBase.accessInfo.permissionViewer');
-  return '--';
-});
-
-// Last updated time from kbInfo
-const kbLastUpdated = computed(() => {
-  const raw = kbInfo.value?.updated_at;
-  if (!raw) return null;
-  return formatStringDate(new Date(raw));
-});
-
 const knowledgeList = ref<Array<{ id: string; name: string; type?: string }>>([]);
 let { cardList, total, moreIndex, details, getKnowled, delKnowledge, openMore, onVisibleChange, getCardDetails, getfDetails } = useKnowledgeBase(kbId.value)
 let isCardDetails = ref(false);
@@ -117,14 +60,14 @@ let docSearchDebounce: ReturnType<typeof setTimeout> | null = null;
 const docSearchKeyword = ref('');
 const selectedFileType = ref('');
 const fileTypeOptions = computed(() => [
-  { content: t('knowledgeBase.allFileTypes') || '全部类型', value: '' },
+  { content: t('knowledgeBase.allFileTypes') || 'All Types', value: '' },
   { content: 'PDF', value: 'pdf' },
   { content: 'DOCX', value: 'docx' },
   { content: 'DOC', value: 'doc' },
   { content: 'TXT', value: 'txt' },
   { content: 'MD', value: 'md' },
   { content: 'URL', value: 'url' },
-  { content: t('knowledgeBase.typeManual') || '手动创建', value: 'manual' },
+  { content: t('knowledgeBase.typeManual') || 'Manual Creation', value: 'manual' },
 ]);
 type TagInputInstance = ComponentPublicInstance<{ focus: () => void; select: () => void }>;
 const tagDropdownOptions = computed(() =>
@@ -167,12 +110,12 @@ const editingTagName = ref('');
 const editingTagSubmitting = ref(false);
 const getPageSize = () => {
   const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-  const itemHeight = 148;
+  const itemHeight = 174;
   let itemsInView = Math.floor(viewportHeight / itemHeight) * 5;
   pageSize = Math.max(35, itemsInView);
 }
 getPageSize()
-// 直接调用 API 获取知识库文件列表
+// Directly call API to get knowledge base file list
 const getTagName = (tagId?: string | number) => {
   if (!tagId && tagId !== 0) return '';
   const key = String(tagId);
@@ -185,23 +128,13 @@ const formatDocTime = (time?: string) => {
   return formatted.slice(2, 16) // "YY-MM-DD HH:mm"
 }
 
-// 格式化文件大小，用于气泡等展示
-const formatFileSize = (bytes?: number | string) => {
-  if (bytes == null || bytes === '') return ''
-  const n = typeof bytes === 'string' ? parseInt(bytes, 10) : bytes
-  if (Number.isNaN(n) || n <= 0) return ''
-  if (n < 1024) return `${n} B`
-  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`
-  return `${(n / (1024 * 1024)).toFixed(1)} MB`
-}
-
-// 获取知识条目的显示类型
+// Get knowledge entry display type
 const getKnowledgeType = (item: any) => {
   if (item.type === 'url') {
     return t('knowledgeBase.typeURL') || 'URL';
   }
   if (item.type === 'manual') {
-    return t('knowledgeBase.typeManual') || '手动创建';
+    return t('knowledgeBase.typeManual') || 'Manual Creation';
   }
   if (item.file_type) {
     return item.file_type.toUpperCase();
@@ -279,7 +212,7 @@ const loadTags = async (kbIdValue: string, reset = false) => {
 
 const handleTagFilterChange = (value: string) => {
   selectedTagId.value = value;
-  // 同步更新 store 中的 selectedTagId，供 menu.vue 上传时使用
+  // Synchronously update selectedTagId in store for menu.vue to use when uploading
   uiStore.setSelectedTagId(value);
   page = 1;
   loadKnowledgeFiles(kbId.value);
@@ -411,7 +344,7 @@ const confirmDeleteTag = (tag: any) => {
         handleTagFilterChange('');
       }
       loadTags(kbId.value);
-      // 由于后端是异步删除文档，延迟刷新以确保看到最新数据
+      // Since backend deletes documents asynchronously, delay refresh to ensure seeing latest data
       setTimeout(() => {
         loadKnowledgeFiles(kbId.value);
       }, 500);
@@ -426,7 +359,7 @@ const handleKnowledgeTagChange = async (knowledgeId: string, tagValue: string) =
     // Pass the tag value directly (empty string means no tag)
     const tagIdToUpdate = tagValue || null;
     await updateKnowledgeTagBatch({ updates: { [knowledgeId]: tagIdToUpdate } });
-    MessagePlugin.success(t('knowledgeBase.tagUpdateSuccess') || '分类已更新');
+    MessagePlugin.success(t('knowledgeBase.tagUpdateSuccess') || 'Category updated');
     loadKnowledgeFiles(kbId.value);
     loadTags(kbId.value);
   } catch (error: any) {
@@ -444,7 +377,7 @@ const loadKnowledgeBaseInfo = async (targetKbId: string) => {
     const res: any = await getKnowledgeBaseById(targetKbId);
     kbInfo.value = res?.data || null;
     selectedTagId.value = '';
-    // 重置store中的标签选择状态，避免上传文档时自动带上之前选择的标签
+    // Reset tag selection state in store to avoid automatically including previously selected tag when uploading documents
     uiStore.setSelectedTagId('');
     if (!isFAQ.value) {
       loadKnowledgeFiles(targetKbId);
@@ -464,37 +397,22 @@ const loadKnowledgeBaseInfo = async (targetKbId: string) => {
 const loadKnowledgeList = async () => {
   try {
     const res: any = await listKnowledgeBases();
-    const myKbs = (res?.data || []).map((item: any) => ({
+    knowledgeList.value = (res?.data || []).map((item: any) => ({
       id: String(item.id),
       name: item.name,
       type: item.type || 'document',
     }));
-    
-    // Also include shared knowledge bases from orgStore
-    const sharedKbs = (orgStore.sharedKnowledgeBases || [])
-      .filter(s => s.knowledge_base != null)
-      .map(s => ({
-        id: String(s.knowledge_base.id),
-        name: s.knowledge_base.name,
-        type: s.knowledge_base.type || 'document',
-      }));
-    
-    // Merge and deduplicate by id (my KBs take precedence)
-    const myKbIds = new Set(myKbs.map(kb => kb.id));
-    const uniqueSharedKbs = sharedKbs.filter(kb => !myKbIds.has(kb.id));
-    
-    knowledgeList.value = [...myKbs, ...uniqueSharedKbs];
   } catch (error) {
     console.error('Failed to load knowledge list:', error);
   }
 };
 
-// 监听路由参数变化，重新获取知识库内容
+// Watch route parameter changes, re-fetch knowledge base content
 watch(() => kbId.value, (newKbId, oldKbId) => {
   if (newKbId && newKbId !== oldKbId) {
     tagSearchQuery.value = '';
     tagPage.value = 1;
-    // 重置标签选择状态，避免在不同知识库间保持标签选择
+    // Reset tag selection state to avoid maintaining tag selection across different knowledge bases
     uiStore.setSelectedTagId('');
     loadKnowledgeBaseInfo(newKbId);
   }
@@ -519,7 +437,7 @@ watch(tagSearchQuery, (newVal, oldVal) => {
   }, 300);
 });
 
-// 监听文档搜索关键词变化
+// Watch document search keyword changes
 watch(docSearchKeyword, (newVal, oldVal) => {
   if (newVal === oldVal) return;
   if (docSearchDebounce) {
@@ -533,7 +451,7 @@ watch(docSearchKeyword, (newVal, oldVal) => {
   }, 300);
 });
 
-// 监听文件类型筛选变化
+// Watch file type filter changes
 watch(selectedFileType, (newVal, oldVal) => {
   if (newVal === oldVal) return;
   if (kbId.value) {
@@ -542,23 +460,23 @@ watch(selectedFileType, (newVal, oldVal) => {
   }
 });
 
-// 监听文件上传事件
+// Watch file upload events
 const handleFileUploaded = (event: CustomEvent) => {
   const uploadedKbId = event.detail.kbId;
-  console.log('接收到文件上传事件，上传的知识库ID:', uploadedKbId, '当前知识库ID:', kbId.value);
+  console.log('Received file upload event, uploaded knowledge base ID:', uploadedKbId, 'Current knowledge base ID:', kbId.value);
   if (uploadedKbId && uploadedKbId === kbId.value && !isFAQ.value) {
-    console.log('匹配当前知识库，开始刷新文件列表');
-    // 如果上传的文件属于当前知识库，使用 loadKnowledgeFiles 刷新文件列表
+    console.log('Matches current knowledge base, refreshing file list');
+    // If uploaded file belongs to current knowledge base, use loadKnowledgeFiles to refresh file list
     loadKnowledgeFiles(uploadedKbId);
     loadTags(uploadedKbId);
   }
 };
 
 
-// 监听从菜单触发的URL导入事件
+// Watch URL import event triggered from menu
 const handleOpenURLImportDialog = (event: CustomEvent) => {
   const eventKbId = event.detail.kbId;
-  console.log('接收到URL导入对话框打开事件，知识库ID:', eventKbId, '当前知识库ID:', kbId.value);
+  console.log('Received URL import dialog open event, knowledge base ID:', eventKbId, 'Current knowledge base ID:', kbId.value);
   if (eventKbId && eventKbId === kbId.value && !isFAQ.value) {
     urlDialogVisible.value = true;
   }
@@ -567,12 +485,10 @@ const handleOpenURLImportDialog = (event: CustomEvent) => {
 onMounted(() => {
   loadKnowledgeBaseInfo(kbId.value);
   loadKnowledgeList();
-  // Load shared knowledge bases to get permission info
-  orgStore.fetchSharedKnowledgeBases();
-
-  // 监听文件上传事件
+  
+  // Watch file upload events
   window.addEventListener('knowledgeFileUploaded', handleFileUploaded as EventListener);
-  // 监听URL导入对话框打开事件
+  // Watch URL import dialog open events
   window.addEventListener('openURLImportDialog', handleOpenURLImportDialog as EventListener);
 });
 
@@ -636,13 +552,13 @@ const updateStatus = (analyzeList: KnowledgeCard[]) => {
         });
       }
     }).catch((_err) => {
-      // 错误处理
+      // Error handling
     });
   }, 1500);
 };
 
 
-// 恢复文档处理状态（用于刷新后恢复）
+// Restore document processing state (for recovery after refresh)
 
 const closeDoc = () => {
   isCardDetails.value = false;
@@ -650,45 +566,6 @@ const closeDoc = () => {
 const openCardDetails = (item: KnowledgeCard) => {
   isCardDetails.value = true;
   getCardDetails(item);
-};
-
-// 悬停知识卡片时跟随鼠标显示详情气泡
-const hoveredCardItem = ref<KnowledgeCard | null>(null);
-const cardPopoverPos = ref({ x: 0, y: 0 });
-const CARD_POPOVER_OFFSET = 16;
-const cardHoverShowDelay = 300;
-let cardHoverTimer: ReturnType<typeof setTimeout> | null = null;
-
-const onCardMouseEnter = (ev: MouseEvent, item: KnowledgeCard) => {
-  if (cardHoverTimer) {
-    clearTimeout(cardHoverTimer);
-    cardHoverTimer = null;
-  }
-  cardHoverTimer = setTimeout(() => {
-    cardHoverTimer = null;
-    hoveredCardItem.value = item;
-    cardPopoverPos.value = {
-      x: ev.clientX + CARD_POPOVER_OFFSET,
-      y: ev.clientY + CARD_POPOVER_OFFSET,
-    };
-  }, cardHoverShowDelay);
-};
-
-const onCardMouseMove = (ev: MouseEvent) => {
-  if (hoveredCardItem.value) {
-    cardPopoverPos.value = {
-      x: ev.clientX + CARD_POPOVER_OFFSET,
-      y: ev.clientY + CARD_POPOVER_OFFSET,
-    };
-  }
-};
-
-const onCardMouseLeave = () => {
-  if (cardHoverTimer) {
-    clearTimeout(cardHoverTimer);
-    cardHoverTimer = null;
-  }
-  hoveredCardItem.value = null;
 };
 
 const delCard = (index: number, item: KnowledgeCard) => {
@@ -710,35 +587,9 @@ const documentTitle = computed(() => {
   return t('knowledgeEditor.document.title');
 });
 
-// 文档操作下拉菜单选项
-const documentActionOptions = computed(() => [
-  { content: t('upload.uploadDocument'), value: 'upload', prefixIcon: () => h(TIcon, { name: 'upload', size: '16px' }) },
-  { content: t('upload.uploadFolder'), value: 'uploadFolder', prefixIcon: () => h(TIcon, { name: 'folder-add', size: '16px' }) },
-  { content: t('knowledgeBase.importURL'), value: 'importURL', prefixIcon: () => h(TIcon, { name: 'link', size: '16px' }) },
-  { content: t('upload.onlineEdit'), value: 'manualCreate', prefixIcon: () => h(TIcon, { name: 'edit', size: '16px' }) },
-]);
-
-// 处理文档操作下拉菜单选择
-const handleDocumentActionSelect = (data: { value: string }) => {
-  switch (data.value) {
-    case 'upload':
-      handleDocumentUploadClick();
-      break;
-    case 'uploadFolder':
-      handleFolderUploadClick();
-      break;
-    case 'importURL':
-      handleURLImportClick();
-      break;
-    case 'manualCreate':
-      handleManualCreate();
-      break;
-  }
-};
-
 const ensureDocumentKbReady = () => {
   if (isFAQ.value) {
-    MessagePlugin.warning('当前知识库类型不支持该操作');
+    MessagePlugin.warning('Current knowledge base type does not support this operation');
     return false;
   }
   if (!kbId.value) {
@@ -758,11 +609,6 @@ const handleDocumentUploadClick = () => {
   uploadInputRef.value?.click();
 };
 
-const handleFolderUploadClick = () => {
-  if (!ensureDocumentKbReady()) return;
-  folderUploadInputRef.value?.click();
-};
-
 const resetUploadInput = () => {
   if (uploadInputRef.value) {
     uploadInputRef.value.value = '';
@@ -775,12 +621,12 @@ const handleDocumentUpload = async (event: Event) => {
   if (!files || files.length === 0) return;
   
   if (!kbId.value) {
-    MessagePlugin.error("缺少知识库ID");
+    MessagePlugin.error("Missing knowledge base ID");
     resetUploadInput();
     return;
   }
 
-  // 过滤有效文件
+  // Filter valid files
   const validFiles: File[] = [];
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
@@ -794,12 +640,12 @@ const handleDocumentUpload = async (event: Event) => {
     return;
   }
 
-  // 批量上传
+  // Batch upload
   let successCount = 0;
   let failCount = 0;
   const totalCount = validFiles.length;
 
-  // 获取当前选中的分类ID（如果不是"未分类"则传递）
+  // Get currently selected category ID (pass if not "untagged")
   const tagIdToUpload = selectedTagId.value !== '__untagged__' ? selectedTagId.value : undefined;
 
   for (const file of validFiles) {
@@ -810,14 +656,14 @@ const handleDocumentUpload = async (event: Event) => {
         successCount++;
       } else {
         failCount++;
-        let errorMessage = "上传失败！";
+        let errorMessage = "Upload failed!";
         if (responseData?.error?.message) {
           errorMessage = responseData.error.message;
         } else if (responseData?.message) {
           errorMessage = responseData.message;
         }
         if (responseData?.code === 'duplicate_file' || responseData?.error?.code === 'duplicate_file') {
-          errorMessage = "文件已存在";
+          errorMessage = "File already exists";
         }
         if (totalCount === 1) {
           MessagePlugin.error(errorMessage);
@@ -825,9 +671,9 @@ const handleDocumentUpload = async (event: Event) => {
       }
     } catch (error: any) {
       failCount++;
-      let errorMessage = error?.error?.message || error?.message || "上传失败！";
+      let errorMessage = error?.error?.message || error?.message || "Upload failed!";
       if (error?.code === 'duplicate_file') {
-        errorMessage = "文件已存在";
+        errorMessage = "File already exists";
       }
       if (totalCount === 1) {
         MessagePlugin.error(errorMessage);
@@ -835,7 +681,7 @@ const handleDocumentUpload = async (event: Event) => {
     }
   }
 
-  // 显示上传结果
+  // Display upload results
   if (successCount > 0) {
     window.dispatchEvent(new CustomEvent('knowledgeFileUploaded', {
       detail: { kbId: kbId.value }
@@ -844,117 +690,21 @@ const handleDocumentUpload = async (event: Event) => {
 
   if (totalCount === 1) {
     if (successCount === 1) {
-      MessagePlugin.success("上传成功！");
+      MessagePlugin.success("Upload successful!");
     }
   } else {
     if (failCount === 0) {
-      MessagePlugin.success(`所有文件上传成功（${successCount}个）`);
+      MessagePlugin.success(`All files uploaded successfully (${successCount} files)`);
     } else if (successCount > 0) {
-      MessagePlugin.warning(`部分文件上传成功（成功：${successCount}，失败：${failCount}）`);
+      MessagePlugin.warning(`Some files uploaded successfully (Success: ${successCount}, Failed: ${failCount})`);
     } else {
-      MessagePlugin.error(`所有文件上传失败（${failCount}个）`);
+      MessagePlugin.error(`All files upload failed (${failCount} files)`);
     }
   }
 
   resetUploadInput();
 };
 
-// 处理文件夹上传
-const handleFolderUpload = async (event: Event) => {
-  const input = event.target as HTMLInputElement;
-  const files = input?.files;
-  if (!files || files.length === 0) return;
-
-  if (!kbId.value) {
-    MessagePlugin.error("缺少知识库ID");
-    if (input) input.value = '';
-    return;
-  }
-
-  // 检查是否启用了VLM
-  const vlmEnabled = kbInfo.value?.vlm_config?.enabled || false;
-
-  // 过滤有效文件
-  const validFiles: File[] = [];
-  let hiddenFileCount = 0;
-  let imageFilteredCount = 0;
-
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    const relativePath = (file as any).webkitRelativePath || file.name;
-    
-    // 1. 过滤隐藏文件和隐藏文件夹
-    const pathParts = relativePath.split('/');
-    const hasHiddenComponent = pathParts.some((part: string) => part.startsWith('.'));
-    if (hasHiddenComponent) {
-      hiddenFileCount++;
-      continue;
-    }
-    
-    // 2. 如果未启用VLM，过滤图片文件
-    if (!vlmEnabled) {
-      const fileExt = file.name.substring(file.name.lastIndexOf('.') + 1).toLowerCase();
-      const imageTypes = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
-      if (imageTypes.includes(fileExt)) {
-        imageFilteredCount++;
-        continue;
-      }
-    }
-    
-    // 3. 文件类型验证
-    if (!kbFileTypeVerification(file, true)) {
-      validFiles.push(file);
-    }
-  }
-
-  if (validFiles.length === 0) {
-    MessagePlugin.warning(t('knowledgeBase.noValidFilesInFolder', { total: files.length }));
-    if (input) input.value = '';
-    return;
-  }
-
-  MessagePlugin.info(t('knowledgeBase.uploadingFolder', { total: validFiles.length }));
-
-  // 批量上传
-  let successCount = 0;
-  let failCount = 0;
-  const tagIdToUpload = selectedTagId.value !== '__untagged__' ? selectedTagId.value : undefined;
-
-  for (const file of validFiles) {
-    const relativePath = (file as any).webkitRelativePath;
-    let fileName = file.name;
-    if (relativePath) {
-      const pathParts = relativePath.split('/');
-      if (pathParts.length > 2) {
-        const subPath = pathParts.slice(1, -1).join('/');
-        fileName = `${subPath}/${file.name}`;
-      }
-    }
-
-    try {
-      await uploadKnowledgeFile(kbId.value, { file, fileName, tag_id: tagIdToUpload });
-      successCount++;
-    } catch (error: any) {
-      failCount++;
-    }
-  }
-
-  if (successCount > 0) {
-    window.dispatchEvent(new CustomEvent('knowledgeFileUploaded', {
-      detail: { kbId: kbId.value }
-    }));
-  }
-
-  if (failCount === 0) {
-    MessagePlugin.success(t('knowledgeBase.uploadAllSuccess', { count: successCount }));
-  } else if (successCount > 0) {
-    MessagePlugin.warning(t('knowledgeBase.uploadPartialSuccess', { success: successCount, fail: failCount }));
-  } else {
-    MessagePlugin.error(t('knowledgeBase.uploadAllFailed'));
-  }
-
-  if (input) input.value = '';
-};
 
 const handleManualCreate = () => {
   if (!ensureDocumentKbReady()) return;
@@ -966,7 +716,7 @@ const handleManualCreate = () => {
   });
 };
 
-// URL 导入相关
+// URL import related
 const urlDialogVisible = ref(false);
 const urlInputValue = ref('');
 const urlImporting = ref(false);
@@ -985,26 +735,26 @@ const handleURLImportCancel = () => {
 const handleURLImportConfirm = async () => {
   const url = urlInputValue.value.trim();
   if (!url) {
-    MessagePlugin.warning(t('knowledgeBase.urlRequired') || '请输入URL');
+    MessagePlugin.warning(t('knowledgeBase.urlRequired') || 'Please enter URL');
     return;
   }
   
-  // 简单的URL格式验证
+  // Simple URL format validation
   try {
     new URL(url);
   } catch (error) {
-    MessagePlugin.warning(t('knowledgeBase.invalidURL') || '请输入有效的URL');
+    MessagePlugin.warning(t('knowledgeBase.invalidURL') || 'Please enter a valid URL');
     return;
   }
-
+  
   if (!kbId.value) {
-    MessagePlugin.error("缺少知识库ID");
+    MessagePlugin.error("Missing knowledge base ID");
     return;
   }
 
   urlImporting.value = true;
   try {
-    // 获取当前选中的分类ID
+    // Get currently selected category ID
     const tagIdToUpload = selectedTagId.value !== '__untagged__' ? selectedTagId.value : undefined;
     const responseData: any = await createKnowledgeFromURL(kbId.value, { url, tag_id: tagIdToUpload });
     window.dispatchEvent(new CustomEvent('knowledgeFileUploaded', {
@@ -1012,25 +762,25 @@ const handleURLImportConfirm = async () => {
     }));
     const isSuccess = responseData?.success || responseData?.code === 200 || responseData?.status === 'success' || (!responseData?.error && responseData);
     if (isSuccess) {
-      MessagePlugin.success(t('knowledgeBase.urlImportSuccess') || 'URL导入成功！');
+      MessagePlugin.success(t('knowledgeBase.urlImportSuccess') || 'URL import successful!');
       urlDialogVisible.value = false;
       urlInputValue.value = '';
     } else {
-      let errorMessage = t('knowledgeBase.urlImportFailed') || "URL导入失败！";
+      let errorMessage = t('knowledgeBase.urlImportFailed') || "URL import failed!";
       if (responseData?.error?.message) {
         errorMessage = responseData.error.message;
       } else if (responseData?.message) {
         errorMessage = responseData.message;
       }
       if (responseData?.code === 'duplicate_url' || responseData?.error?.code === 'duplicate_url') {
-        errorMessage = t('knowledgeBase.urlExists') || "该URL已存在";
+        errorMessage = t('knowledgeBase.urlExists') || "This URL already exists";
       }
       MessagePlugin.error(errorMessage);
     }
   } catch (error: any) {
-    let errorMessage = error?.error?.message || error?.message || t('knowledgeBase.urlImportFailed') || "URL导入失败！";
+    let errorMessage = error?.error?.message || error?.message || t('knowledgeBase.urlImportFailed') || "URL import failed!";
     if (error?.code === 'duplicate_url') {
-      errorMessage = t('knowledgeBase.urlExists') || "该URL已存在";
+      errorMessage = t('knowledgeBase.urlExists') || "This URL already exists";
     }
     MessagePlugin.error(errorMessage);
   } finally {
@@ -1103,15 +853,15 @@ const getDoc = (page: number) => {
 const delCardConfirm = () => {
   delDialog.value = false;
   delKnowledge(knowledgeIndex.value, knowledge.value, () => {
-    // 删除成功后刷新文档列表和分类数量
+    // After successful deletion, refresh document list and category count
     loadKnowledgeFiles(kbId.value);
     loadTags(kbId.value);
   });
 };
 
-// 处理知识库编辑成功后的回调
+// Handle knowledge base editor success callback
 const handleKBEditorSuccess = (kbIdValue: string) => {
-  // 如果编辑的是当前知识库，刷新文件列表
+  // If editing current knowledge base, refresh file list
   if (kbIdValue === kbId.value) {
     loadKnowledgeFiles(kbIdValue);
   }
@@ -1135,12 +885,12 @@ const getTitle = (session_id: string, value: string) => {
 };
 
 async function createNewSession(value: string): Promise<void> {
-  // Session 不再和知识库绑定，直接创建 Session
+  // Session is no longer bound to knowledge base, directly create Session
   createSessions({}).then(res => {
     if (res.data && res.data.id) {
       getTitle(res.data.id, value);
     } else {
-      // 错误处理
+      // Error handling
       console.error(t('knowledgeBase.createSessionFailed'));
     }
   }).catch(error => {
@@ -1189,32 +939,7 @@ async function createNewSession(value: string): Promise<void> {
               <t-icon name="chevron-right" class="breadcrumb-separator" />
               <span class="breadcrumb-current">{{ $t('knowledgeEditor.document.title') }}</span>
             </h2>
-            <!-- 身份与最后更新：紧凑单行，置于标题行右侧，悬停显示权限说明 -->
-            <div v-if="kbInfo" class="kb-access-meta">
-              <t-tooltip :content="accessPermissionSummary" placement="top">
-                <span class="kb-access-meta-inner">
-                  <t-tag size="small" :theme="isOwner ? 'success' : (effectiveKBPermission === 'admin' ? 'primary' : effectiveKBPermission === 'editor' ? 'warning' : 'default')" class="kb-access-role-tag">
-                    {{ accessRoleLabel }}
-                  </t-tag>
-                  <template v-if="currentSharedKb">
-                    <span class="kb-access-meta-sep">·</span>
-                    <span class="kb-access-meta-text">
-                      {{ $t('knowledgeBase.accessInfo.fromOrg') }}「{{ currentSharedKb.org_name }}」
-                      {{ $t('knowledgeBase.accessInfo.sharedAt') }} {{ formatStringDate(new Date(currentSharedKb.shared_at)) }}
-                    </span>
-                  </template>
-                  <template v-else-if="effectiveKBPermission">
-                    <span class="kb-access-meta-sep">·</span>
-                    <span class="kb-access-meta-text">{{ $t('knowledgeList.detail.sourceTypeAgent') }}</span>
-                  </template>
-                  <template v-else-if="kbLastUpdated">
-                    <span class="kb-access-meta-sep">·</span>
-                    <span class="kb-access-meta-text">{{ $t('knowledgeBase.accessInfo.lastUpdated') }} {{ kbLastUpdated }}</span>
-                  </template>
-                </span>
-              </t-tooltip>
-            </div>
-            <t-tooltip v-if="canManage" :content="$t('knowledgeBase.settings')" placement="top">
+            <t-tooltip :content="$t('knowledgeBase.settings')" placement="top">
               <button
                 type="button"
                 class="kb-settings-button"
@@ -1233,16 +958,9 @@ async function createNewSession(value: string): Promise<void> {
         ref="uploadInputRef"
         type="file"
         class="document-upload-input"
-        accept=".pdf,.docx,.doc,.txt,.md,.jpg,.jpeg,.png,.csv,.xlsx,.xls"
+        accept=".pdf,.docx,.doc,.txt,.md,.jpg,.jpeg,.png"
         multiple
         @change="handleDocumentUpload"
-      />
-      <input
-        ref="folderUploadInputRef"
-        type="file"
-        class="document-upload-input"
-        webkitdirectory
-        @change="handleFolderUpload"
       />
       <div class="knowledge-main">
         <aside class="tag-sidebar">
@@ -1251,7 +969,7 @@ async function createNewSession(value: string): Promise<void> {
               <span>{{ $t('knowledgeBase.documentCategoryTitle') }}</span>
               <span class="sidebar-count">({{ sidebarCategoryCount }})</span>
             </div>
-            <div v-if="canEdit" class="sidebar-actions">
+            <div class="sidebar-actions">
               <t-button
                 size="small"
                 variant="text"
@@ -1368,7 +1086,7 @@ async function createNewSession(value: string): Promise<void> {
                       </div>
                     </template>
                     <template v-else>
-                      <div v-if="canEdit" class="tag-more" @click.stop>
+                      <div class="tag-more" @click.stop>
                         <t-popup trigger="click" placement="top-right" overlayClassName="tag-more-popup">
                           <div class="tag-more-btn">
                             <t-icon name="more" size="14px" />
@@ -1409,7 +1127,7 @@ async function createNewSession(value: string): Promise<void> {
         </aside>
         <div class="tag-content">
           <div class="doc-card-area">
-            <!-- 搜索栏、筛选与添加文档 -->
+            <!-- Search bar and filters -->
             <div class="doc-filter-bar">
               <t-input
                 v-model.trim="docSearchKeyword"
@@ -1430,20 +1148,6 @@ async function createNewSession(value: string): Promise<void> {
                 class="doc-type-select"
                 clearable
               />
-              <div v-if="canEdit" class="doc-filter-actions">
-                <t-tooltip :content="$t('knowledgeBase.addDocument')" placement="top">
-                  <t-dropdown
-                    :options="documentActionOptions"
-                    trigger="click"
-                    placement="bottom-right"
-                    @click="handleDocumentActionSelect"
-                  >
-                    <t-button variant="text" theme="default" class="content-bar-icon-btn" size="small">
-                      <template #icon><t-icon name="file-add" size="16px" /></template>
-                    </t-button>
-                  </t-dropdown>
-                </t-tooltip>
-              </div>
             </div>
             <div
               class="doc-scroll-container"
@@ -1453,21 +1157,17 @@ async function createNewSession(value: string): Promise<void> {
             >
               <template v-if="cardList.length">
                 <div class="doc-card-list">
-                  <!-- 现有文档卡片 -->
+                  <!-- Existing document cards -->
                   <div
                     class="knowledge-card"
                     v-for="(item, index) in cardList"
                     :key="index"
                     @click="openCardDetails(item)"
-                    @mouseenter="onCardMouseEnter($event, item)"
-                    @mousemove="onCardMouseMove($event)"
-                    @mouseleave="onCardMouseLeave"
                   >
                     <div class="card-content">
                       <div class="card-content-nav">
-                        <span class="card-content-title" :title="item.file_name">{{ item.file_name }}</span>
+                        <span class="card-content-title">{{ item.file_name }}</span>
                         <t-popup
-                          v-if="canEdit"
                           v-model="item.isMore"
                           overlayClassName="card-more"
                           :on-visible-change="onVisibleChange"
@@ -1532,7 +1232,6 @@ async function createNewSession(value: string): Promise<void> {
                       <div class="card-bottom-right">
                         <div v-if="tagList.length" class="card-tag-selector" @click.stop>
                           <t-dropdown
-                            v-if="canEdit"
                             :options="tagDropdownOptions"
                             trigger="click"
                             @click="(data: any) => handleKnowledgeTagChange(item.id, data.value as string)"
@@ -1541,9 +1240,6 @@ async function createNewSession(value: string): Promise<void> {
                               <span class="tag-text">{{ getTagName(item.tag_id) }}</span>
                             </t-tag>
                           </t-dropdown>
-                          <t-tag v-else size="small" variant="light-outline">
-                            <span class="tag-text">{{ getTagName(item.tag_id) }}</span>
-                          </t-tag>
                         </div>
                         <div class="card-type">
                           <span>{{ getKnowledgeType(item) }}</span>
@@ -1552,48 +1248,6 @@ async function createNewSession(value: string): Promise<void> {
                     </div>
                   </div>
                 </div>
-                <!-- 悬停卡片时跟随鼠标的详情气泡 -->
-                <Teleport to="body">
-                  <div
-                    v-show="hoveredCardItem"
-                    class="knowledge-card-hover-popover"
-                    :style="{ left: cardPopoverPos.x + 'px', top: cardPopoverPos.y + 'px' }"
-                  >
-                    <template v-if="hoveredCardItem">
-                      <div class="card-popover-title">{{ hoveredCardItem.file_name }}</div>
-                      <div v-if="hoveredCardItem.parse_status === 'processing' || hoveredCardItem.parse_status === 'pending'" class="card-popover-status parsing">
-                        <t-icon name="loading" size="14px" /> {{ t('knowledgeBase.parsingInProgress') }}
-                      </div>
-                      <div v-else-if="hoveredCardItem.parse_status === 'failed'" class="card-popover-status failure">
-                        <t-icon name="close-circle" size="14px" /> {{ t('knowledgeBase.parsingFailed') }}
-                        <span v-if="(hoveredCardItem as any).error_message" class="card-popover-error-msg">{{ (hoveredCardItem as any).error_message }}</span>
-                      </div>
-                      <div v-else-if="hoveredCardItem.parse_status === 'draft'" class="card-popover-status draft">
-                        {{ t('knowledgeBase.draft') }}
-                      </div>
-                      <template v-else>
-                        <div v-if="hoveredCardItem.description" class="card-popover-desc">{{ hoveredCardItem.description }}</div>
-                        <div v-if="(hoveredCardItem as any).source" class="card-popover-source" :title="(hoveredCardItem as any).source">
-                          <t-icon name="link" size="12px" /> {{ (hoveredCardItem as any).source }}
-                        </div>
-                        <div class="card-popover-extra">
-                          <span v-if="(hoveredCardItem as any).created_at" class="card-popover-created">
-                            {{ t('knowledgeBase.createdAt') || '创建' }}：{{ formatDocTime((hoveredCardItem as any).created_at) }}
-                          </span>
-                          <span v-if="formatFileSize((hoveredCardItem as any).file_size)" class="card-popover-size">
-                            {{ formatFileSize((hoveredCardItem as any).file_size) }}
-                          </span>
-                        </div>
-                      </template>
-                      <div class="card-popover-meta">
-                        <span class="card-popover-time">{{ t('knowledgeBase.updatedAt') || '更新' }}：{{ formatDocTime(hoveredCardItem.updated_at) }}</span>
-                        <span v-if="getTagName(hoveredCardItem.tag_id)" class="card-popover-tag">{{ getTagName(hoveredCardItem.tag_id) }}</span>
-                        <span class="card-popover-type">{{ getKnowledgeType(hoveredCardItem) }}</span>
-                      </div>
-                      <div class="card-popover-hint">{{ t('knowledgeBase.clickToViewFull') || '点击卡片查看全文与分段' }}</div>
-                    </template>
-                  </div>
-                </Teleport>
               </template>
               <template v-else>
                 <div class="doc-empty-state">
@@ -1626,30 +1280,30 @@ async function createNewSession(value: string): Promise<void> {
             </div>
           </t-dialog>
           
-          <!-- URL 导入对话框 -->
+          <!-- URL import dialog -->
           <t-dialog
             v-model:visible="urlDialogVisible"
-            :header="$t('knowledgeBase.importURLTitle') || '导入网页'"
+            :header="$t('knowledgeBase.importURLTitle') || 'Import Web Page'"
             :confirm-btn="{
-              content: $t('common.confirm') || '确认',
+              content: $t('common.confirm') || 'Confirm',
               theme: 'primary',
               loading: urlImporting,
             }"
-            :cancel-btn="{ content: $t('common.cancel') || '取消' }"
+            :cancel-btn="{ content: $t('common.cancel') || 'Cancel' }"
             @confirm="handleURLImportConfirm"
             @cancel="handleURLImportCancel"
             width="500px"
           >
             <div class="url-import-form">
-              <div class="url-input-label">{{ $t('knowledgeBase.urlLabel') || 'URL地址' }}</div>
+              <div class="url-input-label">{{ $t('knowledgeBase.urlLabel') || 'URL Address' }}</div>
               <t-input
                 v-model="urlInputValue"
-                :placeholder="$t('knowledgeBase.urlPlaceholder') || '请输入网页URL，例如：https://example.com'"
+                :placeholder="$t('knowledgeBase.urlPlaceholder') || 'Please enter web page URL, e.g.: https://example.com'"
                 clearable
                 autofocus
                 @keydown.enter="handleURLImportConfirm"
               />
-              <div class="url-input-tip">{{ $t('knowledgeBase.urlTip') || '支持导入各类网页内容，系统会自动提取和解析网页中的文本内容' }}</div>
+              <div class="url-input-tip">{{ $t('knowledgeBase.urlTip') || 'Supports importing various web page content, the system will automatically extract and parse text content from web pages' }}</div>
             </div>
           </t-dialog>
           
@@ -1664,7 +1318,7 @@ async function createNewSession(value: string): Promise<void> {
     </div>
   </template>
 
-  <!-- 知识库编辑器（创建/编辑统一组件） -->
+  <!-- Knowledge base editor (unified component for create/edit) -->
   <KnowledgeBaseEditorModal 
     :visible="uiStore.showKBEditorModal"
     :mode="uiStore.kbEditorMode"
@@ -1699,7 +1353,7 @@ async function createNewSession(value: string): Promise<void> {
   }
 }
 
-/* 面包屑下拉菜单优化 */
+/* Breadcrumb dropdown menu optimization */
 .t-popup__content {
   .t-dropdown__menu {
     background: #ffffff;
@@ -1760,33 +1414,27 @@ async function createNewSession(value: string): Promise<void> {
 .knowledge-layout {
   display: flex;
   flex-direction: column;
-  margin: 0 16px 0 4px;
-  gap: 20px;
+  gap: 16px;
   height: 100%;
   flex: 1;
   width: 100%;
   min-width: 0;
-  padding: 24px 32px 32px;
+  padding: 24px 44px 32px;
   box-sizing: border-box;
 }
 
-// 与列表页一致：浅灰底圆角区，左侧筛选为白底卡片
 .knowledge-main {
   display: flex;
+  gap: 12px;
   flex: 1;
   min-height: 0;
-  background: #fafbfc;
-  border: 1px solid #e7ebf0;
-  border-radius: 10px;
-  overflow: hidden;
 }
 
-// 与列表页筛选区一致：白底卡片感、细分界
 .tag-sidebar {
-  width: 200px;
+  width: 230px;
   background: #fff;
-  border-right: 1px solid #e7ebf0;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.04);
+  border-radius: 12px;
+  border: 1px solid #e7ebf0;
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -1798,14 +1446,13 @@ async function createNewSession(value: string): Promise<void> {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     color: #1d2129;
 
     .sidebar-title {
       display: flex;
       align-items: baseline;
       gap: 4px;
-      font-size: 13px;
       font-weight: 600;
 
       .sidebar-count {
@@ -1816,19 +1463,19 @@ async function createNewSession(value: string): Promise<void> {
 
     .sidebar-actions {
       display: flex;
-      gap: 6px;
+      gap: 8px;
       color: #c9ced6;
       align-items: center;
 
       .create-tag-btn {
-        width: 24px;
-        height: 24px;
+        width: 28px;
+        height: 28px;
         padding: 0;
         border-radius: 6px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 16px;
+        font-size: 18px;
         font-weight: 600;
         color: #00a870;
         line-height: 1;
@@ -1847,29 +1494,22 @@ async function createNewSession(value: string): Promise<void> {
   }
 
   .tag-search-bar {
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 
     :deep(.t-input) {
-      font-size: 13px;
+      font-size: 12px;
       background-color: #f7f9fc;
       border-color: #e5e9f2;
-      border-radius: 6px;
     }
   }
 
   .tag-list {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 6px;
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    overflow-x: hidden;
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
 
     .tag-load-more {
       padding: 8px 0 0;
@@ -1887,14 +1527,12 @@ async function createNewSession(value: string): Promise<void> {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 9px 12px;
+      padding: 8px 10px;
       border-radius: 6px;
-      color: #2d3139;
+      color: #4e5969;
       cursor: pointer;
       transition: all 0.2s ease;
-      font-family: "PingFang SC", -apple-system, BlinkMacSystemFont, sans-serif;
-      font-size: 14px;
-      -webkit-font-smoothing: antialiased;
+      font-size: 13px;
 
       .tag-list-left {
         display: flex;
@@ -1905,8 +1543,8 @@ async function createNewSession(value: string): Promise<void> {
 
         .t-icon {
           flex-shrink: 0;
-          color: #5c6470;
-          font-size: 14px;
+          color: #86909c;
+          font-size: 16px;
           transition: color 0.2s ease;
         }
       }
@@ -1917,11 +1555,6 @@ async function createNewSession(value: string): Promise<void> {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        font-family: "PingFang SC", -apple-system, BlinkMacSystemFont, sans-serif;
-        font-size: 14px;
-        font-weight: 450;
-        line-height: 1.4;
-        letter-spacing: 0.01em;
       }
 
       .tag-list-right {
@@ -1929,52 +1562,45 @@ async function createNewSession(value: string): Promise<void> {
         align-items: center;
         gap: 6px;
         margin-left: 8px;
-        flex-shrink: 0;
+        min-width: 0;
       }
 
       .tag-count {
         font-size: 12px;
-        color: #5c6470;
+        color: #86909c;
         font-weight: 500;
-        min-width: 28px;
-        padding: 3px 7px;
-        border-radius: 8px;
-        background: #eef0f3;
+        padding: 2px 6px;
+        border-radius: 10px;
+        background: #f7f9fc;
         transition: all 0.2s ease;
-        text-align: center;
-        box-sizing: border-box;
       }
 
       &:hover {
-        background: #f2f4f7;
+        background: #f7f9fc;
         color: #1d2129;
 
         .tag-list-left .t-icon {
-          color: #1d2129;
+          color: #4e5969;
         }
 
         .tag-count {
           background: #e5e9f2;
-          color: #1d2129;
+          color: #4e5969;
         }
       }
 
       &.active {
         background: #e6f7ec;
-        color: #07c05f;
+        color: #00a870;
         font-weight: 500;
 
         .tag-list-left .t-icon {
-          color: #07c05f;
-        }
-
-        .tag-name {
-          font-weight: 500;
+          color: #00a870;
         }
 
         .tag-count {
           background: #b8f0d3;
-          color: #07c05f;
+          color: #00a870;
           font-weight: 600;
         }
       }
@@ -2081,36 +1707,32 @@ async function createNewSession(value: string): Promise<void> {
       .tag-more {
         display: flex;
         align-items: center;
-        opacity: 0;
-        transition: opacity 0.2s ease;
-      }
-
-      &:hover .tag-more {
-        opacity: 1;
       }
 
       .tag-more-btn {
-        width: 22px;
-        height: 22px;
+        width: 24px;
+        height: 24px;
         display: flex;
         align-items: center;
         justify-content: center;
         border-radius: 4px;
         color: #86909c;
         transition: all 0.2s ease;
+        opacity: 0.6;
 
         &:hover {
           background: #f3f5f7;
           color: #4e5969;
+          opacity: 1;
         }
       }
     }
 
     .tag-empty-state {
       text-align: center;
-      padding: 10px 6px;
+      padding: 12px 8px;
       color: #a1a7b3;
-      font-size: 11px;
+      font-size: 12px;
     }
   }
 }
@@ -2157,13 +1779,9 @@ async function createNewSession(value: string): Promise<void> {
 
 .tag-content {
   flex: 1;
-  min-width: 0;
   display: flex;
   flex-direction: column;
   min-height: 0;
-  padding: 12px;
-  overflow: hidden;
-  background: #fafbfc;
 }
 
 .doc-card-area {
@@ -2174,33 +1792,19 @@ async function createNewSession(value: string): Promise<void> {
 }
 
 .doc-filter-bar {
-  padding: 0 0 12px 0;
+  padding: 0px 0px 10px 0px;
   flex-shrink: 0;
   display: flex;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
 
   .doc-search-input {
     flex: 1;
-    min-width: 0;
   }
 
   .doc-type-select {
     width: 140px;
     flex-shrink: 0;
-  }
-
-  .doc-filter-actions {
-    flex-shrink: 0;
-    :deep(.content-bar-icon-btn) {
-      color: #86909c;
-      background: transparent;
-      border: none;
-      &:hover {
-        color: #4e5969;
-        background: #f2f3f5;
-      }
-    }
   }
 
   :deep(.t-input) {
@@ -2248,14 +1852,16 @@ async function createNewSession(value: string): Promise<void> {
   }
 }
 
-// Header 样式（无底部分割线，留更多空间给下方内容区）
+// Header styles
 .document-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 16px;
+  padding: 0 0 16px;
   flex-shrink: 0;
+  border-bottom: 1px solid #e7ebf0;
 
   .document-header-title {
     display: flex;
@@ -2268,33 +1874,6 @@ async function createNewSession(value: string): Promise<void> {
     align-items: center;
     gap: 8px;
     flex-wrap: wrap;
-  }
-
-  .kb-access-meta {
-    margin-left: auto;
-    flex-shrink: 0;
-  }
-
-  .kb-access-meta-inner {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: #86909c;
-    cursor: default;
-  }
-
-  .kb-access-role-tag {
-    flex-shrink: 0;
-  }
-
-  .kb-access-meta-sep {
-    color: #c9ced6;
-    user-select: none;
-  }
-
-  .kb-access-meta-text {
-    white-space: nowrap;
   }
 
   .document-breadcrumb {
@@ -2376,7 +1955,6 @@ async function createNewSession(value: string): Promise<void> {
   }
 
 }
-
 
 .document-upload-input {
   display: none;
@@ -2463,9 +2041,8 @@ async function createNewSession(value: string): Promise<void> {
 
 .faq-manager-wrapper {
   flex: 1;
-  padding: 24px 32px;
+  padding: 24px 44px;
   overflow-y: auto;
-  margin: 0 16px 0 4px;
 }
 
 @media (max-width: 1250px) and (min-width: 1045px) {
@@ -2511,8 +2088,7 @@ async function createNewSession(value: string): Promise<void> {
 .doc-card-list {
   box-sizing: border-box;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
-  gap: 14px;
+  gap: 20px;
   align-content: flex-start;
   width: 100%;
 }
@@ -2633,49 +2209,47 @@ async function createNewSession(value: string): Promise<void> {
 .card-draft {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 0;
+  gap: 10px;
+  padding: 10px 0;
 }
 
 .card-draft-tip {
   color: #b05b00;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .knowledge-card {
-  min-width: 248px;
-  border: 1px solid #e7e9eb;
-  height: 148px;
-  border-radius: 9px;
+  border: 2px solid #fbfbfb;
+  height: 174px;
+  border-radius: 6px;
   overflow: hidden;
   box-sizing: border-box;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 0 8px 0 #00000005;
   background: #fff;
   position: relative;
   cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
   .card-content {
-    padding: 15px 17px 13px;
+    padding: 10px 20px 23px;
   }
 
   .card-analyze {
-    height: 52px;
+    height: 66px;
     display: flex;
   }
 
   .card-analyze-loading {
     display: block;
     color: #07c05f;
-    font-size: 14px;
+    font-size: 15px;
     margin-top: 2px;
   }
 
   .card-analyze-txt {
     color: #07c05f;
     font-family: "PingFang SC";
-    font-size: 11px;
-    margin-left: 8px;
+    font-size: 12px;
+    margin-left: 9px;
   }
 
   .failure {
@@ -2685,35 +2259,30 @@ async function createNewSession(value: string): Promise<void> {
   .card-content-nav {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 11px;
-    gap: 8px;
+    margin-bottom: 10px;
   }
 
   .card-content-title {
-    flex: 1;
-    min-width: 0;
-    height: 29px;
-    line-height: 29px;
+    width: 200px;
+    height: 32px;
+    line-height: 32px;
     display: inline-block;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: #1d2129;
-    font-family: "PingFang SC", -apple-system, sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: 0.01em;
+    color: #000000e6;
+    font-family: "PingFang SC";
+    font-size: 14px;
+    font-weight: 400;
   }
 
   .more-wrap {
-    flex-shrink: 0;
     display: flex;
-    width: 25px;
-    height: 25px;
+    width: 32px;
+    height: 32px;
     justify-content: center;
     align-items: center;
-    border-radius: 5px;
+    border-radius: 3px;
     cursor: pointer;
   }
 
@@ -2722,8 +2291,8 @@ async function createNewSession(value: string): Promise<void> {
   }
 
   .more {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
   }
 
   .active-more {
@@ -2733,180 +2302,49 @@ async function createNewSession(value: string): Promise<void> {
   .card-content-txt {
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
     overflow: hidden;
-    color: #86909c;
+    color: #00000066;
     font-family: "PingFang SC";
     font-size: 12px;
     font-weight: 400;
-    line-height: 19px;
+    line-height: 20px;
   }
 
   .card-bottom {
     position: absolute;
     bottom: 0;
-    padding: 0 17px;
+    padding: 0 20px;
     box-sizing: border-box;
-    height: 34px;
+    height: 32px;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: linear-gradient(to top, #f7f8fa 0%, #fafbfc 100%);
-    border-top: 1px solid #f0f1f3;
+    background: rgba(48, 50, 54, 0.02);
   }
 
   .card-time {
-    color: #86909c;
+    color: #00000066;
     font-family: "PingFang SC";
     font-size: 12px;
     font-weight: 400;
   }
 
   .card-type {
-    color: #4e5969;
+    color: #00000066;
     font-family: "PingFang SC";
-    font-size: 11px;
-    font-weight: 500;
-    padding: 3px 8px;
-    background: #e8e9eb;
+    font-size: 12px;
+    font-weight: 400;
+    padding: 2px 4px;
+    background: #3032360f;
     border-radius: 4px;
   }
 }
 
 .knowledge-card:hover {
-  border-color: #07c05f;
-  box-shadow: 0 2px 8px rgba(7, 192, 95, 0.12);
-}
-
-/* 悬停知识卡片时跟随鼠标的详情气泡 */
-.knowledge-card-hover-popover {
-  position: fixed;
-  z-index: 9999;
-  pointer-events: none;
-  min-width: 220px;
-  max-width: 360px;
-  padding: 12px 14px;
-  background: #fff;
-  border: 1px solid #e7ebf0;
-  border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  font-family: "PingFang SC", -apple-system, sans-serif;
-  transition: opacity 0.15s ease;
-
-  .card-popover-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: #1d2129;
-    margin-bottom: 8px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .card-popover-status {
-    font-size: 12px;
-    margin-bottom: 6px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-
-    &.parsing {
-      color: #07c05f;
-    }
-
-    &.failure {
-      color: #fa5151;
-    }
-
-    &.draft {
-      color: #b05b00;
-    }
-  }
-
-  .card-popover-desc {
-    font-size: 12px;
-    color: #4e5969;
-    line-height: 1.5;
-    margin-bottom: 8px;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 5;
-    line-clamp: 5;
-    overflow: hidden;
-  }
-
-  .card-popover-error-msg {
-    display: block;
-    margin-top: 4px;
-    font-size: 11px;
-    color: #fa5151;
-    opacity: 0.95;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 280px;
-  }
-
-  .card-popover-source {
-    font-size: 11px;
-    color: #0052d9;
-    margin-bottom: 6px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 100%;
-  }
-
-  .card-popover-extra {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    font-size: 11px;
-    color: #86909c;
-    margin-bottom: 6px;
-  }
-
-  .card-popover-created,
-  .card-popover-size {
-    flex-shrink: 0;
-  }
-
-  .card-popover-meta {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    font-size: 11px;
-    color: #86909c;
-  }
-
-  .card-popover-tag {
-    padding: 1px 6px;
-    background: #e6f7ec;
-    color: #07c05f;
-    border-radius: 4px;
-  }
-
-  .card-popover-type {
-    padding: 1px 6px;
-    background: #e8e9eb;
-    color: #4e5969;
-    border-radius: 4px;
-  }
-
-  .card-popover-hint {
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px solid #f0f1f3;
-    font-size: 11px;
-    color: #86909c;
-  }
+  border: 2px solid #07c05f;
 }
 
 .url-import-form {
@@ -2961,7 +2399,39 @@ async function createNewSession(value: string): Promise<void> {
   margin: 0 auto;
 }
 
+.doc-card-list {
+  grid-template-columns: 1fr;
+}
+
 .del-card {
   vertical-align: middle;
+}
+
+/* Small screen tablet - 2 columns */
+@media (min-width: 900px) {
+  .doc-card-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Medium screen - 3 columns */
+@media (min-width: 1250px) {
+  .doc-card-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Medium screen - 3 columns */
+@media (min-width: 1600px) {
+  .doc-card-list {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Large screen - 4 columns */
+@media (min-width: 2000px) {
+  .doc-card-list {
+    grid-template-columns: repeat(5, 1fr);
+  }
 }
 </style>

@@ -76,20 +76,20 @@ const toggleResult = (chunkId: string) => {
 
 const getRelevanceClass = (level: RelevanceLevel): string => {
   const classMap: Record<RelevanceLevel, string> = {
-    '高相关': 'high',
-    '中相关': 'medium',
-    '低相关': 'low',
-    '弱相关': 'weak',
+    'high': 'high',
+    'medium': 'medium',
+    'low': 'low',
+    'weak': 'weak',
   };
   return classMap[level] || 'weak';
 };
 
 const getRelevanceLabel = (level: RelevanceLevel): string => {
   const labelMap: Record<RelevanceLevel, string> = {
-    '高相关': t('chat.relevanceHigh'),
-    '中相关': t('chat.relevanceMedium'),
-    '低相关': t('chat.relevanceLow'),
-    '弱相关': t('chat.relevanceWeak'),
+    'high': t('chat.relevanceHigh'),
+    'medium': t('chat.relevanceMedium'),
+    'low': t('chat.relevanceLow'),
+    'weak': t('chat.relevanceWeak'),
   };
   return labelMap[level] || level;
 };

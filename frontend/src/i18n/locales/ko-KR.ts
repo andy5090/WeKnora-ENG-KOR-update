@@ -1,6 +1,7 @@
 export default {
   menu: {
     knowledgeBase: "지식베이스",
+    agents: "에이전트",
     chat: "대화",
     createChat: "대화 생성",
     tenant: "계정 정보",
@@ -761,7 +762,8 @@ export default {
     argumentsLabel: "매개변수",
     toolFallback: "도구",
     title: "에이전트",
-    subtitle: "에이전트를 구성하고 관리하며, 대화 동작과 기능을 사용자 정의합니다",
+    subtitle:
+      "에이전트를 구성하고 관리하며, 대화 동작과 기능을 사용자 정의합니다",
     createAgent: "에이전트 생성",
     builtin: "내장",
     noDescription: "설명 없음",
@@ -806,7 +808,8 @@ export default {
     },
     delete: {
       confirmTitle: "에이전트 삭제",
-      confirmMessage: "에이전트「{name}」을(를) 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+      confirmMessage:
+        "에이전트「{name}」을(를) 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
       confirmButton: "삭제 확인",
     },
     messages: {
@@ -843,13 +846,16 @@ export default {
       rerankModelRequired: "지식베이스를 사용할 때 ReRank 모델을 선택하세요",
       contextsMissing:
         "지식베이스를 활성화할 때 컨텍스트 템플릿에 {'{{'}contexts{'}}'} 플레이스홀더가 포함되어야 합니다",
-      queryMissingInContext: "컨텍스트 템플릿에 {'{{'}query{'}}'} 플레이스홀더가 포함되어야 합니다",
+      queryMissingInContext:
+        "컨텍스트 템플릿에 {'{{'}query{'}}'} 플레이스홀더가 포함되어야 합니다",
       knowledgeBasesMissing:
         "시스템 프롬프트에 {'{{'}knowledge_bases{'}}'} 플레이스홀더를 포함하여 모델이 사용 가능한 지식베이스를 이해하도록 권장합니다",
-      queryMissingInRewrite: "사용자 프롬프트 재작성에 {'{{'}query{'}}'} 플레이스홀더가 포함되어야 합니다",
+      queryMissingInRewrite:
+        "사용자 프롬프트 재작성에 {'{{'}query{'}}'} 플레이스홀더가 포함되어야 합니다",
       conversationMissing:
         "사용자 프롬프트 재작성에 {'{{'}conversation{'}}'} 플레이스홀더가 포함되어야 합니다",
-      queryMissingInFallback: "폴백 프롬프트에 {'{{'}query{'}}'} 플레이스홀더가 포함되어야 합니다",
+      queryMissingInFallback:
+        "폴백 프롬프트에 {'{{'}query{'}}'} 플레이스홀더가 포함되어야 합니다",
       avatar: "아이콘",
       avatarPlaceholder: "Emoji를 입력하거나 클릭하여 선택",
       description: "설명",
@@ -863,7 +869,8 @@ export default {
       systemPromptPlaceholder:
         "시스템 프롬프트를 사용자 정의하여 에이전트의 동작과 역할을 정의합니다 ({'{{'}web_search_status{'}}'} 플레이스홀더를 사용하여 웹 검색 동작을 동적으로 제어)",
       defaultPromptHint: "비워두면 다음 시스템 기본 프롬프트가 사용됩니다:",
-      defaultContextTemplateHint: "비워두면 다음 시스템 기본 컨텍스트 템플릿이 사용됩니다:",
+      defaultContextTemplateHint:
+        "비워두면 다음 시스템 기본 컨텍스트 템플릿이 사용됩니다:",
       contextTemplateRequired: "컨텍스트 템플릿을 입력하세요",
       availablePlaceholders: "사용 가능한 플레이스홀더",
       placeholderHint: "{'{{'}를 입력하면 자동 완성이 트리거됩니다",
@@ -887,7 +894,8 @@ export default {
       retrieveKBOnlyWhenMentionedDesc:
         "끄기: 구성된 지식베이스를 자동으로 검색, 켜기: 사용자가 {'@'}로 언급할 때만 검색",
       rerankModel: "ReRank 모델",
-      rerankModelDesc: "지식베이스 검색 결과를 재정렬하여 답변 정확도를 향상시키는 데 사용됩니다",
+      rerankModelDesc:
+        "지식베이스 검색 결과를 재정렬하여 답변 정확도를 향상시키는 데 사용됩니다",
       rerankModelPlaceholder: "ReRank 모델을 선택하세요",
       maxIterations: "최대 반복 횟수",
       allowedTools: "허용된 도구",
@@ -935,7 +943,8 @@ export default {
     builtinInfo: {
       quickAnswer: {
         name: "빠른 질의응답",
-        description: "지식베이스 기반 RAG 질의응답, 빠르고 정확하게 질문에 답변",
+        description:
+          "지식베이스 기반 RAG 질의응답, 빠르고 정확하게 질문에 답변",
       },
       smartReasoning: {
         name: "지능형 추론",
@@ -1304,7 +1313,7 @@ export default {
     },
   },
   language: {
-    zhCN: "简体中文",
+    zhCN: "Simplified Chinese",
     enUS: "English",
     ruRU: "Русский",
     koKR: "한국어",

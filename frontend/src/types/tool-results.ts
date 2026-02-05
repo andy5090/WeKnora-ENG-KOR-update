@@ -4,7 +4,7 @@
  */
 
 // Relevance levels
-export type RelevanceLevel = '高相关' | '中相关' | '低相关' | '弱相关';
+export type RelevanceLevel = 'high' | 'medium' | 'low' | 'weak';
 
 // Display types
 export type DisplayType =

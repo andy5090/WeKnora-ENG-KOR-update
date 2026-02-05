@@ -1,12 +1,12 @@
 /**
- * 安全工具类 - 防止 XSS 攻击
+ * Security utility class - prevent XSS attacks
  */
 
 import DOMPurify from 'dompurify';
 
-// 配置 DOMPurify 的安全策略
+// Configure DOMPurify security policy
 const DOMPurifyConfig = {
-  // 允许的标签
+  // Allowed tags
   ALLOWED_TAGS: [
     'p', 'br', 'strong', 'em', 'u', 's', 'del', 'ins',
     'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
@@ -14,17 +14,17 @@ const DOMPurifyConfig = {
     'a', 'img', 'table', 'thead', 'tbody', 'tr', 'th', 'td',
     'div', 'span', 'figure', 'figcaption', 'think'
   ],
-  // 允许的属性
+  // Allowed attributes
   ALLOWED_ATTR: [
     'href', 'title', 'alt', 'src', 'class', 'id', 'style',
     'target', 'rel', 'width', 'height'
   ],
-  // 允许的协议
+  // Allowed protocols
   ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
-  // 禁止的标签和属性
+  // Forbidden tags and attributes
   FORBID_TAGS: ['script', 'object', 'embed', 'form', 'input', 'button'],
   FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'onfocus', 'onblur'],
-  // 其他安全配置
+  // Other security configurations
   KEEP_CONTENT: true,
   RETURN_DOM: false,
   RETURN_DOM_FRAGMENT: false,
@@ -32,16 +32,16 @@ const DOMPurifyConfig = {
   SANITIZE_DOM: true,
   SANITIZE_NAMED_PROPS: true,
   WHOLE_DOCUMENT: false,
-  // 自定义钩子函数
+  // Custom hook functions
   HOOKS: {
-    // 在清理前处理
+    // Process before sanitization
     beforeSanitizeElements: (currentNode: Element) => {
-      // 移除所有 script 标签
+      // Remove all script tags
       if (currentNode.tagName === 'SCRIPT') {
         currentNode.remove();
         return null;
       }
-      // 移除所有事件处理器
+      // Remove all event handlers
       const eventAttrs = ['onclick', 'onload', 'onerror', 'onmouseover', 'onfocus', 'onblur'];
       eventAttrs.forEach(attr => {
         if (currentNode.hasAttribute(attr)) {
@@ -49,9 +49,9 @@ const DOMPurifyConfig = {
         }
       });
     },
-    // 在清理后处理
+    // Process after sanitization
     afterSanitizeElements: (currentNode: Element) => {
-      // 确保所有链接都有 rel="noopener noreferrer"
+      // Ensure all links have rel="noopener noreferrer"
       if (currentNode.tagName === 'A') {
         const href = currentNode.getAttribute('href');
         if (href && href.startsWith('http')) {
@@ -59,7 +59,7 @@ const DOMPurifyConfig = {
           currentNode.setAttribute('target', '_blank');
         }
       }
-      // 确保所有图片都有 alt 属性
+      // Ensure all images have alt attribute
       if (currentNode.tagName === 'IMG') {
         if (!currentNode.getAttribute('alt')) {
           currentNode.setAttribute('alt', '');
@@ -70,9 +70,9 @@ const DOMPurifyConfig = {
 };
 
 /**
- * 安全地清理 HTML 内容
- * @param html 需要清理的 HTML 字符串
- * @returns 清理后的安全 HTML 字符串
+ * Safely sanitize HTML content
+ * @param html HTML string to sanitize
+ * @returns Sanitized safe HTML string
  */
 export function sanitizeHTML(html: string): string {
   if (!html || typeof html !== 'string') {
@@ -83,15 +83,15 @@ export function sanitizeHTML(html: string): string {
     return DOMPurify.sanitize(html, DOMPurifyConfig);
   } catch (error) {
     console.error('HTML sanitization failed:', error);
-    // 如果清理失败，返回转义的纯文本
+    // If sanitization fails, return escaped plain text
     return escapeHTML(html);
   }
 }
 
 /**
- * 转义 HTML 特殊字符
- * @param text 需要转义的文本
- * @returns 转义后的文本
+ * Escape HTML special characters
+ * @param text Text to escape
+ * @returns Escaped text
  */
 export function escapeHTML(text: string): string {
   if (!text || typeof text !== 'string') {
@@ -113,9 +113,9 @@ export function escapeHTML(text: string): string {
 }
 
 /**
- * 验证 URL 是否安全
- * @param url 需要验证的 URL
- * @returns 是否为安全 URL
+ * Validate if URL is safe
+ * @param url URL to validate
+ * @returns Whether URL is safe
  */
 export function isValidURL(url: string): boolean {
   if (!url || typeof url !== 'string') {
@@ -124,7 +124,7 @@ export function isValidURL(url: string): boolean {
   
   try {
     const urlObj = new URL(url);
-    // 只允许 http 和 https 协议
+    // Only allow http and https protocols
     return ['http:', 'https:'].includes(urlObj.protocol);
   } catch {
     return false;
@@ -132,16 +132,16 @@ export function isValidURL(url: string): boolean {
 }
 
 /**
- * 安全地处理 Markdown 内容
- * @param markdown Markdown 文本
- * @returns 安全的 HTML 字符串
+ * Safely process Markdown content
+ * @param markdown Markdown text
+ * @returns Safe HTML string
  */
 export function safeMarkdownToHTML(markdown: string): string {
   if (!markdown || typeof markdown !== 'string') {
     return '';
   }
   
-  // 首先转义可能的 HTML 标签
+  // First escape possible HTML tags
   const escapedMarkdown = markdown
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
     .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
@@ -152,19 +152,19 @@ export function safeMarkdownToHTML(markdown: string): string {
 }
 
 /**
- * 清理用户输入
- * @param input 用户输入
- * @returns 清理后的安全输入
+ * Clean user input
+ * @param input User input
+ * @returns Cleaned safe input
  */
 export function sanitizeUserInput(input: string): string {
   if (!input || typeof input !== 'string') {
     return '';
   }
   
-  // 移除控制字符
+  // Remove control characters
   let cleaned = input.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
   
-  // 限制长度
+  // Limit length
   if (cleaned.length > 10000) {
     cleaned = cleaned.substring(0, 10000);
   }
@@ -173,9 +173,9 @@ export function sanitizeUserInput(input: string): string {
 }
 
 /**
- * 验证图片 URL 是否安全
- * @param url 图片 URL
- * @returns 是否为安全的图片 URL
+ * Validate if image URL is safe
+ * @param url Image URL
+ * @returns Whether image URL is safe
  */
 export function isValidImageURL(url: string): boolean {
   if (!isValidURL(url)) {
@@ -186,11 +186,11 @@ export function isValidImageURL(url: string): boolean {
 }
 
 /**
- * 创建安全的图片元素
- * @param src 图片源
- * @param alt 替代文本
- * @param title 标题
- * @returns 安全的图片 HTML
+ * Create safe image element
+ * @param src Image source
+ * @param alt Alternative text
+ * @param title Title
+ * @returns Safe image HTML
  */
 export function createSafeImage(src: string, alt: string = '', title: string = ''): string {
   if (!isValidImageURL(src)) {
