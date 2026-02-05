@@ -92,22 +92,22 @@ func (c *OllamaChat) Chat(ctx context.Context, messages []Message, opts *ChatOpt
 		return nil, err
 	}
 
-	// 构建请求参数
+	// Build request parameters
 	chatReq := c.buildChatRequest(messages, opts, false)
 
-	// 记录请求日志
-	logger.GetLogger(ctx).Infof("发送聊天请求到模型 %s", c.modelName)
+	// Log request
+	logger.GetLogger(ctx).Infof("Sending chat request to model %s", c.modelName)
 
 	var responseContent string
 	var toolCalls []types.LLMToolCall
 	var promptTokens, completionTokens int
 
-	// 使用 Ollama 客户端发送请求
+	// Use Ollama client to send request
 	err := c.ollamaService.Chat(ctx, chatReq, func(resp ollamaapi.ChatResponse) error {
 		responseContent = resp.Message.Content
 		toolCalls = c.toolCallTo(resp.Message.ToolCalls)
 
-		// 获取token计数
+		// Get token count
 		if resp.EvalCount > 0 {
 			promptTokens = resp.PromptEvalCount
 			completionTokens = resp.EvalCount - promptTokens
@@ -116,10 +116,10 @@ func (c *OllamaChat) Chat(ctx context.Context, messages []Message, opts *ChatOpt
 		return nil
 	})
 	if err != nil {
-		return nil, fmt.Errorf("聊天请求失败: %w", err)
+		return nil, fmt.Errorf("chat request failed: %w", err)
 	}
 
-	// 构建响应
+	// Build response
 	return &types.ChatResponse{
 		Content:   responseContent,
 		ToolCalls: toolCalls,
@@ -135,27 +135,27 @@ func (c *OllamaChat) Chat(ctx context.Context, messages []Message, opts *ChatOpt
 	}, nil
 }
 
-// ChatStream 进行流式聊天
+// ChatStream performs streaming chat
 func (c *OllamaChat) ChatStream(
 	ctx context.Context,
 	messages []Message,
 	opts *ChatOptions,
 ) (<-chan types.StreamResponse, error) {
-	// 确保模型可用
+	// Ensure model is available
 	if err := c.ensureModelAvailable(ctx); err != nil {
 		return nil, err
 	}
 
-	// 构建请求参数
+	// Build request parameters
 	chatReq := c.buildChatRequest(messages, opts, true)
 
-	// 记录请求日志
-	logger.GetLogger(ctx).Infof("发送流式聊天请求到模型 %s", c.modelName)
+	// Log request
+	logger.GetLogger(ctx).Infof("Sending streaming chat request to model %s", c.modelName)
 
-	// 创建流式响应通道
+	// Create streaming response channel
 	streamChan := make(chan types.StreamResponse)
 
-	// 启动goroutine处理流式响应
+	// Start goroutine to handle streaming response
 	go func() {
 		defer close(streamChan)
 
@@ -186,8 +186,8 @@ func (c *OllamaChat) ChatStream(
 			return nil
 		})
 		if err != nil {
-			logger.GetLogger(ctx).Errorf("流式聊天请求失败: %v", err)
-			// 发送错误响应
+			logger.GetLogger(ctx).Errorf("Streaming chat request failed: %v", err)
+			// Send error response
 			streamChan <- types.StreamResponse{
 				ResponseType: types.ResponseTypeError,
 				Content:      err.Error(),
@@ -199,18 +199,18 @@ func (c *OllamaChat) ChatStream(
 	return streamChan, nil
 }
 
-// 确保模型可用
+// ensureModelAvailable ensures the model is available
 func (c *OllamaChat) ensureModelAvailable(ctx context.Context) error {
-	logger.GetLogger(ctx).Infof("确保模型 %s 可用", c.modelName)
+	logger.GetLogger(ctx).Infof("Ensuring model %s is available", c.modelName)
 	return c.ollamaService.EnsureModelAvailable(ctx, c.modelName)
 }
 
-// GetModelName 获取模型名称
+// GetModelName returns the model name
 func (c *OllamaChat) GetModelName() string {
 	return c.modelName
 }
 
-// GetModelID 获取模型ID
+// GetModelID returns the model ID
 func (c *OllamaChat) GetModelID() string {
 	return c.modelID
 }

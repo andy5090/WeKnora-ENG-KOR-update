@@ -57,7 +57,7 @@ If KB is not configured with graph, tool will return regular search results.
 // QueryKnowledgeGraphInput defines the input parameters for query knowledge graph tool
 type QueryKnowledgeGraphInput struct {
 	KnowledgeBaseIDs []string `json:"knowledge_base_ids" jsonschema:"Array of knowledge base IDs to query"`
-	Query            string   `json:"query" jsonschema:"查询内容（实体名称或查询文本）"`
+	Query            string   `json:"query" jsonschema:"Query content (entity name or query text)"`
 }
 
 // QueryKnowledgeGraphTool queries the knowledge graph for entities and relationships
@@ -135,7 +135,7 @@ func (t *QueryKnowledgeGraphTool) Execute(ctx context.Context, args json.RawMess
 			kb, err := t.knowledgeService.GetKnowledgeBaseByID(ctx, id)
 			if err != nil {
 				mu.Lock()
-				kbResults[id] = &graphQueryResult{kbID: id, err: fmt.Errorf("获取知识库失败: %v", err)}
+				kbResults[id] = &graphQueryResult{kbID: id, err: fmt.Errorf("failed to get knowledge base: %v", err)}
 				mu.Unlock()
 				return
 			}
@@ -143,7 +143,7 @@ func (t *QueryKnowledgeGraphTool) Execute(ctx context.Context, args json.RawMess
 			// Check if graph extraction is enabled
 			if kb.ExtractConfig == nil || (len(kb.ExtractConfig.Nodes) == 0 && len(kb.ExtractConfig.Relations) == 0) {
 				mu.Lock()
-				kbResults[id] = &graphQueryResult{kbID: id, err: fmt.Errorf("未配置知识图谱抽取")}
+				kbResults[id] = &graphQueryResult{kbID: id, err: fmt.Errorf("knowledge graph extraction not configured")}
 				mu.Unlock()
 				return
 			}
@@ -152,7 +152,7 @@ func (t *QueryKnowledgeGraphTool) Execute(ctx context.Context, args json.RawMess
 			results, err := t.knowledgeService.HybridSearch(ctx, id, searchParams)
 			if err != nil {
 				mu.Lock()
-				kbResults[id] = &graphQueryResult{kbID: id, kb: kb, err: fmt.Errorf("查询失败: %v", err)}
+				kbResults[id] = &graphQueryResult{kbID: id, kb: kb, err: fmt.Errorf("query failed: %v", err)}
 				mu.Unlock()
 				return
 			}
@@ -206,7 +206,7 @@ func (t *QueryKnowledgeGraphTool) Execute(ctx context.Context, args json.RawMess
 	if len(allResults) == 0 {
 		return &types.ToolResult{
 			Success: true,
-			Output:  "未找到相关的图谱信息。",
+			Output:  "No relevant graph information found.",
 			Data: map[string]interface{}{
 				"knowledge_base_ids": input.KnowledgeBaseIDs,
 				"query":              query,
@@ -218,13 +218,13 @@ func (t *QueryKnowledgeGraphTool) Execute(ctx context.Context, args json.RawMess
 	}
 
 	// Format output with enhanced graph information
-	output := "=== 知识图谱查询 ===\n\n"
-	output += fmt.Sprintf("📊 查询: %s\n", query)
-	output += fmt.Sprintf("🎯 目标知识库: %v\n", input.KnowledgeBaseIDs)
-	output += fmt.Sprintf("✓ 找到 %d 条相关结果（已去重）\n\n", len(allResults))
+	output := "=== Knowledge Graph Query ===\n\n"
+	output += fmt.Sprintf("📊 Query: %s\n", query)
+	output += fmt.Sprintf("🎯 Target Knowledge Bases: %v\n", input.KnowledgeBaseIDs)
+	output += fmt.Sprintf("✓ Found %d relevant results (deduplicated)\n\n", len(allResults))
 
 	if len(errors) > 0 {
-		output += "=== ⚠️ 部分失败 ===\n"
+		output += "=== ⚠️ Partial Failures ===\n"
 		for _, errMsg := range errors {
 			output += fmt.Sprintf("  - %s\n", errMsg)
 		}
@@ -233,16 +233,16 @@ func (t *QueryKnowledgeGraphTool) Execute(ctx context.Context, args json.RawMess
 
 	// Display graph configuration status
 	hasGraphConfig := false
-	output += "=== 📈 图谱配置状态 ===\n\n"
+	output += "=== 📈 Graph Configuration Status ===\n\n"
 	for kbID, config := range graphConfigs {
 		hasGraphConfig = true
-		output += fmt.Sprintf("知识库【%s】:\n", kbID)
+		output += fmt.Sprintf("Knowledge Base [%s]:\n", kbID)
 
 		nodes, _ := config["nodes"].([]interface{})
 		relations, _ := config["relations"].([]interface{})
 
 		if len(nodes) > 0 {
-			output += fmt.Sprintf("  ✓ 实体类型 (%d): ", len(nodes))
+			output += fmt.Sprintf("  ✓ Entity Types (%d): ", len(nodes))
 			nodeNames := make([]string, 0, len(nodes))
 			for _, n := range nodes {
 				if nodeMap, ok := n.(map[string]interface{}); ok {
@@ -253,11 +253,11 @@ func (t *QueryKnowledgeGraphTool) Execute(ctx context.Context, args json.RawMess
 			}
 			output += fmt.Sprintf("%v\n", nodeNames)
 		} else {
-			output += "  ⚠️ 未配置实体类型\n"
+			output += "  ⚠️ Entity types not configured\n"
 		}
 
 		if len(relations) > 0 {
-			output += fmt.Sprintf("  ✓ 关系类型 (%d): ", len(relations))
+			output += fmt.Sprintf("  ✓ Relation Types (%d): ", len(relations))
 			relNames := make([]string, 0, len(relations))
 			for _, r := range relations {
 				if relMap, ok := r.(map[string]interface{}); ok {
@@ -268,31 +268,31 @@ func (t *QueryKnowledgeGraphTool) Execute(ctx context.Context, args json.RawMess
 			}
 			output += fmt.Sprintf("%v\n", relNames)
 		} else {
-			output += "  ⚠️ 未配置关系类型\n"
+			output += "  ⚠️ Relation types not configured\n"
 		}
 		output += "\n"
 	}
 
 	if !hasGraphConfig {
-		output += "⚠️ 所查询的知识库均未配置图谱抽取\n"
-		output += "💡 提示: 需要在知识库设置中配置实体和关系类型\n\n"
+		output += "⚠️ None of the queried knowledge bases have graph extraction configured\n"
+		output += "💡 Tip: Configure entity and relation types in knowledge base settings\n\n"
 	}
 
 	// Display result counts by KB
 	if len(kbCounts) > 0 {
-		output += "=== 📚 知识库覆盖 ===\n"
+		output += "=== 📚 Knowledge Base Coverage ===\n"
 		for kbID, count := range kbCounts {
-			output += fmt.Sprintf("  - %s: %d 条结果\n", kbID, count)
+			output += fmt.Sprintf("  - %s: %d results\n", kbID, count)
 		}
 		output += "\n"
 	}
 
 	// Display search results
-	output += "=== 🔍 查询结果 ===\n\n"
+	output += "=== 🔍 Query Results ===\n\n"
 	if !hasGraphConfig {
-		output += "💡 当前返回相关文档片段（知识库未配置图谱）\n\n"
+		output += "💡 Returning relevant document chunks (knowledge base has no graph configured)\n\n"
 	} else {
-		output += "💡 基于图谱配置的相关内容检索\n\n"
+		output += "💡 Content retrieval based on graph configuration\n\n"
 	}
 
 	formattedResults := make([]map[string]interface{}, 0, len(allResults))
@@ -305,16 +305,16 @@ func (t *QueryKnowledgeGraphTool) Execute(ctx context.Context, args json.RawMess
 			if i > 0 {
 				output += "\n"
 			}
-			output += fmt.Sprintf("【来源文档: %s】\n\n", result.KnowledgeTitle)
+			output += fmt.Sprintf("[Source Document: %s]\n\n", result.KnowledgeTitle)
 		}
 
 		relevanceLevel := GetRelevanceLevel(result.Score)
 
-		output += fmt.Sprintf("结果 #%d:\n", i+1)
-		output += fmt.Sprintf("  📍 相关度: %.2f (%s)\n", result.Score, relevanceLevel)
-		output += fmt.Sprintf("  🔗 匹配方式: %s\n", FormatMatchType(result.MatchType))
-		output += fmt.Sprintf("  📄 内容: %s\n", result.Content)
-		output += fmt.Sprintf("  🆔 chunk_id: %s\n\n", result.ID)
+		output += fmt.Sprintf("Result #%d:\n", i+1)
+		output += fmt.Sprintf("  📍 Relevance: %.2f (%s)\n", result.Score, relevanceLevel)
+		output += fmt.Sprintf("  🔗 Match Type: %s\n", FormatMatchType(result.MatchType))
+		output += fmt.Sprintf("  📄 Content: %s\n", result.Content)
+		output += fmt.Sprintf("  🆔 Chunk ID: %s\n\n", result.ID)
 
 		formattedResults = append(formattedResults, map[string]interface{}{
 			"result_index":    i + 1,
@@ -328,14 +328,14 @@ func (t *QueryKnowledgeGraphTool) Execute(ctx context.Context, args json.RawMess
 		})
 	}
 
-	output += "=== 💡 使用提示 ===\n"
-	output += "- ✓ 结果已跨知识库去重并按相关度排序\n"
-	output += "- ✓ 使用 get_chunk_detail 获取完整内容\n"
-	output += "- ✓ 使用 list_knowledge_chunks 探索上下文\n"
+	output += "=== 💡 Usage Tips ===\n"
+	output += "- ✓ Results are deduplicated across knowledge bases and sorted by relevance\n"
+	output += "- ✓ Use get_chunk_detail to get full content\n"
+	output += "- ✓ Use list_knowledge_chunks to explore context\n"
 	if !hasGraphConfig {
-		output += "- ⚠️ 配置图谱抽取以获得更精准的实体关系结果\n"
+		output += "- ⚠️ Configure graph extraction for more precise entity-relationship results\n"
 	}
-	output += "- ⏳ 完整的图查询语言（Cypher）支持开发中\n"
+	output += "- ⏳ Full graph query language (Cypher) support in development\n"
 
 	// Build structured graph data for frontend visualization
 	graphData := buildGraphVisualizationData(allResults, graphConfigs)

@@ -248,10 +248,10 @@ func ErrorWithFields(c context.Context, err error, fields logrus.Fields) {
 	if err != nil {
 		fields["error"] = err.Error()
 	}
-	addCaller(GetLogger(c), 2).WithFields(fields).Error("发生错误")
+	addCaller(GetLogger(c), 2).WithFields(fields).Error("error occurred")
 }
 
-// Fatal 输出致命级别的日志并退出程序
+// Fatal outputs fatal level log and exits the program
 func Fatal(c context.Context, args ...interface{}) {
 	addCaller(GetLogger(c), 2).Fatal(args...)
 }

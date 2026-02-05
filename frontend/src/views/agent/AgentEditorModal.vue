@@ -737,7 +737,7 @@
                 <div v-show="currentSection === 'websearch'" class="section">
                   <div class="section-header">
                     <h2>{{ $t('agent.editor.webSearchConfig') || 'Web Search' }}</h2>
-                    <p class="section-description">{{ $t('agent.editor.webSearchConfigDesc') || 'Configure agent's web search capability' }}</p>
+                    <p class="section-description">{{ $t('agent.editor.webSearchConfigDesc') || 'Configure agent\'s web search capability' }}</p>
                   </div>
                   
                   <div class="settings-group">

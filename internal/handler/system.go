@@ -95,7 +95,7 @@ func (h *SystemHandler) GetSystemInfo(c *gin.Context) {
 func (h *SystemHandler) getKeywordIndexEngine() string {
 	retrieveDriver := os.Getenv("RETRIEVE_DRIVER")
 	if retrieveDriver == "" {
-		return "未配置"
+		return "Not Configured"
 	}
 
 	drivers := strings.Split(retrieveDriver, ",")
@@ -109,7 +109,7 @@ func (h *SystemHandler) getKeywordIndexEngine() string {
 	}
 
 	if len(keywordEngines) == 0 {
-		return "未配置"
+		return "Not Configured"
 	}
 	return strings.Join(keywordEngines, ", ")
 }
@@ -124,7 +124,7 @@ func (h *SystemHandler) getVectorStoreEngine() string {
 	// Fallback to RETRIEVE_DRIVER for vector support
 	retrieveDriver := os.Getenv("RETRIEVE_DRIVER")
 	if retrieveDriver == "" {
-		return "未配置"
+		return "Not Configured"
 	}
 
 	drivers := strings.Split(retrieveDriver, ",")
@@ -138,7 +138,7 @@ func (h *SystemHandler) getVectorStoreEngine() string {
 	}
 
 	if len(vectorEngines) == 0 {
-		return "未配置"
+		return "Not Configured"
 	}
 	return strings.Join(vectorEngines, ", ")
 }
@@ -146,7 +146,7 @@ func (h *SystemHandler) getVectorStoreEngine() string {
 // getGraphDatabaseEngine returns the graph database engine name
 func (h *SystemHandler) getGraphDatabaseEngine() string {
 	if h.neo4jDriver == nil {
-		return "未启用"
+		return "Not Enabled"
 	}
 	return "Neo4j"
 }

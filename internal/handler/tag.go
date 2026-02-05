@@ -43,7 +43,7 @@ func (h *TagHandler) resolveTagID(c *gin.Context) (string, error) {
 		tenantID := ctx.Value(types.TenantIDContextKey).(uint64)
 		tag, err := h.tagRepo.GetBySeqID(ctx, tenantID, seqID)
 		if err != nil {
-			return "", errors.NewNotFoundError("标签不存在")
+			return "", errors.NewNotFoundError("tag not found")
 		}
 		return tag.ID, nil
 	}
@@ -79,7 +79,7 @@ func (h *TagHandler) ListTags(c *gin.Context) {
 	var page types.Pagination
 	if err := c.ShouldBindQuery(&page); err != nil {
 		logger.Error(ctx, "Failed to bind pagination query", err)
-		c.Error(errors.NewBadRequestError("分页参数不合法").WithDetails(err.Error()))
+		c.Error(errors.NewBadRequestError("invalid pagination parameters").WithDetails(err.Error()))
 		return
 	}
 
@@ -124,7 +124,7 @@ func (h *TagHandler) CreateTag(c *gin.Context) {
 	var req createTagRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		logger.Error(ctx, "Failed to bind create tag payload", err)
-		c.Error(errors.NewBadRequestError("请求参数不合法").WithDetails(err.Error()))
+		c.Error(errors.NewBadRequestError("invalid request parameters").WithDetails(err.Error()))
 		return
 	}
 
@@ -176,7 +176,7 @@ func (h *TagHandler) UpdateTag(c *gin.Context) {
 	var req updateTagRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		logger.Error(ctx, "Failed to bind update tag payload", err)
-		c.Error(errors.NewBadRequestError("请求参数不合法").WithDetails(err.Error()))
+		c.Error(errors.NewBadRequestError("invalid request parameters").WithDetails(err.Error()))
 		return
 	}
 
