@@ -3,7 +3,7 @@
     <Transition name="modal">
       <div v-if="visible" class="settings-overlay">
         <div class="settings-modal">
-          <!-- 关闭按钮 -->
+          <!-- Close button -->
           <button class="close-btn" @click="handleClose" :aria-label="$t('general.close')">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
               <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -11,7 +11,7 @@
           </button>
 
           <div class="settings-container">
-            <!-- 左侧导航 -->
+            <!-- Left navigation -->
             <div class="settings-sidebar">
               <div class="sidebar-header">
                 <h2 class="sidebar-title">{{ $t('general.settings') }}</h2>
@@ -26,7 +26,7 @@
                     }]"
                     @click="handleNavClick(item)"
                   >
-                    <!-- 网络搜索使用自定义 SVG 图标 -->
+                    <!-- Web search uses custom SVG icon -->
                     <svg 
                       v-if="item.key === 'websearch'"
                       width="18" 
@@ -51,7 +51,7 @@
                     />
                   </div>
                   
-                  <!-- 子菜单 -->
+                  <!-- Submenu -->
                   <Transition name="submenu">
                     <div 
                       v-if="item.children && expandedMenus.includes(item.key)" 
@@ -71,45 +71,45 @@
               </div>
             </div>
 
-            <!-- 右侧内容区域 -->
+            <!-- Right content area -->
             <div class="settings-content">
               <div class="content-wrapper">
-                <!-- 常规设置 -->
+                <!-- General settings -->
                 <div v-if="currentSection === 'general'" class="section">
                   <GeneralSettings />
                 </div>
 
-                <!-- 模型配置 -->
+                <!-- Model configuration -->
                 <div v-if="currentSection === 'models'" class="section">
                   <ModelSettings />
                 </div>
 
-                <!-- Ollama 设置 -->
+                <!-- Ollama settings -->
                 <div v-if="currentSection === 'ollama'" class="section">
                   <OllamaSettings />
                 </div>
 
-                <!-- 网络搜索配置 -->
+                <!-- Web search configuration -->
                 <div v-if="currentSection === 'websearch'" class="section">
                   <WebSearchSettings />
                 </div>
 
-                <!-- 系统信息 -->
+                <!-- System information -->
                 <div v-if="currentSection === 'system'" class="section">
                   <SystemInfo />
                 </div>
 
-                <!-- 租户信息 -->
+                <!-- Tenant information -->
                 <div v-if="currentSection === 'tenant'" class="section">
                   <TenantInfo />
                 </div>
 
-                <!-- API 信息 -->
+                <!-- API information -->
                 <div v-if="currentSection === 'api'" class="section">
                   <ApiInfo />
                 </div>
 
-                <!-- MCP 服务 -->
+                <!-- MCP service -->
                 <div v-if="currentSection === 'mcp'" class="section">
                   <McpSettings />
                 </div>
@@ -166,10 +166,10 @@ const navItems = computed(() => [
   { key: 'api', icon: 'secured', label: t('settings.apiInfo') }
 ])
 
-// 导航项点击处理
+// Handle navigation item click
 const handleNavClick = (item: any) => {
   if (item.children && item.children.length > 0) {
-    // 有子菜单，切换展开状态
+    // Has submenu, toggle expand state
     const index = expandedMenus.value.indexOf(item.key)
     if (index > -1) {
       expandedMenus.value.splice(index, 1)
@@ -181,16 +181,16 @@ const handleNavClick = (item: any) => {
     currentSubSection.value = ''
   }
   
-  // 切换到对应页面
+  // Switch to corresponding page
   currentSection.value = item.key
 }
 
-// 子菜单点击处理
+// Handle submenu click
 const handleSubMenuClick = (parentKey: string, childKey: string) => {
   currentSection.value = parentKey
   currentSubSection.value = childKey
   
-  // 滚动到对应的模型类型区域
+  // Scroll to corresponding model type area
   setTimeout(() => {
     const element = document.querySelector(`[data-model-type="${childKey}"]`)
     if (element) {
@@ -199,21 +199,21 @@ const handleSubMenuClick = (parentKey: string, childKey: string) => {
   }, 100)
 }
 
-// 控制弹窗显示
+// Control modal display
 const visible = computed(() => {
   return route.path === '/platform/settings' || uiStore.showSettingsModal
 })
 
-// 关闭弹窗
+// Close modal
 const handleClose = () => {
   uiStore.closeSettings()
-  // 如果当前路由是设置页，返回上一页
+  // If current route is settings page, go back
   if (route.path === '/platform/settings') {
     router.back()
   }
 }
 
-// 监听初始导航设置
+// Watch initial navigation settings
 watch(() => uiStore.settingsInitialSection, (section) => {
   if (section && visible.value) {
     currentSection.value = section
@@ -237,25 +237,25 @@ watch(() => uiStore.settingsInitialSection, (section) => {
   }
 }, { immediate: true })
 
-// ESC 键关闭
+// Close on ESC key
 const handleEscape = (e: KeyboardEvent) => {
   if (e.key === 'Escape' && visible.value) {
     handleClose()
   }
 }
 
-// 处理快捷导航事件
+// Handle quick navigation event
 const handleSettingsNav = (e: CustomEvent) => {
   const { section, subsection } = e.detail
   if (section) {
     currentSection.value = section
-    // 如果有子菜单，自动展开
+    // If has submenu, auto expand
     const navItem = (navItems.value as any[]).find((item: any) => item.key === section)
     if (navItem && navItem.children && navItem.children.length > 0) {
       if (!expandedMenus.value.includes(section)) {
         expandedMenus.value.push(section)
       }
-      // 如果有 subsection，选中对应的子菜单项
+      // If has subsection, select corresponding submenu item
       currentSubSection.value = subsection || navItem.children[0].key
     }
   }
@@ -273,7 +273,7 @@ onUnmounted(() => {
 </script>
 
 <style lang="less" scoped>
-/* 遮罩层 */
+/* Overlay */
 .settings-overlay {
   position: fixed;
   inset: 0;
@@ -286,7 +286,7 @@ onUnmounted(() => {
   backdrop-filter: blur(4px);
 }
 
-/* 弹窗容器 */
+/* Modal container */
 .settings-modal {
   position: relative;
   width: 100%;
@@ -300,7 +300,7 @@ onUnmounted(() => {
   flex-direction: column;
 }
 
-/* 关闭按钮 */
+/* Close button */
 .close-btn {
   position: absolute;
   top: 16px;
@@ -331,7 +331,7 @@ onUnmounted(() => {
   overflow: hidden;
 }
 
-/* 左侧导航栏 */
+/* Left navigation bar */
 .settings-sidebar {
   width: 220px;
   background-color: #f8f9fa;
@@ -403,7 +403,7 @@ onUnmounted(() => {
   transition: transform 0.2s ease;
 }
 
-/* 子菜单 */
+/* Submenu */
 .submenu {
   margin-left: 32px;
   margin-bottom: 4px;
@@ -436,7 +436,7 @@ onUnmounted(() => {
   display: block;
 }
 
-/* 子菜单动画 */
+/* Submenu animation */
 .submenu-enter-active,
 .submenu-leave-active {
   transition: all 0.2s ease;
@@ -462,7 +462,7 @@ onUnmounted(() => {
   max-height: 0;
 }
 
-/* 右侧内容区域 */
+/* Right content area */
 .settings-content {
   flex: 1;
   overflow-y: auto;
@@ -489,7 +489,7 @@ onUnmounted(() => {
   }
 }
 
-/* 弹窗动画 */
+/* Modal animation */
 .modal-enter-active,
 .modal-leave-active {
   transition: opacity 0.2s ease;
@@ -511,7 +511,7 @@ onUnmounted(() => {
   opacity: 0;
 }
 
-/* 滚动条样式 */
+/* Scrollbar styles */
 .settings-sidebar::-webkit-scrollbar,
 .settings-content::-webkit-scrollbar {
   width: 6px;

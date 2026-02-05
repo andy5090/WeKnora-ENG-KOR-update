@@ -2,60 +2,60 @@
 
 # Show help
 help:
-	@echo "WeKnora Makefile 帮助"
+	@echo "WeKnora Makefile Help"
 	@echo ""
-	@echo "基础命令:"
-	@echo "  build             构建应用"
-	@echo "  run               运行应用"
-	@echo "  test              运行测试"
-	@echo "  clean             清理构建文件"
+	@echo "Basic Commands:"
+	@echo "  build             Build application"
+	@echo "  run               Run application"
+	@echo "  test              Run tests"
+	@echo "  clean             Clean build files"
 	@echo ""
-	@echo "Docker 命令:"
-	@echo "  docker-build-app       构建应用 Docker 镜像 (wechatopenai/weknora-app)"
-	@echo "  docker-build-docreader 构建文档读取器镜像 (wechatopenai/weknora-docreader)"
-	@echo "  docker-build-frontend  构建前端镜像 (wechatopenai/weknora-ui)"
-	@echo "  docker-build-all       构建所有 Docker 镜像"
-	@echo "  docker-run            运行 Docker 容器"
-	@echo "  docker-stop           停止 Docker 容器"
-	@echo "  docker-restart        重启 Docker 容器"
+	@echo "Docker Commands:"
+	@echo "  docker-build-app        Build application Docker image (wechatopenai/weknora-app)"
+	@echo "  docker-build-docreader Build document reader image (wechatopenai/weknora-docreader)"
+	@echo "  docker-build-frontend   Build frontend image (wechatopenai/weknora-ui)"
+	@echo "  docker-build-all        Build all Docker images"
+	@echo "  docker-run              Run Docker containers"
+	@echo "  docker-stop             Stop Docker containers"
+	@echo "  docker-restart          Restart Docker containers"
 	@echo ""
-	@echo "服务管理:"
-	@echo "  start-all         启动所有服务"
-	@echo "  stop-all          停止所有服务"
-	@echo "  start-ollama      仅启动 Ollama 服务"
+	@echo "Service Management:"
+	@echo "  start-all         Start all services"
+	@echo "  stop-all          Stop all services"
+	@echo "  start-ollama      Start Ollama service only"
 	@echo ""
-	@echo "镜像构建:"
-	@echo "  build-images      从源码构建所有镜像"
-	@echo "  build-images-app  从源码构建应用镜像"
-	@echo "  build-images-docreader 从源码构建文档读取器镜像"
-	@echo "  build-images-frontend  从源码构建前端镜像"
-	@echo "  clean-images      清理本地镜像"
+	@echo "Image Building:"
+	@echo "  build-images      Build all images from source"
+	@echo "  build-images-app  Build application image from source"
+	@echo "  build-images-docreader Build document reader image from source"
+	@echo "  build-images-frontend  Build frontend image from source"
+	@echo "  clean-images      Clean local images"
 	@echo ""
-	@echo "数据库:"
-	@echo "  migrate-up        执行数据库迁移"
-	@echo "  migrate-down      回滚数据库迁移"
+	@echo "Database:"
+	@echo "  migrate-up        Run database migrations"
+	@echo "  migrate-down      Rollback database migrations"
 	@echo ""
-	@echo "开发工具:"
-	@echo "  fmt               格式化代码"
-	@echo "  lint              代码检查"
-	@echo "  deps              安装依赖"
-	@echo "  docs              生成 Swagger API 文档"
-	@echo "  install-swagger   安装 swag 工具"
+	@echo "Development Tools:"
+	@echo "  fmt               Format code"
+	@echo "  lint              Lint code"
+	@echo "  deps              Install dependencies"
+	@echo "  docs              Generate Swagger API documentation"
+	@echo "  install-swagger   Install swag tool"
 	@echo ""
-	@echo "环境检查:"
-	@echo "  check-env         检查环境配置"
-	@echo "  list-containers   列出运行中的容器"
-	@echo "  pull-images       拉取最新镜像"
-	@echo "  show-platform     显示当前构建平台"
+	@echo "Environment Check:"
+	@echo "  check-env         Check environment configuration"
+	@echo "  list-containers   List running containers"
+	@echo "  pull-images       Pull latest images"
+	@echo "  show-platform     Show current build platform"
 	@echo ""
-	@echo "开发模式（推荐）:"
-	@echo "  dev-start         启动开发环境基础设施（仅启动依赖服务）"
-	@echo "  dev-stop          停止开发环境"
-	@echo "  dev-restart       重启开发环境"
-	@echo "  dev-logs          查看开发环境日志"
-	@echo "  dev-status        查看开发环境状态"
-	@echo "  dev-app           启动后端应用（本地运行，需先运行 dev-start）"
-	@echo "  dev-frontend      启动前端（本地运行，需先运行 dev-start）"
+	@echo "Development Mode (Recommended):"
+	@echo "  dev-start         Start development infrastructure (only dependency services)"
+	@echo "  dev-stop          Stop development environment"
+	@echo "  dev-restart       Restart development environment"
+	@echo "  dev-logs          View development environment logs"
+	@echo "  dev-status        View development environment status"
+	@echo "  dev-app           Start backend application (run locally, requires dev-start first)"
+	@echo "  dev-frontend      Start frontend (run locally, requires dev-start first)"
 
 # Go related variables
 BINARY_NAME=WeKnora
@@ -95,7 +95,7 @@ clean:
 
 # Build Docker image
 docker-build-app:
-	@echo "获取版本信息..."
+	@echo "Getting version information..."
 	@eval $$(./scripts/get_version.sh env); \
 	./scripts/get_version.sh info; \
 	docker build --platform $(PLATFORM) \
@@ -116,31 +116,31 @@ docker-build-frontend:
 # Build all Docker images
 docker-build-all: docker-build-app docker-build-docreader docker-build-frontend
 
-# Run Docker container (传统方式)
+# Run Docker container (traditional way)
 docker-run:
 	docker-compose up
 
-# 使用新脚本启动所有服务
+# Start all services using new script
 start-all:
 	./scripts/start_all.sh
 
-# 使用新脚本仅启动Ollama服务
+# Start only Ollama service using new script
 start-ollama:
 	./scripts/start_all.sh --ollama
 
-# 使用新脚本仅启动Docker容器
+# Start only Docker containers using new script
 start-docker:
 	./scripts/start_all.sh --docker
 
-# 使用新脚本停止所有服务
+# Stop all services using new script
 stop-all:
 	./scripts/start_all.sh --stop
 
-# Stop Docker container (传统方式)
+# Stop Docker container (traditional way)
 docker-stop:
 	docker-compose down
 
-# 从源码构建镜像相关命令
+# Build images from source related commands
 build-images:
 	./scripts/build_images.sh
 
@@ -197,10 +197,10 @@ migrate-goto:
 
 # Generate API documentation (Swagger)
 docs:
-	@echo "生成 Swagger API 文档..."
+	@echo "Generating Swagger API documentation..."
 	swag init -g $(MAIN_PATH)/main.go -o ./docs --parseDependency --parseInternal
-	@echo "文档已生成到 ./docs 目录"
-	@echo "启动服务后访问 http://localhost:8080/swagger/index.html 查看文档"
+	@echo "Documentation generated to ./docs directory"
+	@echo "After starting the service, visit http://localhost:8080/swagger/index.html to view the documentation"
 
 # Install swagger tool
 install-swagger:
@@ -256,8 +256,8 @@ pull-images:
 
 # Show current platform
 show-platform:
-	@echo "当前系统架构: $(shell uname -m)"
-	@echo "Docker构建平台: $(PLATFORM)"
+	@echo "Current system architecture: $(shell uname -m)"
+	@echo "Docker build platform: $(PLATFORM)"
 
 # Development mode commands
 dev-start:

@@ -1,6 +1,6 @@
-# 开发环境配置 - 只启动基础设施服务，app 和 frontend 在本地运行
+# Development environment configuration - only start infrastructure services, app and frontend run locally
 services:
-  # 只启动依赖的基础设施服务
+  # Only start dependent infrastructure services
   postgres:
     image: paradedb/paradedb:v0.21.4-pg17
     container_name: WeKnora-postgres-dev
