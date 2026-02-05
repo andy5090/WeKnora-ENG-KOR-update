@@ -20,7 +20,7 @@
     </div>
 
     <div v-if="isGraphDatabaseEnabled" class="settings-group">
-      <!-- 启用实体关系提取 -->
+      <!-- Enable entity relationship extraction -->
       <div class="setting-row">
         <div class="setting-info">
           <label>{{ t('graphSettings.enableLabel') }}</label>
@@ -34,7 +34,7 @@
         </div>
       </div>
 
-      <!-- 关系类型配置 -->
+      <!-- Relation type configuration -->
       <div v-if="localGraphExtract.enabled" class="setting-row vertical">
         <div class="setting-info">
           <label>{{ t('graphSettings.tagsLabel') }}</label>
@@ -70,7 +70,7 @@
         </div>
       </div>
 
-      <!-- 示例文本 -->
+      <!-- Sample text -->
       <div v-if="localGraphExtract.enabled" class="setting-row vertical">
         <div class="setting-info">
           <label>{{ t('graphSettings.sampleTextLabel') }}</label>
@@ -105,7 +105,7 @@
         </div>
       </div>
 
-      <!-- 实体列表 -->
+      <!-- Entity list -->
       <div v-if="localGraphExtract.enabled && localGraphExtract.nodes.length > 0" class="setting-row vertical">
         <div class="setting-info">
           <label>{{ t('graphSettings.entityListLabel') }}</label>
@@ -160,7 +160,7 @@
         </div>
       </div>
 
-      <!-- 添加实体按钮 -->
+      <!-- Add entity button -->
       <div v-if="localGraphExtract.enabled" class="setting-row">
         <div class="setting-info">
           <label>{{ t('graphSettings.manageEntitiesLabel') }}</label>
@@ -176,7 +176,7 @@
         </div>
       </div>
 
-      <!-- 关系列表 -->
+      <!-- Relation list -->
       <div v-if="localGraphExtract.enabled && localGraphExtract.relations.length > 0" class="setting-row vertical">
         <div class="setting-info">
           <label>{{ t('graphSettings.relationListLabel') }}</label>
@@ -241,7 +241,7 @@
         </div>
       </div>
 
-      <!-- 添加关系按钮 -->
+      <!-- Add relation button -->
       <div v-if="localGraphExtract.enabled" class="setting-row">
         <div class="setting-info">
           <label>{{ t('graphSettings.manageRelationsLabel') }}</label>
@@ -257,7 +257,7 @@
         </div>
       </div>
 
-      <!-- 提取操作按钮 -->
+      <!-- Extraction action buttons -->
       <div v-if="localGraphExtract.enabled" class="setting-row">
         <div class="setting-info">
           <label>{{ t('graphSettings.extractActionsLabel') }}</label>
@@ -321,19 +321,19 @@ const emit = defineEmits<{
   'update:graphExtract': [value: GraphExtractConfig]
 }>()
 
-// 本地状态
+// Local state
 const localGraphExtract = ref<GraphExtractConfig>({
   ...props.graphExtract,
   nodes: props.graphExtract.nodes || [],
   relations: props.graphExtract.relations || []
 })
 
-// 加载状态
+// Loading state
 const tagFabring = ref(false)
 const textFabring = ref(false)
 const extracting = ref(false)
 
-// 模型状态
+// Model status
 const modelStatus = ref({
   llm: {
     available: false,
@@ -341,12 +341,12 @@ const modelStatus = ref({
   }
 })
 
-// 系统信息
+// System information
 const systemInfo = ref<any>(null)
 
-// 计算图数据库是否启用
+// Calculate if graph database is enabled
 const isGraphDatabaseEnabled = computed(() => {
-  return systemInfo.value?.graph_database_engine && systemInfo.value.graph_database_engine !== '未启用'
+  return systemInfo.value?.graph_database_engine && systemInfo.value.graph_database_engine !== 'Not Enabled'
 })
 
 // Watch for prop changes
@@ -358,14 +358,14 @@ watch(() => props.graphExtract, (newVal) => {
   }
 }, { deep: true })
 
-// 处理配置变更
+// Handle configuration change
 const handleConfigChange = () => {
   emit('update:graphExtract', localGraphExtract.value)
 }
 
-// 处理启用/禁用切换
+// Handle enable/disable toggle
 const handleEnabledChange = () => {
-  // 当关闭提取功能时，清空所有数据
+  // When disabling extraction feature, clear all data
   if (!localGraphExtract.value.enabled) {
     localGraphExtract.value.text = ''
     localGraphExtract.value.tags = []
@@ -391,7 +391,7 @@ const handleRelationsChange = () => {
   handleConfigChange()
 }
 
-// 节点操作
+// Node operations
 const addNode = () => {
   if (!localGraphExtract.value.nodes) {
     localGraphExtract.value.nodes = []
@@ -418,7 +418,7 @@ const removeAttribute = (nodeIndex: number, attrIndex: number) => {
   handleNodesChange()
 }
 
-// 关系操作
+// Relation operations
 const addRelation = () => {
   if (!localGraphExtract.value.relations) {
     localGraphExtract.value.relations = []
@@ -436,7 +436,7 @@ const removeRelation = (index: number) => {
   handleRelationsChange()
 }
 
-// 生成随机标签
+// Generate random tags
 const handleFabriTag = async () => {
   if (!modelStatus.value.llm.available || !modelStatus.value.llm.config) {
     MessagePlugin.warning(t('graphSettings.completeModelConfig'))
@@ -459,7 +459,7 @@ const handleFabriTag = async () => {
   }
 }
 
-// 生成随机文本
+// Generate random text
 const handleFabriText = async () => {
   if (!modelStatus.value.llm.available || !modelStatus.value.llm.config) {
     MessagePlugin.warning(t('graphSettings.completeModelConfig'))
@@ -483,7 +483,7 @@ const handleFabriText = async () => {
   }
 }
 
-// 提取实体关系
+// Extract entity relationships
 const handleExtract = async () => {
   if (!modelStatus.value.llm.available || !modelStatus.value.llm.config) {
     MessagePlugin.warning(t('graphSettings.completeModelConfig'))
@@ -514,7 +514,7 @@ const handleExtract = async () => {
   }
 }
 
-// 默认示例
+// Default example
 const defaultExtractExample = () => {
   localGraphExtract.value.text = `《红楼梦》，又名《石头记》，是清代作家曹雪芹创作的中国古典四大名著之一，被誉为中国封建社会的百科全书。该书前80回由曹雪芹所著，后40回一般认为是高鹗所续。小说以贾、史、王、薛四大家族的兴衰为背景，以贾宝玉、林黛玉和薛宝钗的爱情悲剧为主线，刻画了以贾宝玉和金陵十二钗为中心的正邪两赋、贤愚并出的高度复杂的人物群像。成书于乾隆年间（1743年前后），是中国文学史上现实主义的高峰，对后世影响深远。`
   localGraphExtract.value.tags = ['作者', '别名']
@@ -533,7 +533,7 @@ const defaultExtractExample = () => {
   MessagePlugin.success(t('graphSettings.exampleLoaded'))
 }
 
-// 清除示例
+// Clear example
 const clearExtractExample = () => {
   localGraphExtract.value.text = ''
   localGraphExtract.value.tags = []
@@ -543,12 +543,12 @@ const clearExtractExample = () => {
   MessagePlugin.success(t('graphSettings.exampleCleared'))
 }
 
-// 加载模型状态
+// Load model status
 const loadModelStatus = async () => {
   try {
     const models = await listModels()
     
-    // 查找可用的KnowledgeQA模型（对话模型）
+    // Find available KnowledgeQA models (chat models)
     const llmModels = models.filter((m: any) => m.type === 'KnowledgeQA')
     if (llmModels.length > 0) {
       const llmModel = llmModels[0]
@@ -565,7 +565,7 @@ const loadModelStatus = async () => {
   }
 }
 
-// 加载系统信息
+// Load system information
 const loadSystemInfo = async () => {
   try {
     const response = await getSystemInfo()
@@ -584,7 +584,7 @@ const handleOpenGraphGuide = () => {
   window.open(graphGuideUrl, '_blank', 'noopener')
 }
 
-// 初始化
+// Initialize
 onMounted(async () => {
   await Promise.all([
     loadModelStatus(),

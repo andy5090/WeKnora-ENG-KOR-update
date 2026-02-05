@@ -16,7 +16,7 @@ export default defineConfig({
   server: {
     port: 5173,
     host: true,
-    // 代理配置，用于开发环境
+    // Proxy configuration for development environment
     proxy: {
       '/api': {
         target: 'http://localhost:8080',
