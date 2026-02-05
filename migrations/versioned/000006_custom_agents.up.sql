@@ -79,7 +79,7 @@ DO $$ BEGIN RAISE NOTICE '[Migration 000006] Migrating tenant config to built-in
 INSERT INTO custom_agents (id, name, description, avatar, is_builtin, tenant_id, config, created_at, updated_at)
 SELECT 
     'builtin-quick-answer',
-    'Quick Q&A',
+    'Quick Answer',
     'RAG Q&A based on knowledge base, quickly and accurately answering questions',
     '💬',
     true,

@@ -160,17 +160,14 @@ func (h *Handler) setupStreamHandler(
 func (h *Handler) setupStopEventHandler(
 	eventBus *event.EventBus,
 	sessionID string,
-	sessionTenantID uint64,
 	assistantMessage *types.Message,
 	cancel context.CancelFunc,
 ) {
 	eventBus.On(event.EventStop, func(ctx context.Context, evt event.Event) error {
 		logger.Infof(ctx, "Received stop event, cancelling async operations for session: %s", sessionID)
 		cancel()
-		assistantMessage.Content = "用户停止了本次对话"
-		// Use session's tenant for message update (ctx may have effectiveTenantID when using shared agent)
-		updateCtx := context.WithValue(ctx, types.TenantIDContextKey, sessionTenantID)
-		h.completeAssistantMessage(updateCtx, assistantMessage)
+		assistantMessage.Content = "User stopped this conversation"
+		h.completeAssistantMessage(ctx, assistantMessage)
 		return nil
 	})
 }
