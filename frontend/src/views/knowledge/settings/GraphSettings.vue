@@ -516,18 +516,18 @@ const handleExtract = async () => {
 
 // Default example
 const defaultExtractExample = () => {
-  localGraphExtract.value.text = `《红楼梦》，又名《石头记》，是清代作家曹雪芹创作的中国古典四大名著之一，被誉为中国封建社会的百科全书。该书前80回由曹雪芹所著，后40回一般认为是高鹗所续。小说以贾、史、王、薛四大家族的兴衰为背景，以贾宝玉、林黛玉和薛宝钗的爱情悲剧为主线，刻画了以贾宝玉和金陵十二钗为中心的正邪两赋、贤愚并出的高度复杂的人物群像。成书于乾隆年间（1743年前后），是中国文学史上现实主义的高峰，对后世影响深远。`
-  localGraphExtract.value.tags = ['作者', '别名']
+  localGraphExtract.value.text = `"Dream of the Red Chamber", also known as "The Story of the Stone", is one of the Four Great Classical Novels of Chinese literature, written by Cao Xueqin during the Qing Dynasty. It is hailed as an encyclopedia of Chinese feudal society. The first 80 chapters were written by Cao Xueqin, while the last 40 chapters are generally believed to have been completed by Gao E. The novel uses the rise and fall of the four major families (Jia, Shi, Wang, and Xue) as its background, with the love tragedy of Jia Baoyu, Lin Daiyu, and Xue Baochai as the main storyline. It depicts a highly complex cast of characters centered around Jia Baoyu and the Twelve Beauties of Jinling, showing both virtue and vice, wisdom and folly. Completed during the Qianlong era (around 1743), it represents the peak of realism in Chinese literary history and has had a profound influence on later generations.`
+  localGraphExtract.value.tags = ['Author', 'Alias']
   localGraphExtract.value.nodes = [
-    {name: '红楼梦', attributes: ['中国古典四大名著之一', '又名《石头记》', '被誉为中国封建社会的百科全书']},
-    {name: '石头记', attributes: ['《红楼梦》的别名']},
-    {name: '曹雪芹', attributes: ['清代作家', '《红楼梦》前 80 回的作者']},
-    {name: '高鹗', attributes: ['一般认为是《红楼梦》后 40 回的续写者']}
+    {name: 'Dream of the Red Chamber', attributes: ['One of the Four Great Classical Novels', 'Also known as "The Story of the Stone"', 'Hailed as an encyclopedia of Chinese feudal society']},
+    {name: 'The Story of the Stone', attributes: ['Alias of "Dream of the Red Chamber"']},
+    {name: 'Cao Xueqin', attributes: ['Qing Dynasty writer', 'Author of the first 80 chapters of "Dream of the Red Chamber"']},
+    {name: 'Gao E', attributes: ['Generally believed to be the continuator of the last 40 chapters of "Dream of the Red Chamber"']}
   ]
   localGraphExtract.value.relations = [
-    {node1: '红楼梦', node2: '石头记', type: '别名'},
-    {node1: '红楼梦', node2: '曹雪芹', type: '作者'},
-    {node1: '红楼梦', node2: '高鹗', type: '作者'}
+    {node1: 'Dream of the Red Chamber', node2: 'The Story of the Stone', type: 'Alias'},
+    {node1: 'Dream of the Red Chamber', node2: 'Cao Xueqin', type: 'Author'},
+    {node1: 'Dream of the Red Chamber', node2: 'Gao E', type: 'Author'}
   ]
   handleNodesChange()
   MessagePlugin.success(t('graphSettings.exampleLoaded'))

@@ -4,33 +4,33 @@ package docreader;
 
 option go_package = "github.com/Tencent/WeKnora/internal/docreader/proto";
 
-// 文档读取服务
+// Document reading service
 service DocReader {
-  // 从文件读取文档
+  // Read document from file
   rpc ReadFromFile(ReadFromFileRequest) returns (ReadResponse) {}
-  // 从URL读取文档
+  // Read document from URL
   rpc ReadFromURL(ReadFromURLRequest) returns (ReadResponse) {}
 }
 
-// 对象存储提供方
+// Object storage provider
 enum StorageProvider {
   STORAGE_PROVIDER_UNSPECIFIED = 0;
-  COS = 1;     // 腾讯云 COS
-  MINIO = 2;   // MinIO/S3 兼容
+  COS = 1;     // Tencent Cloud COS
+  MINIO = 2;   // MinIO/S3 compatible
 }
 
-// 通用对象存储配置，兼容 COS 与 MinIO
+// Generic object storage configuration, compatible with COS and MinIO
 message StorageConfig {
-  StorageProvider provider = 1;   // 存储提供方
-  string region = 2;              // 区域（COS 使用）
-  string bucket_name = 3;         // 桶名
-  string access_key_id = 4;       // 访问密钥 ID（MinIO/S3 使用）
-  string secret_access_key = 5;   // 访问密钥 Secret（MinIO/S3 使用）
-  string app_id = 6;              // 应用 ID（COS 使用）
-  string path_prefix = 7;         // 路径前缀
+  StorageProvider provider = 1;   // Storage provider
+  string region = 2;              // Region (used by COS)
+  string bucket_name = 3;         // Bucket name
+  string access_key_id = 4;       // Access key ID (used by MinIO/S3)
+  string secret_access_key = 5;   // Secret access key (used by MinIO/S3)
+  string app_id = 6;              // Application ID (used by COS)
+  string path_prefix = 7;         // Path prefix
 }
 
-// VLM 配置
+// VLM configuration
 message VLMConfig {
   string model_name = 1;     // VLM Model Name
   string base_url = 2;       // VLM Base URL
@@ -39,51 +39,51 @@ message VLMConfig {
 }
 
 message ReadConfig {
-  int32 chunk_size = 1;    // 分块大小
-  int32 chunk_overlap = 2; // 分块重叠
-  repeated string separators = 3;    // 分隔符
-  bool enable_multimodal = 4; // 多模态处理
-  StorageConfig storage_config = 5;   // 对象存储配置（通用）
-  VLMConfig vlm_config = 6;   // VLM 配置
+  int32 chunk_size = 1;    // Chunk size
+  int32 chunk_overlap = 2; // Chunk overlap
+  repeated string separators = 3;    // Separators
+  bool enable_multimodal = 4; // Multimodal processing
+  StorageConfig storage_config = 5;   // Object storage configuration (generic)
+  VLMConfig vlm_config = 6;   // VLM configuration
 }
 
-// 从文件读取文档请求
+// Read document from file request
 message ReadFromFileRequest {
-  bytes file_content = 1;  // 文件内容
-  string file_name = 2;    // 文件名
-  string file_type = 3;    // 文件类型
+  bytes file_content = 1;  // File content
+  string file_name = 2;    // File name
+  string file_type = 3;    // File type
   ReadConfig read_config = 4; 
   string request_id = 5;
 }
 
-// 从URL读取文档请求
+// Read document from URL request
 message ReadFromURLRequest {
-  string url = 1;          // 文档URL
-  string title = 2;        // 标题
+  string url = 1;          // Document URL
+  string title = 2;        // Title
   ReadConfig read_config = 3; 
   string request_id = 4;
 }
 
-// 图片信息
+// Image information
 message Image {
-  string url = 1;           // 图片URL
-  string caption = 2;       // 图片描述
-  string ocr_text = 3;      // OCR提取的文本内容
-  string original_url = 4;  // 原始图片URL
-  int32 start = 5;          // 图片在文本中的开始位置
-  int32 end = 6;            // 图片在文本中的结束位置
+  string url = 1;           // Image URL
+  string caption = 2;       // Image caption/description
+  string ocr_text = 3;      // Text content extracted via OCR
+  string original_url = 4;  // Original image URL
+  int32 start = 5;          // Start position of image in text
+  int32 end = 6;            // End position of image in text
 }
 
 message Chunk {
-  string content = 1;     // 块内容
-  int32 seq = 2;          // 块在文档中的次序
-  int32 start = 3;        // 块在文档中的起始位置
-  int32 end = 4;          // 块在文档中的结束位置
-  repeated Image images = 5; // 块中包含的图片信息
+  string content = 1;     // Chunk content
+  int32 seq = 2;          // Chunk sequence in document
+  int32 start = 3;        // Start position of chunk in document
+  int32 end = 4;          // End position of chunk in document
+  repeated Image images = 5; // Image information contained in chunk
 }
 
-// 从URL读取文档响应
+// Read document from URL response
 message ReadResponse {
-  repeated Chunk chunks = 1; // 文档分块
-  string error = 2;          // 错误信息
+  repeated Chunk chunks = 1; // Document chunks
+  string error = 2;          // Error message
 } 
