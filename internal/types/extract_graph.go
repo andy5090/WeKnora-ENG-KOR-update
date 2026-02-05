@@ -2,15 +2,15 @@ package types
 
 const (
 	TypeChunkExtract        = "chunk:extract"
-	TypeDocumentProcess     = "document:process"      // 文档处理任务
-	TypeFAQImport           = "faq:import"            // FAQ导入任务（包含dry run模式）
-	TypeQuestionGeneration  = "question:generation"   // 问题生成任务
-	TypeSummaryGeneration   = "summary:generation"    // 摘要生成任务
-	TypeKBClone             = "kb:clone"              // 知识库复制任务
-	TypeIndexDelete         = "index:delete"          // 索引删除任务
-	TypeKBDelete            = "kb:delete"             // 知识库删除任务
-	TypeKnowledgeListDelete = "knowledge:list_delete" // 批量删除知识任务
-	TypeDataTableSummary    = "datatable:summary"     // 表格摘要任务
+	TypeDocumentProcess     = "document:process"      // Document processing task
+	TypeFAQImport           = "faq:import"            // FAQ import task (includes dry run mode)
+	TypeQuestionGeneration  = "question:generation"   // Question generation task
+	TypeSummaryGeneration   = "summary:generation"    // Summary generation task
+	TypeKBClone             = "kb:clone"              // Knowledge base clone task
+	TypeIndexDelete         = "index:delete"          // Index deletion task
+	TypeKBDelete            = "kb:delete"             // Knowledge base deletion task
+	TypeKnowledgeListDelete = "knowledge:list_delete" // Batch knowledge deletion task
+	TypeDataTableSummary    = "datatable:summary"     // Data table summary task
 )
 
 // ExtractChunkPayload represents the extract chunk task payload
@@ -26,14 +26,14 @@ type DocumentProcessPayload struct {
 	TenantID                 uint64   `json:"tenant_id"`
 	KnowledgeID              string   `json:"knowledge_id"`
 	KnowledgeBaseID          string   `json:"knowledge_base_id"`
-	FilePath                 string   `json:"file_path,omitempty"` // 文件路径（文件导入时使用）
-	FileName                 string   `json:"file_name,omitempty"` // 文件名（文件导入时使用）
-	FileType                 string   `json:"file_type,omitempty"` // 文件类型（文件导入时使用）
-	URL                      string   `json:"url,omitempty"`       // URL（URL导入时使用）
-	Passages                 []string `json:"passages,omitempty"`  // 文本段落（文本导入时使用）
+	FilePath                 string   `json:"file_path,omitempty"` // File path (used for file import)
+	FileName                 string   `json:"file_name,omitempty"` // File name (used for file import)
+	FileType                 string   `json:"file_type,omitempty"` // File type (used for file import)
+	URL                      string   `json:"url,omitempty"`       // URL (used for URL import)
+	Passages                 []string `json:"passages,omitempty"`  // Text passages (used for text import)
 	EnableMultimodel         bool     `json:"enable_multimodel"`
-	EnableQuestionGeneration bool     `json:"enable_question_generation"` // 是否启用问题生成
-	QuestionCount            int      `json:"question_count,omitempty"`   // 每个chunk生成的问题数量
+	EnableQuestionGeneration bool     `json:"enable_question_generation"` // Whether to enable question generation
+	QuestionCount            int      `json:"question_count,omitempty"`   // Number of questions to generate per chunk
 }
 
 // FAQImportPayload represents the FAQ import task payload (including dry run mode)
@@ -41,13 +41,13 @@ type FAQImportPayload struct {
 	TenantID    uint64            `json:"tenant_id"`
 	TaskID      string            `json:"task_id"`
 	KBID        string            `json:"kb_id"`
-	KnowledgeID string            `json:"knowledge_id,omitempty"` // 仅非 dry run 模式需要
-	Entries     []FAQEntryPayload `json:"entries,omitempty"`      // 小数据量时直接存储在 payload 中
-	EntriesURL  string            `json:"entries_url,omitempty"`  // 大数据量时存储到对象存储，这里存储 URL
-	EntryCount  int               `json:"entry_count,omitempty"`  // 条目总数（使用 EntriesURL 时需要）
+	KnowledgeID string            `json:"knowledge_id,omitempty"` // Only required for non-dry-run mode
+	Entries     []FAQEntryPayload `json:"entries,omitempty"`      // Stored directly in payload for small data volumes
+	EntriesURL  string            `json:"entries_url,omitempty"`  // Stored in object storage for large data volumes, URL stored here
+	EntryCount  int               `json:"entry_count,omitempty"`  // Total number of entries (required when using EntriesURL)
 	Mode        string            `json:"mode"`
-	DryRun      bool              `json:"dry_run"`     // dry run 模式只验证不导入
-	EnqueuedAt  int64             `json:"enqueued_at"` // 任务入队时间戳，用于区分同一 TaskID 的不同次提交
+	DryRun      bool              `json:"dry_run"`     // Dry run mode only validates, does not import
+	EnqueuedAt  int64             `json:"enqueued_at"` // Task enqueue timestamp, used to distinguish different submissions with same TaskID
 }
 
 // QuestionGenerationPayload represents the question generation task payload
@@ -113,12 +113,12 @@ type KBCloneProgress struct {
 	TargetID  string            `json:"target_id"`
 	Status    KBCloneTaskStatus `json:"status"`
 	Progress  int               `json:"progress"`   // 0-100
-	Total     int               `json:"total"`      // 总知识数
-	Processed int               `json:"processed"`  // 已处理数
-	Message   string            `json:"message"`    // 状态消息
-	Error     string            `json:"error"`      // 错误信息
-	CreatedAt int64             `json:"created_at"` // 任务创建时间
-	UpdatedAt int64             `json:"updated_at"` // 最后更新时间
+	Total     int               `json:"total"`      // Total number of knowledge items
+	Processed int               `json:"processed"`  // Number processed
+	Message   string            `json:"message"`    // Status message
+	Error     string            `json:"error"`      // Error message
+	CreatedAt int64             `json:"created_at"` // Task creation time
+	UpdatedAt int64             `json:"updated_at"` // Last update time
 }
 
 // ChunkContext represents chunk content with surrounding context

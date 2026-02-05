@@ -17,12 +17,12 @@ const (
 	MatchTypeKeywords
 	MatchTypeNearByChunk
 	MatchTypeHistory
-	MatchTypeParentChunk   // 父Chunk匹配类型
-	MatchTypeRelationChunk // 关系Chunk匹配类型
+	MatchTypeParentChunk   // Parent chunk match type
+	MatchTypeRelationChunk // Relation chunk match type
 	MatchTypeGraph
-	MatchTypeWebSearch    // 网络搜索匹配类型
-	MatchTypeDirectLoad   // 直接加载匹配类型
-	MatchTypeDataAnalysis // 数据分析匹配类型
+	MatchTypeWebSearch    // Web search match type
+	MatchTypeDirectLoad   // Direct load match type
+	MatchTypeDataAnalysis // Data analysis match type
 )
 
 // IndexInfo contains information about indexed content

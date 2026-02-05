@@ -16,8 +16,8 @@ CREATE TABLE IF NOT EXISTS tenants (
     retriever_engines JSONB NOT NULL DEFAULT '[]',
     status VARCHAR(50) DEFAULT 'active',
     business VARCHAR(255) NOT NULL,
-    storage_quota BIGINT NOT NULL DEFAULT 10737418240, -- 默认10GB配额(Bytes)
-    storage_used BIGINT NOT NULL DEFAULT 0, -- 已使用的存储空间(Bytes)
+    storage_quota BIGINT NOT NULL DEFAULT 10737418240, -- Default 10GB quota (Bytes)
+    storage_used BIGINT NOT NULL DEFAULT 0, -- Used storage space (Bytes)
     agent_config JSONB DEFAULT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,

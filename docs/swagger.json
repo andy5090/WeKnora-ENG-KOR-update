@@ -68,7 +68,7 @@
     },
     "/auth/login": {
       "post": {
-        "description": "userlogin并gettingaccesstoken",
+        "description": "User login and get access token",
         "consumes": [
           "application/json"
         ],
@@ -78,7 +78,7 @@
         "tags": [
           "Authentication"
         ],
-        "summary": "userlogin",
+        "summary": "User login",
         "parameters": [
           {
             "description": "loginrequestparameters",
@@ -113,7 +113,7 @@
             "Bearer": []
           }
         ],
-        "description": "撤销currentaccesstoken并logout",
+        "description": "Revoke current access token and logout",
         "consumes": [
           "application/json"
         ],
@@ -148,7 +148,7 @@
             "Bearer": []
           }
         ],
-        "description": "gettingcurrentloginuser详细information",
+        "description": "Get current logged-in user detailed information",
         "consumes": [
           "application/json"
         ],
@@ -158,7 +158,7 @@
         "tags": [
           "Authentication"
         ],
-        "summary": "gettingcurrentuserinformation",
+        "summary": "Get current user information",
         "responses": {
           "200": {
             "description": "userinformation",
@@ -224,7 +224,7 @@
     },
     "/auth/register": {
       "post": {
-        "description": "registrationnewuser账号",
+        "description": "Register new user account",
         "consumes": [
           "application/json"
         ],
@@ -929,7 +929,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "based onKnowledge base IDexecutecompleteconfiguration更new",
+        "description": "Execute complete configuration update based on Knowledge base ID",
         "consumes": [
           "application/json"
         ],
@@ -1040,7 +1040,7 @@
         "tags": [
           "Initialization"
         ],
-        "summary": "更newKnowledge baseconfiguration",
+        "summary": "Update Knowledge base configuration",
         "parameters": [
           {
             "type": "string",
@@ -1061,7 +1061,7 @@
         ],
         "responses": {
           "200": {
-            "description": "更newsuccessful",
+            "description": "Update successful",
             "schema": {
               "type": "object",
               "additionalProperties": true
@@ -1803,7 +1803,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "更newKnowledge basename、descriptionandconfiguration",
+        "description": "Update Knowledge base name, description and configuration",
         "consumes": [
           "application/json"
         ],
@@ -1813,7 +1813,7 @@
         "tags": [
           "Knowledge base"
         ],
-        "summary": "更newKnowledge base",
+        "summary": "Update Knowledge base",
         "parameters": [
           {
             "type": "string",
@@ -1834,7 +1834,7 @@
         ],
         "responses": {
           "200": {
-            "description": "更new后Knowledge base",
+            "description": "Updated Knowledge base",
             "schema": {
               "type": "object",
               "additionalProperties": true
@@ -1985,7 +1985,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "Asynchronouslybatch更neworinsertFAQ entry",
+        "description": "Asynchronously batch update or insert FAQ entry",
         "consumes": [
           "application/json"
         ],
@@ -1995,7 +1995,7 @@
         "tags": [
           "FAQ Management"
         ],
-        "summary": "batch更new/insertFAQ entry",
+        "summary": "Batch update/insert FAQ entry",
         "parameters": [
           {
             "type": "string",
@@ -2149,7 +2149,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "batch更newFAQ entrymultiplefields（is_enabled, is_recommended, tag_id）",
+        "description": "Batch update FAQ entry multiple fields (is_enabled, is_recommended, tag_id)",
         "consumes": [
           "application/json"
         ],
@@ -2180,7 +2180,7 @@
         ],
         "responses": {
           "200": {
-            "description": "更newsuccessful",
+            "description": "Update successful",
             "schema": {
               "type": "object",
               "additionalProperties": true
@@ -2236,7 +2236,7 @@
         ],
         "responses": {
           "200": {
-            "description": "更newsuccessful",
+            "description": "Update successful",
             "schema": {
               "type": "object",
               "additionalProperties": true
@@ -2357,7 +2357,7 @@
         ],
         "responses": {
           "200": {
-            "description": "更newsuccessful",
+            "description": "Update successful",
             "schema": {
               "type": "object",
               "additionalProperties": true
@@ -3187,7 +3187,7 @@
         ],
         "responses": {
           "200": {
-            "description": "更newsuccessful",
+            "description": "Update successful",
             "schema": {
               "type": "object",
               "additionalProperties": true
@@ -3350,7 +3350,7 @@
         ],
         "responses": {
           "200": {
-            "description": "更newsuccessful",
+            "description": "Update successful",
             "schema": {
               "type": "object",
               "additionalProperties": true
@@ -3457,7 +3457,7 @@
         ],
         "responses": {
           "200": {
-            "description": "更newsuccessful",
+            "description": "Update successful",
             "schema": {
               "type": "object",
               "additionalProperties": true
@@ -5189,7 +5189,7 @@
         ],
         "responses": {
           "200": {
-            "description": "更newsuccessful",
+            "description": "Update successful",
             "schema": {
               "type": "object",
               "additionalProperties": true

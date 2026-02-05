@@ -54,13 +54,13 @@
         </div>
       </div>
 
-      <!-- 导入结果统计（持久化显示） -->
+      <!-- Import result statistics (persistent display) -->
       <div v-if="importResult && importResult.display_status === 'open' && !importState.taskId" class="faq-import-result-card">
         <div class="import-result-content">
           <div class="import-result-header">
             <div class="header-left">
               <t-icon name="check-circle-filled" size="20px" class="result-icon" />
-              <span class="result-title">最近导入结果</span>
+              <span class="result-title">{{ $t('knowledgeEditor.faq.recentImportResult') }}</span>
             </div>
             <div class="header-right">
               <span class="result-time">{{ formatImportTime(importResult.imported_at) }}</span>
@@ -78,16 +78,16 @@
           <div class="import-result-body">
             <div class="import-result-stats">
               <div class="stat-item">
-                <span class="stat-label">导入数据</span>
-                <span class="stat-value">{{ importResult.total_entries }}条</span>
+                <span class="stat-label">{{ $t('knowledgeEditor.faq.importedData') }}</span>
+                <span class="stat-value">{{ importResult.total_entries }}{{ $t('knowledgeEditor.faq.entries') }}</span>
               </div>
               <div class="stat-item success">
-                <span class="stat-label">成功</span>
-                <span class="stat-value">{{ importResult.success_count }}条</span>
+                <span class="stat-label">{{ $t('knowledgeEditor.faq.success') }}</span>
+                <span class="stat-value">{{ importResult.success_count }}{{ $t('knowledgeEditor.faq.entries') }}</span>
               </div>
               <div v-if="importResult.failed_count > 0" class="stat-item failed">
-                <span class="stat-label">失败</span>
-                <span class="stat-value">{{ importResult.failed_count }}条</span>
+                <span class="stat-label">{{ $t('knowledgeEditor.faq.failed') }}</span>
+                <span class="stat-value">{{ importResult.failed_count }}{{ $t('knowledgeEditor.faq.entries') }}</span>
                 <t-button
                   v-if="importResult.failed_entries_url"
                   variant="outline"
@@ -97,7 +97,7 @@
                   @click="downloadFailedEntries"
                 >
                   <t-icon name="download" size="14px" />
-                  下载原因
+                  {{ $t('knowledgeEditor.faq.downloadReason') }}
                 </t-button>
               </div>
               <div v-if="importResult.skipped_count > 0" class="stat-item skipped">

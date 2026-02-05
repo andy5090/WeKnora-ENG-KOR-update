@@ -1,9 +1,9 @@
-# 服务器配置
+# Server configuration
 server:
   port: 8080
   host: "0.0.0.0"
 
-# 对话服务配置
+# Conversation service configuration
 conversation:
   max_rounds: 5
   keyword_threshold: 0.3
@@ -12,121 +12,121 @@ conversation:
   rerank_threshold: 0.5
   rerank_top_k: 5
   fallback_strategy: "model"
-  fallback_response: "抱歉，我无法回答这个问题。"
+  fallback_response: "I'm sorry, I cannot answer this question."
   fallback_prompt: |
-    你是一个专业、友好的AI助手。请根据你的知识直接回答用户的问题。
+    You are a professional and friendly AI assistant. Please answer the user's question directly based on your knowledge.
 
-    ## 回复要求
-    - 直接回答用户的问题
-    - 简洁清晰，言之有物
-    - 如果涉及实时数据或个人隐私信息，诚实说明无法获取
-    - 使用礼貌、专业的语气
+    ## Response Requirements
+    - Answer the user's question directly
+    - Be concise and clear, with substance
+    - If involving real-time data or personal privacy information, honestly state that it cannot be obtained
+    - Use polite and professional tone
 
-    ## 用户的问题是:
+    ## User's question:
     {{query}}
   enable_rewrite: true
   enable_query_expansion: true
   enable_rerank: true
   rewrite_prompt_system: |
-    你是一个专注于指代消解和省略补全的智能助手，你的任务是根据历史对话上下文，清晰识别用户问题中的代词并替换为明确的主语，同时补全省略的关键信息。
+    You are an intelligent assistant focused on coreference resolution and ellipsis completion. Your task is to clearly identify pronouns in user questions based on conversation history and replace them with explicit subjects, while also completing omitted key information.
 
-    ## 改写目标
-    请根据历史对话，对当前用户问题进行改写，目标是：
-    - 进行指代消解，将"它"、"这个"、"那个"、"他"、"她"、"它们"、"他们"、"她们"等代词替换为明确的主语
-    - 补全省略的关键信息，确保问题语义完整
-    - 保持问题的原始含义和表达方式不变
-    - 改写后必须也是一个问题
-    - 改写后的问题字数控制在30字以内
-    - 仅输出改写后的问题，不要输出任何解释，更不要尝试回答该问题，后面有其他助手回去解答此问题
+    ## Rewriting Goals
+    Please rewrite the current user question based on conversation history, with the following goals:
+    - Perform coreference resolution, replacing pronouns like "it", "this", "that", "he", "she", "they", etc. with explicit subjects
+    - Complete omitted key information to ensure semantic completeness
+    - Maintain the original meaning and expression style of the question
+    - The rewritten result must also be a question
+    - Keep the rewritten question within 30 characters
+    - Only output the rewritten question, do not output any explanation, and do not attempt to answer the question, as other assistants will answer it later
 
-    ## Few-shot示例
+    ## Few-shot Examples
 
-    示例1:
-    历史对话:
-    用户: 微信支付有哪些功能？
-    助手: 微信支付的主要功能包括转账、付款码、收款、信用卡还款等多种支付服务。
+    Example 1:
+    Conversation History:
+    User: What features does WeChat Pay have?
+    Assistant: WeChat Pay's main features include transfers, payment codes, receiving money, credit card repayment, and other payment services.
 
-    用户问题: 它的安全性
-    改写后: 微信支付的安全性
+    User Question: Its security
+    Rewritten: WeChat Pay security
 
-    示例2:
-    历史对话:
-    用户: 苹果手机电池不耐用怎么办？
-    助手: 您可以通过降低屏幕亮度、关闭后台应用和定期更新系统来延长电池寿命。
+    Example 2:
+    Conversation History:
+    User: What should I do if my iPhone battery doesn't last long?
+    Assistant: You can extend battery life by reducing screen brightness, closing background apps, and regularly updating the system.
 
-    用户问题: 这样会影响使用体验吗？
-    改写后: 降低屏幕亮度和关闭后台应用是否影响使用体验
+    User Question: Will this affect user experience?
+    Rewritten: Will reducing screen brightness and closing background apps affect user experience
 
-    示例3:
-    历史对话:
-    用户: 如何制作红烧肉？
-    助手: 红烧肉的制作需要先将肉块焯水，然后加入酱油、糖等调料慢炖。
+    Example 3:
+    Conversation History:
+    User: How to make braised pork?
+    Assistant: Making braised pork requires first blanching the meat pieces, then adding soy sauce, sugar and other seasonings for slow braising.
 
-    用户问题: 需要炖多久？
-    改写后: 红烧肉需要炖多久
+    User Question: How long does it need to braise?
+    Rewritten: How long does braised pork need to braise
 
-    示例4:
-    历史对话:
-    用户: 北京到上海的高铁票价是多少？
-    助手: 北京到上海的高铁票价根据车次和座位类型不同，二等座约为553元，一等座约为933元。
+    Example 4:
+    Conversation History:
+    User: What is the high-speed rail fare from Beijing to Shanghai?
+    Assistant: The high-speed rail fare from Beijing to Shanghai varies by train and seat type, with second-class seats around 553 yuan and first-class seats around 933 yuan.
 
-    用户问题: 时间呢？
-    改写后: 北京到上海的高铁时长
+    User Question: What about the time?
+    Rewritten: High-speed rail duration from Beijing to Shanghai
 
-    示例5:
-    历史对话:
-    用户: 如何注册微信账号？
-    助手: 注册微信账号需要下载微信APP，输入手机号，接收验证码，然后设置昵称和密码。
+    Example 5:
+    Conversation History:
+    User: How to register a WeChat account?
+    Assistant: Registering a WeChat account requires downloading the WeChat APP, entering a phone number, receiving a verification code, then setting a nickname and password.
 
-    用户问题: 国外手机号可以吗？
-    改写后: 国外手机号是否可以注册微信账号
+    User Question: Can foreign phone numbers be used?
+    Rewritten: Can foreign phone numbers register WeChat accounts
   rewrite_prompt_user: |
-    ## 历史对话背景
+    ## Conversation History Context
     {{conversation}}
 
-    ## 需要改写的用户问题
+    ## User Question to Rewrite
     {{query}}
 
-    ## 改写后的问题
+    ## Rewritten Question
   keywords_extraction_prompt: |
-    # 角色
-    你是一个专业的关键词提取助手，你的任务是根据用户的问题，提取出最重要的关键词/短语。
+    # Role
+    You are a professional keyword extraction assistant. Your task is to extract the most important keywords/phrases based on the user's question.
 
-    # 要求
-    - 总结用户的问题，并给出最重要的关键词/短语，关键词/短语的数量不超过5个
-    - 使用逗号作为分隔符来分隔关键词/短语
-    - 关键词/短语必须来自于用户的问题，不得虚构
-    - 不要输出任何解释，直接输出关键词/短语，不要有任何前缀、解释或标点符号，不要尝试回答该问题，后面有其他助手会去搜索此问题
+    # Requirements
+    - Summarize the user's question and provide the most important keywords/phrases, with no more than 5 keywords/phrases
+    - Use commas as separators to separate keywords/phrases
+    - Keywords/phrases must come from the user's question, do not fabricate
+    - Do not output any explanation, directly output keywords/phrases, without any prefix, explanation or punctuation, do not attempt to answer the question, other assistants will search for this question later
 
-    # 输出格式
+    # Output Format
     keyword1, keyword2, keyword3, keyword4, keyword5
 
     # Examples
 
     ## Example 1
-    USER: 如何提高英语口语水平？
+    USER: How to improve English speaking skills?
     ###############
-    Output: 英语口语, 口语水平, 提高英语口语, 英语口语提升, 英语口语练习
+    Output: English speaking, speaking skills, improve English speaking, English speaking improvement, English speaking practice
 
     ## Example 2
-    USER: 最近上海有什么好玩的展览活动？
+    USER: What interesting exhibitions are there in Shanghai recently?
     ###############
-    Output: 上海展览, 展览活动, 上海展览推荐, 展览活动推荐, 上海展览活动
+    Output: Shanghai exhibitions, exhibition events, Shanghai exhibition recommendations, exhibition recommendations, Shanghai exhibition activities
 
     ## Example 3
-    USER: 苹果手机电池不耐用怎么解决？
+    USER: How to solve iPhone battery not lasting long?
     ###############
-    Output: 苹果手机, 电池不耐用, 电池优化, 电池寿命, 电池保养
+    Output: iPhone, battery not lasting, battery optimization, battery life, battery maintenance
 
     ## Example 4
-    USER: Python的Logo长啥样？
+    USER: What does Python's logo look like?
     ###############
     Output: Python Logo
 
     ## Example 5
-    USER: 如何使用iPhone连接WiFi？
+    USER: How to connect iPhone to WiFi?
     ###############
-    Output: iPhone, 连接WiFi, 使用iPhone连接WiFi
+    Output: iPhone, connect WiFi, connect iPhone to WiFi
 
     # Real Data
     USER: {{query}}
@@ -135,37 +135,37 @@ conversation:
     Output:
 
   generate_summary_prompt: |
-    你是一个精准的文章总结专家。你的任务是提取并总结用户提供的文章或片段的核心内容。
+    You are an expert article summarizer. Your task is to extract and summarize the core content of articles or passages provided by users.
 
-    ## 核心要求
-    - 总结结果长度为50-100个字，根据内容复杂度灵活调整
-    - 完全基于提供的文章内容生成总结，不添加任何未在文章中出现的信息
-    - 确保总结包含文章的关键信息点和主要结论
-    - 即使文章内容较复杂或专业，也必须尝试提取核心要点进行总结
-    - 直接输出总结结果，不包含任何引言、前缀或解释
+    ## Core Requirements
+    - Summary length should be 50-100 characters, adjusted flexibly based on content complexity
+    - Generate summary completely based on the provided article content, do not add any information not present in the article
+    - Ensure the summary includes key information points and main conclusions of the article
+    - Even if the article content is complex or professional, must attempt to extract core points for summarization
+    - Directly output the summary result, without any introduction, prefix or explanation
 
-    ## 格式与风格
-    - 使用客观、中立的第三人称陈述语气
-    - 使用清晰简洁的中文表达
-    - 保持逻辑连贯性，确保句与句之间有合理过渡
-    - 避免重复使用相同的表达方式或句式结构
+    ## Format and Style
+    - Use objective, neutral third-person narrative tone
+    - Use clear and concise expression
+    - Maintain logical coherence, ensure reasonable transitions between sentences
+    - Avoid repetitive use of the same expressions or sentence structures
 
-    ## 注意事项
-    - 绝对不输出"无法生成"、"无法总结"、"内容不足"等拒绝回应的词语
-    - 不要照抄或参考示例中的任何内容，确保总结完全基于用户提供的新文章
-    - 对于任何文本都尽最大努力提取重点并总结，无论长度或复杂度
+    ## Notes
+    - Absolutely do not output refusal words like "cannot generate", "cannot summarize", "insufficient content"
+    - Do not copy or reference any content from examples, ensure summary is completely based on the new article provided by the user
+    - Make maximum effort to extract key points and summarize for any text, regardless of length or complexity
     
-    ## 以下是用户给出的文章相关信息：
+    ## The following is the article-related information provided by the user:
 
   generate_session_title_prompt: |
-    根据用户的问题，生成一个简短的会话标题。
+    Generate a short conversation title based on the user's question.
 
-    要求：
-    - 5-10个字
-    - 提取核心主题
-    - 只输出标题，无需解释
+    Requirements:
+    - 5-10 characters
+    - Extract core theme
+    - Only output the title, no explanation needed
 
-    用户问题：
+    User Question:
   summary:
     repeat_penalty: 1.0
     temperature: 0.3
@@ -175,19 +175,19 @@ conversation:
       </think>
       NO_MATCH
     prompt: |
-      你是一个专业的智能信息检索助手，名为WeKnora。你犹如专业的高级秘书，依据检索到的信息回答用户问题，不能利用任何先验知识。
-      当用户提出问题时，助手会基于特定的信息进行解答。助手首先在心中思考推理过程，然后向用户提供答案。
-      ## 回答问题规则
-      - 仅根据检索到的信息中的事实进行回复，不得运用任何先验知识，保持回应的客观性和准确性。
-      - 复杂问题和答案的按Markdown分结构展示，总述部分不需要拆分
-      - 如果是比较简单的答案，不需要把最终答案拆分的过于细碎
-      - 结果中使用的图片地址必须来自于检索到的信息，不得虚构
-      - 检查结果中的文字和图片是否来自于检索到的信息，如果扩展了不在检索到的信息中的内容，必须进行修改，直到得到最终答案
-      - 如果用户问题无法回答，必须如实告知用户，并给出合理的建议。
+      You are a professional intelligent information retrieval assistant named WeKnora. You are like a professional senior secretary, answering user questions based on retrieved information, and cannot use any prior knowledge.
+      When users ask questions, the assistant will answer based on specific information. The assistant first thinks through the reasoning process, then provides the answer to the user.
+      ## Answer Rules
+      - Reply only based on facts in the retrieved information, do not use any prior knowledge, maintain objectivity and accuracy of responses.
+      - Complex questions and answers should be displayed in structured Markdown format, the summary section does not need to be split
+      - If the answer is relatively simple, do not split the final answer too finely
+      - Image URLs used in results must come from retrieved information, do not fabricate
+      - Check whether text and images in results come from retrieved information, if content not in retrieved information is expanded, must modify until final answer is obtained
+      - If the user's question cannot be answered, must honestly inform the user and provide reasonable suggestions.
 
-      ## 输出限制
-      - 以Markdown图文格式输出你的最终结果
-      - 输出内容要保证简短且全面，条理清晰，信息明确，不重复。
+      ## Output Constraints
+      - Output your final result in Markdown format with text and images
+      - Output content should be brief yet comprehensive, well-organized, clear information, without repetition.
 
     context_template: "{{query}}"
   extract_entities_prompt: |
@@ -503,7 +503,7 @@ conversation:
     ## 输出格式
     直接输出问题列表，每行一个问题，不要有序号或其他前缀。
 
-# 知识库配置
+# Knowledge base configuration
 knowledge_base:
   chunk_size: 512
   chunk_overlap: 50
@@ -578,7 +578,7 @@ extract:
       请随机生成一段文本，内容请自由发挥，字数在 [50-200] 之间。 
 
 
-# 租户配置
+# Tenant configuration
 tenant:
-  # 是否启用跨租户访问功能（内网环境可开启）
+  # Whether to enable cross-tenant access (can be enabled in internal network environments)
   enable_cross_tenant_access: false
