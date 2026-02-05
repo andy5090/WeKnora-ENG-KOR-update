@@ -4,10 +4,10 @@
             <img class="logo" src="@/assets/img/weknora.png" alt="">
         </div>
         
-        <!-- 租户选择器：仅在用户可切换租户时显示 -->
+        <!-- Tenant selector: Only shown when user can switch tenants -->
         <TenantSelector v-if="canAccessAllTenants" />
         
-        <!-- 上半部分：知识库和对话 -->
+        <!-- Top section: Knowledge bases and chats -->
         <div class="menu_top">
             <div class="menu_box" :class="{ 'has-submenu': item.children }" v-for="(item, index) in topMenuItems" :key="index">
                 <div @click="handleMenuClick(item.path)"
@@ -50,7 +50,7 @@
         </div>
         
         
-        <!-- 下半部分：用户菜单 -->
+        <!-- Bottom section: User menu -->
         <div class="menu_bottom">
             <UserMenu />
         </div>
@@ -95,17 +95,17 @@ const page_size = ref(30);
 const total = ref(0);
 const currentSecondpath = ref('');
 const submenuscrollContainer = ref(null);
-// 计算总页数
+// Calculate total pages
 const totalPages = computed(() => Math.ceil(total.value / page_size.value));
 const hasMore = computed(() => currentPage.value < totalPages.value);
 type MenuItem = { title: string; icon: string; path: string; childrenPath?: string; children?: any[] };
 const { menuArr } = storeToRefs(usemenuStore);
 let activeSubmenu = ref<string>('');
 
-// 批量管理状态
+// Batch management state
 const batchManageVisible = ref(false);
 
-// 所有会话列表（用于批量管理对话框）
+// All sessions list (for batch management dialog)
 const allSessions = computed(() => {
     const chatMenu = (menuArr.value as unknown as MenuItem[]).find((item: MenuItem) => item.path === 'creatChat');
     if (!chatMenu || !chatMenu.children) return [];
@@ -117,36 +117,36 @@ const allSessions = computed(() => {
     }));
 });
 
-// 是否可以访问所有租户
+// Whether user can access all tenants
 const canAccessAllTenants = computed(() => authStore.canAccessAllTenants);
 
-// 是否处于知识库详情页（不包括全局聊天）
+// Whether on knowledge base detail page (excluding global chat)
 const isInKnowledgeBase = computed<boolean>(() => {
     return route.name === 'knowledgeBaseDetail' || 
            route.name === 'kbCreatChat' || 
            route.name === 'knowledgeBaseSettings';
 });
 
-// 是否在知识库列表页面
+// Whether on knowledge base list page
 const isInKnowledgeBaseList = computed<boolean>(() => {
     return route.name === 'knowledgeBaseList';
 });
 
-// 是否在创建聊天页面
+// Whether on create chat page
 const isInCreatChat = computed<boolean>(() => {
     return route.name === 'globalCreatChat' || route.name === 'kbCreatChat';
 });
 
-// 是否在对话详情页
+// Whether on chat detail page
 const isInChatDetail = computed<boolean>(() => route.name === 'chat');
 
-// 是否在智能体列表页面
+// Whether on agent list page
 const isInAgentList = computed<boolean>(() => route.name === 'agentList');
 
-// 是否在组织列表页面
+// Whether on organization list page
 const isInOrganizationList = computed<boolean>(() => route.name === 'organizationList');
 
-// 统一的菜单项激活状态判断
+// Unified menu item active state determination
 const isMenuItemActive = (itemPath: string): boolean => {
     const currentRoute = route.name;
     
@@ -168,7 +168,7 @@ const isMenuItemActive = (itemPath: string): boolean => {
     }
 };
 
-// 统一的图标激活状态判断
+// Unified icon active state determination
 const getIconActiveState = (itemPath: string) => {
     const currentRoute = route.name;
     
@@ -184,7 +184,7 @@ const getIconActiveState = (itemPath: string) => {
     };
 };
 
-// 分离上下两部分菜单
+// Separate top and bottom menu sections
 const topMenuItems = computed<MenuItem[]>(() => {
     return (menuArr.value as unknown as MenuItem[]).filter((item: MenuItem) => 
         item.path === 'knowledge-bases' || item.path === 'agents' || item.path === 'organizations' || item.path === 'creatChat'
@@ -200,11 +200,38 @@ const bottomMenuItems = computed<MenuItem[]>(() => {
     });
 });
 
-// 当前知识库信息
+// Current knowledge base information
 const currentKbName = ref<string>('')
 const currentKbInfo = ref<any>(null)
+const docUploadInput = ref<HTMLInputElement | null>(null)
+const docFolderInput = ref<HTMLInputElement | null>(null)
+const pendingUploadKbId = ref<string | null>(null)
+const selectedFaqCount = ref<number>(0)
+const selectedFaqEnabledCount = ref<number>(0)
+const selectedFaqDisabledCount = ref<number>(0)
 
-// 时间分组函数
+// Listen for FAQ selection count changes
+const handleFaqSelectionChanged = ((event: CustomEvent<{ count: number; enabledCount?: number; disabledCount?: number }>) => {
+  const count = event.detail?.count || 0
+  selectedFaqCount.value = count
+  selectedFaqEnabledCount.value = event.detail?.enabledCount || 0
+  selectedFaqDisabledCount.value = event.detail?.disabledCount || 0
+}) as EventListener
+
+const showKbActions = computed(() => 
+    (isInKnowledgeBase.value && !!currentKbInfo.value) || 
+    isInKnowledgeBaseList.value || 
+    isInCreatChat.value ||
+    isInChatDetail.value ||
+    isInAgentList.value
+)
+const currentKbType = computed(() => currentKbInfo.value?.type || 'document')
+const showDocActions = computed(() => showKbActions.value && isInKnowledgeBase.value && currentKbType.value !== 'faq')
+const showFaqActions = computed(() => showKbActions.value && isInKnowledgeBase.value && currentKbType.value === 'faq')
+const showCreateKbAction = computed(() => showKbActions.value && (isInKnowledgeBaseList.value || isInCreatChat.value || isInChatDetail.value))
+const showCreateAgentAction = computed(() => showKbActions.value && isInAgentList.value)
+
+// Time grouping function
 const getTimeCategory = (dateStr: string): string => {
     if (!dateStr) return t('time.earlier');
     
@@ -233,7 +260,7 @@ const getTimeCategory = (dateStr: string): string => {
     }
 };
 
-// 按时间分组Session列表
+// Group session list by time
 const groupedSessions = computed(() => {
     const chatMenu = (menuArr.value as unknown as MenuItem[]).find((item: MenuItem) => item.path === 'creatChat');
     if (!chatMenu || !chatMenu.children || chatMenu.children.length === 0) {
@@ -249,7 +276,7 @@ const groupedSessions = computed(() => {
         [t('time.earlier')]: []
     };
     
-    // 将sessions按时间分组
+    // Group sessions by time
     (chatMenu.children as any[]).forEach((session: any, index: number) => {
         const category = getTimeCategory(session.updated_at || session.created_at);
         groups[category].push({
@@ -258,7 +285,7 @@ const groupedSessions = computed(() => {
         });
     });
     
-    // 按顺序返回非空分组
+    // Return non-empty groups in order
     const orderedLabels = [t('time.today'), t('time.yesterday'), t('time.last7Days'), t('time.last30Days'), t('time.lastYear'), t('time.earlier')];
     return orderedLabels
         .filter(label => groups[label].length > 0)
@@ -287,12 +314,12 @@ const handleSessionMenuClick = (data: { value: string }, index: number, item: an
 const delCard = (index: number, item: any) => {
     delSession(item.id).then((res: any) => {
         if (res && (res as any).success) {
-            // 找到 'creatChat' 菜单项
+            // Find 'creatChat' menu item
             const chatMenuItem = (menuArr.value as any[]).find((m: any) => m.path === 'creatChat');
             
             if (chatMenuItem && chatMenuItem.children) {
                 const children = chatMenuItem.children;
-                // 通过ID查找索引，比依赖传入的index更安全
+                // Find index by ID, safer than relying on passed index
                 const actualIndex = children.findIndex((s: any) => s.id === item.id);
                 
                 if (actualIndex !== -1) {
@@ -301,15 +328,15 @@ const delCard = (index: number, item: any) => {
             }
             
             if (item.id == route.params.chatid) {
-                // 删除当前会话后，跳转到全局创建聊天页面
+                // After deleting current session, navigate to global create chat page
                 router.push('/platform/creatChat');
             }
-            // 更新总数
+            // Update total count
             if (total.value > 0) {
                 total.value--;
             }
         } else {
-            MessagePlugin.error("删除失败，请稍后再试!");
+            MessagePlugin.error("Delete failed, please try again later!");
         }
     })
 }
@@ -338,13 +365,13 @@ const debounce = (fn: (...args: any[]) => void, delay: number) => {
         timer = setTimeout(() => fn(...args), delay)
     }
 }
-// 滚动处理
+// Scroll handling
 const checkScrollBottom = () => {
     const container = submenuscrollContainer.value
     if (!container || !container[0]) return
 
     const { scrollTop, scrollHeight, clientHeight } = container[0]
-    const isBottom = scrollHeight - (scrollTop + clientHeight) < 100 // 触底阈值
+    const isBottom = scrollHeight - (scrollTop + clientHeight) < 100 // Bottom threshold
     
     if (isBottom && hasMore.value && !loading.value) {
         currentPage.value++;
@@ -356,9 +383,9 @@ const getMessageList = async (isLoadMore = false) => {
     if (loading.value) return Promise.resolve();
     loading.value = true;
     
-    // 只有在首次加载或路由变化时才清空数组，滚动加载时不清空
+    // Only clear array on first load or route change, don't clear on scroll load
     if (!isLoadMore) {
-        currentPage.value = 1; // 重置页码
+        currentPage.value = 1; // Reset page number
         usemenuStore.clearMenuArr();
     }
     
@@ -367,7 +394,7 @@ const getMessageList = async (isLoadMore = false) => {
             // Display all sessions globally without filtering
             res.data.forEach((item: any) => {
                 let obj = { 
-                    title: item.title ? item.title : "新会话", 
+                    title: item.title ? item.title : "New Session", 
                     path: `chat/${item.id}`, 
                     id: item.id, 
                     isMore: false, 
@@ -394,7 +421,7 @@ onMounted(async () => {
         currentSecondpath.value = `chat/${route.params.chatid}`;
     }
     
-    // 初始化知识库信息
+    // Initialize knowledge base information
     const kbId = (route.params as any)?.kbId as string
     if (kbId && isInKnowledgeBase.value) {
         try {
@@ -409,15 +436,21 @@ onMounted(async () => {
         currentKbInfo.value = null
     }
     
-    // 加载对话列表
+    // Load chat list
     getMessageList();
-    // 若组织列表未加载则拉取一次，用于侧栏「待审批」角标
+    // If organization list not loaded, fetch once for sidebar "pending approval" badge
     if (orgStore.organizations.length === 0) {
         orgStore.fetchOrganizations();
     }
+    // Listen for FAQ selection count changes
+    window.addEventListener('faqSelectionChanged', handleFaqSelectionChanged)
 });
 
 watch([() => route.name, () => route.params], (newvalue, oldvalue) => {
+    // Reset selection count when switching knowledge base
+    if (newvalue[1].kbId !== oldvalue?.[1]?.kbId) {
+        selectedFaqCount.value = 0
+    }
     const nameStr = typeof newvalue[0] === 'string' ? (newvalue[0] as string) : (newvalue[0] ? String(newvalue[0]) : '')
     currentpath.value = nameStr;
     if (newvalue[1].chatid) {
@@ -426,23 +459,23 @@ watch([() => route.name, () => route.params], (newvalue, oldvalue) => {
         currentSecondpath.value = "";
     }
     
-    // 只在必要时刷新对话列表，避免不必要的重新加载导致列表抖动
-    // 需要刷新的情况：
-    // 1. 创建新会话后（从 creatChat/kbCreatChat 跳转到 chat/:id）
-    // 2. 删除会话后已在 delCard 中处理，不需要在这里刷新
+    // Only refresh chat list when necessary to avoid unnecessary reloads causing list jitter
+    // Cases requiring refresh:
+    // 1. After creating new session (navigating from creatChat/kbCreatChat to chat/:id)
+    // 2. After deleting session, already handled in delCard, no need to refresh here
     const oldRouteNameStr = typeof oldvalue?.[0] === 'string' ? (oldvalue[0] as string) : (oldvalue?.[0] ? String(oldvalue[0]) : '')
     const isCreatingNewSession = (oldRouteNameStr === 'globalCreatChat' || oldRouteNameStr === 'kbCreatChat') && 
                                  nameStr !== 'globalCreatChat' && nameStr !== 'kbCreatChat';
     
-    // 只在创建新会话时才刷新列表
+    // Only refresh list when creating new session
     if (isCreatingNewSession) {
         getMessageList();
     }
     
-    // 路由变化时更新图标状态和知识库信息（不涉及对话列表）
+    // Update icon state and knowledge base info on route change (not involving chat list)
     getIcon(nameStr);
     
-    // 如果切换了知识库，更新知识库名称但不重新加载对话列表
+    // If knowledge base switched, update name but don't reload chat list
     if (newvalue[1].kbId !== oldvalue?.[1]?.kbId) {
         const kbId = (newvalue[1] as any)?.kbId as string;
         if (kbId && isInKnowledgeBase.value) {
@@ -463,42 +496,42 @@ watch([() => route.name, () => route.params], (newvalue, oldvalue) => {
 let knowledgeIcon = ref('zhishiku-green.svg');
 let prefixIcon = ref('prefixIcon.svg');
 let logoutIcon = ref('logout.svg');
-let settingIcon = ref('setting.svg'); // 设置图标
-let agentIcon = ref('agent.svg'); // 智能体图标
-let organizationIcon = ref('organization.svg'); // 组织图标
+let settingIcon = ref('setting.svg'); // Settings icon
+let agentIcon = ref('agent.svg'); // Agent icon
+let organizationIcon = ref('organization.svg'); // Organization icon
 let pathPrefix = ref(route.name)
   const getIcon = (path: string) => {
-      // 根据当前路由状态更新所有图标
+      // Update all icons based on current route state
       const kbActiveState = getIconActiveState('knowledge-bases');
       const creatChatActiveState = getIconActiveState('creatChat');
       const settingsActiveState = getIconActiveState('settings');
       const agentsActiveState = route.name === 'agentList';
       const organizationsActiveState = route.name === 'organizationList';
       
-      // 知识库图标：只在知识库页面显示绿色
+      // Knowledge base icon: Only show green on knowledge base pages
       knowledgeIcon.value = kbActiveState.isKbActive ? 'zhishiku-green.svg' : 'zhishiku.svg';
       
-      // 智能体图标：只在智能体页面显示绿色
+      // Agent icon: Only show green on agent pages
       agentIcon.value = agentsActiveState ? 'agent-green.svg' : 'agent.svg';
       
-      // 组织图标：只在组织页面显示绿色
+      // Organization icon: Only show green on organization pages
       organizationIcon.value = organizationsActiveState ? 'organization-green.svg' : 'organization.svg';
       
-      // 对话图标：只在对话创建页面显示绿色，在知识库页面显示灰色，其他情况显示默认
+      // Chat icon: Only show green on chat creation pages, grey on knowledge base pages, default otherwise
       prefixIcon.value = creatChatActiveState.isCreatChatActive ? 'prefixIcon-green.svg' : 
                         kbActiveState.isKbActive ? 'prefixIcon-grey.svg' : 
                         'prefixIcon.svg';
       
-      // 设置图标：只在设置页面显示绿色
+      // Settings icon: Only show green on settings page
       settingIcon.value = settingsActiveState.isSettingsActive ? 'setting-green.svg' : 'setting.svg';
       
-      // 退出图标：始终显示默认
+      // Logout icon: Always show default
       logoutIcon.value = 'logout.svg';
 }
 getIcon(typeof route.name === 'string' ? route.name as string : (route.name ? String(route.name) : ''))
 const handleMenuClick = async (path: string) => {
     if (path === 'knowledge-bases') {
-        // 知识库菜单项：如果在知识库内部，跳转到当前知识库文件页；否则跳转到知识库列表
+        // Knowledge base menu item: If inside knowledge base, navigate to current knowledge base files page; otherwise navigate to knowledge base list
         const kbId = await getCurrentKbId()
         if (kbId) {
             router.push(`/platform/knowledge-bases/${kbId}`)
@@ -506,13 +539,13 @@ const handleMenuClick = async (path: string) => {
             router.push('/platform/knowledge-bases')
         }
     } else if (path === 'agents') {
-        // 智能体菜单项：跳转到智能体列表
+        // Agent menu item: Navigate to agent list
         router.push('/platform/agents')
     } else if (path === 'organizations') {
-        // 组织菜单项：跳转到组织列表
+        // Organization menu item: Navigate to organization list
         router.push('/platform/organizations')
     } else if (path === 'settings') {
-        // 设置菜单项：打开设置弹窗并跳转路由
+        // Settings menu item: Open settings modal and navigate route
         uiStore.openSettings()
         router.push('/platform/settings')
     } else {
@@ -520,7 +553,7 @@ const handleMenuClick = async (path: string) => {
     }
 }
 
-// 处理退出登录确认
+// Handle logout confirmation
 const handleLogout = () => {
     gotopage('logout')
 }
@@ -535,27 +568,27 @@ const getCurrentKbId = async (): Promise<string | null> => {
 
 const gotopage = async (path: string) => {
     pathPrefix.value = path;
-    // 处理退出登录
+    // Handle logout
     if (path === 'logout') {
         try {
-            // 调用后端API注销
+            // Call backend API to logout
             await logoutApi();
         } catch (error) {
-            // 即使API调用失败，也继续执行本地清理
-            console.error('注销API调用失败:', error);
+            // Even if API call fails, continue with local cleanup
+            console.error('Logout API call failed:', error);
         }
-        // 清理所有状态和本地存储
+        // Clear all state and local storage
         authStore.logout();
-        MessagePlugin.success('已退出登录');
+        MessagePlugin.success('Logged out successfully');
         router.push('/login');
         return;
     } else {
         if (path === 'creatChat') {
-            // 如果在知识库详情页，跳转到全局对话创建页
+            // If on knowledge base detail page, navigate to global chat creation page
             if (isInKnowledgeBase.value) {
                 router.push('/platform/creatChat')
             } else {
-                // 如果不在知识库内，进入对话创建页
+                // If not inside knowledge base, enter chat creation page
                 router.push(`/platform/creatChat`)
             }
         } else {
@@ -581,6 +614,583 @@ const mouseleaveMenu = (path: string) => {
     }
 }
 
+const ensureDocKnowledgeBaseReady = async (): Promise<string | null> => {
+    const kbId = await getCurrentKbId()
+    if (!kbId) {
+        MessagePlugin.warning(t('knowledgeEditor.messages.missingId'))
+        return null
+    }
+    if (currentKbType.value === 'faq') {
+        MessagePlugin.warning(t('knowledgeBase.docActionUnsupported'))
+        return null
+    }
+    if (!currentKbInfo.value || !currentKbInfo.value.embedding_model_id || !currentKbInfo.value.summary_model_id) {
+        MessagePlugin.warning(t('knowledgeBase.notInitialized'))
+        return null
+    }
+    return kbId
+}
+
+const handleDocUploadClick = async () => {
+    const kbId = await ensureDocKnowledgeBaseReady()
+    if (!kbId) return
+    pendingUploadKbId.value = kbId
+    docUploadInput.value?.click()
+}
+
+const FAILED_FILES_PREVIEW_LIMIT = 10
+
+const summarizeFailedFiles = (failedFiles: Array<{ name: string; reason: string }>) => {
+    const duplicateLabel = t('knowledgeBase.fileExists')
+    let duplicateCount = 0
+    const nonDuplicate: Array<{ name: string; reason: string }> = []
+    failedFiles.forEach((file) => {
+        if (file.reason === duplicateLabel) {
+            duplicateCount++
+        } else {
+            nonDuplicate.push(file)
+        }
+    })
+
+    const previewList = nonDuplicate.slice(0, FAILED_FILES_PREVIEW_LIMIT).map(f => `• ${f.name}: ${f.reason}`)
+    let nonDuplicateText = ''
+    if (previewList.length) {
+        nonDuplicateText = previewList.join('\n')
+        if (nonDuplicate.length > FAILED_FILES_PREVIEW_LIMIT) {
+            nonDuplicateText += `\n${t('knowledgeBase.andMoreFiles', { count: nonDuplicate.length - FAILED_FILES_PREVIEW_LIMIT })}`
+        }
+    }
+
+    return {
+        duplicateCount,
+        nonDuplicateText,
+    }
+}
+
+const handleDocFileChange = async (event: Event) => {
+    const input = event.target as HTMLInputElement
+    const files = input?.files
+    if (!files || files.length === 0) {
+        pendingUploadKbId.value = null
+        return
+    }
+
+    const kbId = pendingUploadKbId.value || (await ensureDocKnowledgeBaseReady())
+    pendingUploadKbId.value = null
+    if (!kbId) {
+        input.value = ''
+        return
+    }
+
+    // Filter valid files
+    const validFiles: File[] = []
+    let invalidCount = 0
+    const isSingleFile = files.length === 1
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i]
+        // Show error for single file, silently filter for multiple files
+        if (kbFileTypeVerification(file, !isSingleFile)) {
+            invalidCount++
+        } else {
+            validFiles.push(file)
+        }
+    }
+
+    // If no valid files, show summary prompt for multiple files
+    if (validFiles.length === 0) {
+        if (!isSingleFile && invalidCount > 0) {
+            MessagePlugin.error(t('knowledgeBase.noValidFilesSelected'))
+        }
+        // Single file errors are already shown in kbFileTypeVerification
+        input.value = ''
+        return
+    }
+
+    // Batch upload
+    let successCount = 0
+    let failCount = 0
+    const totalCount = validFiles.length
+    const failedFiles: Array<{ name: string; reason: string }> = []
+
+    // Create upload task for each file and send event notification
+    const uploadPromises = validFiles.map(async (file) => {
+        const uploadId = `${file.name}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        let progress = 0
+        let status: 'uploading' | 'success' | 'error' = 'uploading'
+        let error: string | undefined
+
+        // Send upload start event
+        window.dispatchEvent(new CustomEvent('knowledgeFileUploadStart', {
+            detail: { 
+                kbId, 
+                uploadId, 
+                fileName: file.name
+            }
+        }))
+
+        try {
+            // Get currently selected tag ID
+            const tagIdToUpload = uiStore.selectedTagId !== '__untagged__' ? uiStore.selectedTagId : undefined
+            await uploadKnowledgeFile(
+                kbId, 
+                { file, tag_id: tagIdToUpload },
+                (progressEvent: any) => {
+                    if (progressEvent.total) {
+                        progress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+                        // Send progress update event
+                        window.dispatchEvent(new CustomEvent('knowledgeFileUploadProgress', {
+                            detail: { 
+                                kbId, 
+                                uploadId, 
+                                progress 
+                            }
+                        }))
+                    }
+                }
+            )
+            successCount++
+            status = 'success'
+            progress = 100
+        } catch (error: any) {
+            failCount++
+            let errorReason = error?.error?.message || error?.message || t('knowledgeBase.uploadFailed')
+            if (error?.code === 'duplicate_file' || error?.error?.code === 'duplicate_file') {
+                errorReason = t('knowledgeBase.fileExists')
+            }
+            status = 'error'
+            error = errorReason
+            failedFiles.push({ name: file.name, reason: errorReason })
+
+            // Only show detailed error for single file upload
+            if (totalCount === 1) {
+                MessagePlugin.error(errorReason)
+            }
+        } finally {
+            // Send upload complete event
+            window.dispatchEvent(new CustomEvent('knowledgeFileUploadComplete', {
+                detail: { 
+                    kbId, 
+                    uploadId, 
+                    status,
+                    progress,
+                    error
+                }
+            }))
+        }
+    })
+
+    // Wait for all uploads to complete
+    await Promise.allSettled(uploadPromises)
+
+    // Show upload results
+    if (successCount > 0) {
+        window.dispatchEvent(new CustomEvent('knowledgeFileUploaded', {
+            detail: { kbId }
+        }))
+    }
+
+    if (totalCount === 1) {
+        if (successCount === 1) {
+            MessagePlugin.success(t('knowledgeBase.uploadSuccess'))
+        }
+        // Single file failure errors are already shown above
+    } else {
+        if (failCount === 0) {
+            MessagePlugin.success(t('knowledgeBase.uploadAllSuccess', { count: successCount }))
+        } else if (successCount > 0) {
+            const { duplicateCount, nonDuplicateText } = summarizeFailedFiles(failedFiles)
+            const extraSections: string[] = []
+            if (duplicateCount > 0) {
+                extraSections.push(t('knowledgeBase.duplicateFilesSkipped', { count: duplicateCount }))
+            }
+            if (nonDuplicateText) {
+                extraSections.push(t('knowledgeBase.failedFilesList') + '\n' + nonDuplicateText)
+            }
+            const extraContent = extraSections.length ? '\n\n' + extraSections.join('\n\n') : ''
+            MessagePlugin.warning({
+                content: t('knowledgeBase.uploadPartialSuccess', {
+                    success: successCount,
+                    fail: failCount
+                }) + extraContent,
+                duration: 8000,
+                closeBtn: true
+            })
+        } else {
+            const { duplicateCount, nonDuplicateText } = summarizeFailedFiles(failedFiles)
+            const extraSections: string[] = []
+            if (duplicateCount > 0) {
+                extraSections.push(t('knowledgeBase.duplicateFilesSkipped', { count: duplicateCount }))
+            }
+            if (nonDuplicateText) {
+                extraSections.push(t('knowledgeBase.failedFilesList') + '\n' + nonDuplicateText)
+            }
+            const extraContent = extraSections.length ? '\n\n' + extraSections.join('\n\n') : ''
+            MessagePlugin.error({
+                content: t('knowledgeBase.uploadAllFailed') + extraContent,
+                duration: 8000,
+                closeBtn: true
+            })
+        }
+    }
+
+    input.value = ''
+}
+
+const handleDocFolderUploadClick = async () => {
+    const kbId = await ensureDocKnowledgeBaseReady()
+    if (!kbId) return
+    pendingUploadKbId.value = kbId
+    docFolderInput.value?.click()
+}
+
+const handleDocFolderChange = async (event: Event) => {
+    const input = event.target as HTMLInputElement
+    const files = input?.files
+    if (!files || files.length === 0) {
+        pendingUploadKbId.value = null
+        return
+    }
+
+    const kbId = pendingUploadKbId.value || (await ensureDocKnowledgeBaseReady())
+    pendingUploadKbId.value = null
+    if (!kbId) {
+        input.value = ''
+        return
+    }
+
+    // Check if VLM is enabled
+    const vlmEnabled = currentKbInfo.value?.vlm_config?.enabled || false
+
+    // Filter valid files (folder upload always uses silent mode)
+    const validFiles: File[] = []
+    let invalidCount = 0
+    let hiddenFileCount = 0
+    let imageFilteredCount = 0
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i]
+        const relativePath = (file as any).webkitRelativePath || file.name
+        
+        // 1. Filter hidden files and hidden folders
+        // Check if path contains files or folders starting with .
+        const pathParts = relativePath.split('/')
+        const hasHiddenComponent = pathParts.some((part: string) => part.startsWith('.'))
+        if (hasHiddenComponent) {
+            hiddenFileCount++
+            continue
+        }
+        
+        // 2. If VLM not enabled, filter image files
+        if (!vlmEnabled) {
+            const fileExt = file.name.substring(file.name.lastIndexOf('.') + 1).toLowerCase()
+            const imageTypes = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp']
+            if (imageTypes.includes(fileExt)) {
+                imageFilteredCount++
+                continue
+            }
+        }
+        
+        // 3. File type validation (always silently filter for folder upload)
+        if (kbFileTypeVerification(file, true)) {
+            invalidCount++
+        } else {
+            validFiles.push(file)
+        }
+    }
+
+    // If no valid files, return directly
+    if (validFiles.length === 0) {
+        const totalFiltered = invalidCount + hiddenFileCount + imageFilteredCount
+        if (totalFiltered > 0) {
+            let filterReasons = []
+            if (hiddenFileCount > 0) {
+                filterReasons.push(t('knowledgeBase.hiddenFilesFiltered', { count: hiddenFileCount }))
+            }
+            if (imageFilteredCount > 0) {
+                filterReasons.push(t('knowledgeBase.imagesFilteredNoVLM', { count: imageFilteredCount }))
+            }
+            if (invalidCount > 0) {
+                filterReasons.push(t('knowledgeBase.invalidFilesFiltered', { count: invalidCount }))
+            }
+            MessagePlugin.warning(t('knowledgeBase.noValidFilesInFolder', { total: files.length }) + '\n' + filterReasons.join('\n'))
+        } else {
+            MessagePlugin.error(t('knowledgeBase.noValidFiles'))
+        }
+        input.value = ''
+        return
+    }
+
+    // Show filtered upload prompt
+    const totalCount = validFiles.length
+    const totalFiltered = invalidCount + hiddenFileCount + imageFilteredCount
+    if (totalFiltered > 0) {
+        let filterInfo = []
+        if (hiddenFileCount > 0) {
+            filterInfo.push(t('knowledgeBase.hiddenFilesFiltered', { count: hiddenFileCount }))
+        }
+        if (imageFilteredCount > 0) {
+            filterInfo.push(t('knowledgeBase.imagesFilteredNoVLM', { count: imageFilteredCount }))
+        }
+        if (invalidCount > 0) {
+            filterInfo.push(t('knowledgeBase.invalidFilesFiltered', { count: invalidCount }))
+        }
+        MessagePlugin.info(
+            t('knowledgeBase.uploadingValidFiles', {
+                valid: totalCount,
+                total: files.length
+            }) + '\n' + filterInfo.join(', ')
+        )
+    } else {
+        MessagePlugin.info(t('knowledgeBase.uploadingFolder', { total: totalCount }))
+    }
+
+    // Batch upload folder contents
+    let successCount = 0
+    let failCount = 0
+    const failedFiles: Array<{ name: string; reason: string }> = []
+
+    for (const file of validFiles) {
+        // Get file relative path (webkitRelativePath) to preserve subdirectory structure
+        const relativePath = (file as any).webkitRelativePath
+        let fileName = file.name
+        if (relativePath) {
+            const pathParts = relativePath.split('/')
+            if (pathParts.length > 2) {
+                const subPath = pathParts.slice(1, -1).join('/')
+                fileName = `${subPath}/${file.name}`
+            }
+        }
+
+        const uploadId = `${file.name}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        let progress = 0
+        let status: 'uploading' | 'success' | 'error' = 'uploading'
+        let errorReason: string | undefined
+
+        window.dispatchEvent(new CustomEvent('knowledgeFileUploadStart', {
+            detail: {
+                kbId,
+                uploadId,
+                fileName
+            }
+        }))
+
+        try {
+            // Get currently selected tag ID
+            const tagIdToUpload = uiStore.selectedTagId !== '__untagged__' ? uiStore.selectedTagId : undefined
+            await uploadKnowledgeFile(
+                kbId,
+                { file, fileName, tag_id: tagIdToUpload },
+                (progressEvent: any) => {
+                    if (progressEvent?.total) {
+                        progress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+                        window.dispatchEvent(new CustomEvent('knowledgeFileUploadProgress', {
+                            detail: {
+                                kbId,
+                                uploadId,
+                                progress
+                            }
+                        }))
+                    }
+                }
+            )
+            successCount++
+            status = 'success'
+            progress = 100
+        } catch (error: any) {
+            failCount++
+            errorReason = error?.error?.message || error?.message || t('knowledgeBase.uploadFailed')
+            if (error?.code === 'duplicate_file' || error?.error?.code === 'duplicate_file') {
+                errorReason = t('knowledgeBase.fileExists')
+            }
+            failedFiles.push({ name: fileName, reason: errorReason })
+            status = 'error'
+        } finally {
+            window.dispatchEvent(new CustomEvent('knowledgeFileUploadComplete', {
+                detail: {
+                    kbId,
+                    uploadId,
+                    status,
+                    progress,
+                    error: errorReason,
+                    fileName
+                }
+            }))
+        }
+    }
+
+    if (successCount > 0) {
+        window.dispatchEvent(new CustomEvent('knowledgeFileUploaded', {
+            detail: { kbId }
+        }))
+    }
+
+    if (failCount === 0) {
+        MessagePlugin.success(t('knowledgeBase.uploadAllSuccess', { count: successCount }))
+    } else if (successCount > 0) {
+        const { duplicateCount, nonDuplicateText } = summarizeFailedFiles(failedFiles)
+        const extraSections: string[] = []
+        if (duplicateCount > 0) {
+            extraSections.push(t('knowledgeBase.duplicateFilesSkipped', { count: duplicateCount }))
+        }
+        if (nonDuplicateText) {
+            extraSections.push(t('knowledgeBase.failedFilesList') + '\n' + nonDuplicateText)
+        }
+        const extraContent = extraSections.length ? '\n\n' + extraSections.join('\n\n') : ''
+        MessagePlugin.warning({
+            content: t('knowledgeBase.uploadPartialSuccess', {
+                success: successCount,
+                fail: failCount
+            }) + extraContent,
+            duration: 8000,
+            closeBtn: true
+        })
+    } else {
+        const { duplicateCount, nonDuplicateText } = summarizeFailedFiles(failedFiles)
+        const extraSections: string[] = []
+        if (duplicateCount > 0) {
+            extraSections.push(t('knowledgeBase.duplicateFilesSkipped', { count: duplicateCount }))
+        }
+        if (nonDuplicateText) {
+            extraSections.push(t('knowledgeBase.failedFilesList') + '\n' + nonDuplicateText)
+        }
+        const extraContent = extraSections.length ? '\n\n' + extraSections.join('\n\n') : ''
+        MessagePlugin.error({
+            content: t('knowledgeBase.uploadAllFailed') + extraContent,
+            duration: 8000,
+            closeBtn: true
+        })
+    }
+
+    input.value = ''
+}
+
+const handleDocManualCreate = async () => {
+    const kbId = await ensureDocKnowledgeBaseReady()
+    if (!kbId) return
+    uiStore.openManualEditor({
+        mode: 'create',
+        kbId,
+        status: 'draft',
+        onSuccess: ({ kbId: savedKbId }) => {
+            if (savedKbId) {
+                window.dispatchEvent(new CustomEvent('knowledgeFileUploaded', { detail: { kbId: savedKbId } }))
+            }
+        },
+    })
+}
+
+const handleDocURLImport = async () => {
+    const kbId = await ensureDocKnowledgeBaseReady()
+    if (!kbId) return
+    
+    window.dispatchEvent(new CustomEvent('openURLImportDialog', {
+        detail: { kbId }
+    }))
+}
+
+const dispatchFaqMenuAction = (action: 'create' | 'import' | 'search' | 'export' | 'batch' | 'batchTag' | 'batchEnable' | 'batchDisable' | 'batchDelete', kbId: string) => {
+    window.dispatchEvent(new CustomEvent('faqMenuAction', {
+        detail: { action, kbId }
+    }))
+}
+
+const handleFaqCreateFromMenu = async () => {
+    const kbId = await getCurrentKbId()
+    if (!kbId) {
+        MessagePlugin.warning(t('knowledgeEditor.messages.missingId'))
+        return
+    }
+    dispatchFaqMenuAction('create', kbId)
+}
+
+const handleFaqImportFromMenu = async () => {
+    const kbId = await getCurrentKbId()
+    if (!kbId) {
+        MessagePlugin.warning(t('knowledgeEditor.messages.missingId'))
+        return
+    }
+    dispatchFaqMenuAction('import', kbId)
+}
+
+const handleFaqSearchTestFromMenu = async () => {
+    const kbId = await getCurrentKbId()
+    if (!kbId) {
+        MessagePlugin.warning(t('knowledgeEditor.messages.missingId'))
+        return
+    }
+    dispatchFaqMenuAction('search', kbId)
+}
+
+const handleFaqExportFromMenu = async () => {
+    const kbId = await getCurrentKbId()
+    if (!kbId) {
+        MessagePlugin.warning(t('knowledgeEditor.messages.missingId'))
+        return
+    }
+    dispatchFaqMenuAction('export', kbId)
+}
+
+const faqBatchActionOptions = computed(() => {
+  if (selectedFaqCount.value === 0) {
+    return []
+  }
+  const options = [
+    { 
+      content: `${t('knowledgeEditor.faq.batchUpdateTag')} (${selectedFaqCount.value})`, 
+      value: 'batchTag', 
+      icon: 'folder'
+    }
+  ]
+  
+  // Show batch enable or disable based on selected items' state
+  if (selectedFaqDisabledCount.value > 0) {
+    options.push({
+      content: `${t('knowledgeEditor.faq.batchEnable')} (${selectedFaqDisabledCount.value})`,
+      value: 'batchEnable',
+      icon: 'check-circle',
+    })
+  }
+  if (selectedFaqEnabledCount.value > 0) {
+    options.push({
+      content: `${t('knowledgeEditor.faq.batchDisable')} (${selectedFaqEnabledCount.value})`,
+      value: 'batchDisable',
+      icon: 'close-circle',
+    })
+  }
+  
+  options.push({
+    content: `${t('knowledgeEditor.faqImport.deleteSelected')} (${selectedFaqCount.value})`,
+    value: 'batchDelete',
+    icon: 'delete',
+  })
+  
+  return options
+})
+
+const handleFaqBatchActionFromMenu = async (data: { value: string }) => {
+  const kbId = await getCurrentKbId()
+  if (!kbId) {
+    MessagePlugin.warning(t('knowledgeEditor.messages.missingId'))
+    return
+  }
+  if (selectedFaqCount.value === 0) {
+    MessagePlugin.warning(t('knowledgeEditor.faq.selectEntriesFirst') || 'Please select FAQ entries to operate on first')
+    return
+  }
+  dispatchFaqMenuAction(data.value as 'batchTag' | 'batchEnable' | 'batchDisable' | 'batchDelete', kbId)
+}
+
+const handleCreateKnowledgeBase = () => {
+    uiStore.openCreateKB()
+}
+
+const handleCreateAgent = () => {
+    // Trigger create agent event, handled by AgentList page listener
+    window.dispatchEvent(new CustomEvent('openAgentEditor', {
+        detail: { mode: 'create' }
+    }))
+}
 
 </script>
 <style lang="less" scoped>
@@ -863,7 +1473,7 @@ const mouseleaveMenu = (path: string) => {
     }
 }
 
-/* 知识库下拉菜单样式 */
+/* Knowledge base dropdown menu styles */
 .kb-dropdown-icon {
     margin-left: auto;
     color: #666;
@@ -979,8 +1589,8 @@ const mouseleaveMenu = (path: string) => {
 }
 </style>
 <style lang="less">
-// 上传操作下拉菜单样式 - 全局样式（因为 TDesign 的下拉菜单挂载到 body 上）
-// 使用更具体的选择器来匹配上传操作下拉菜单
+// Upload operation dropdown menu styles - Global styles (because TDesign dropdown menus are mounted to body)
+// Use more specific selectors to match upload operation dropdown menu
 .t-popup[data-popper-placement^="right"] {
     .t-popup__content {
         .t-dropdown__menu {
@@ -1019,7 +1629,7 @@ const mouseleaveMenu = (path: string) => {
     }
 }
 
-// 退出登录确认框样式
+// Logout confirmation box styles
 :deep(.t-popconfirm) {
     .t-popconfirm__content {
         background: #fff;

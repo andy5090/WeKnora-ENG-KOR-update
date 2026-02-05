@@ -1,23 +1,23 @@
-# 会话管理 API
+# Session Management API
 
-[返回目录](./README.md)
+[Back to Index](./README.md)
 
-| 方法   | 路径                                    | 描述                  |
-| ------ | --------------------------------------- | --------------------- |
-| POST   | `/sessions`                             | 创建会话              |
-| GET    | `/sessions/:id`                         | 获取会话详情          |
-| GET    | `/sessions`                             | 获取租户的会话列表    |
-| PUT    | `/sessions/:id`                         | 更新会话              |
-| DELETE | `/sessions/:id`                         | 删除会话              |
-| DELETE | `/sessions/batch`                       | 批量删除会话          |
-| POST   | `/sessions/:session_id/generate_title`  | 生成会话标题          |
-| POST   | `/sessions/:session_id/stop`            | 停止会话              |
-| GET    | `/sessions/continue-stream/:session_id` | 继续未完成的会话      |
+| Method   | Path                                    | Description                  |
+| -------- | --------------------------------------- | ---------------------------- |
+| POST     | `/sessions`                             | Create session               |
+| GET      | `/sessions/:id`                         | Get session details          |
+| GET      | `/sessions`                             | Get tenant's session list    |
+| PUT      | `/sessions/:id`                         | Update session               |
+| DELETE   | `/sessions/:id`                         | Delete session               |
+| DELETE   | `/sessions/batch`                       | Batch delete sessions        |
+| POST     | `/sessions/:session_id/generate_title`  | Generate session title       |
+| POST     | `/sessions/:session_id/stop`            | Stop session                 |
+| GET      | `/sessions/continue-stream/:session_id` | Continue incomplete session  |
 
 
-## POST `/sessions` - 创建会话
+## POST `/sessions` - Create Session
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/sessions' \
@@ -29,11 +29,11 @@ curl --location 'http://localhost:8080/api/v1/sessions' \
         "max_rounds": 5,
         "enable_rewrite": true,
         "fallback_strategy": "FIXED_RESPONSE",
-        "fallback_response": "对不起，我无法回答这个问题",
+        "fallback_response": "Sorry, I cannot answer this question",
         "embedding_top_k": 10,
         "keyword_threshold": 0.5,
         "vector_threshold": 0.7,
-        "rerank_model_id": "排序模型ID",
+        "rerank_model_id": "Rerank Model ID",
         "rerank_top_k": 3,
         "rerank_threshold": 0.7,
         "summary_model_id": "8aea788c-bb30-4898-809e-e40c14ffb48c",
@@ -44,8 +44,8 @@ curl --location 'http://localhost:8080/api/v1/sessions' \
             "top_p": 0,
             "frequency_penalty": 0,
             "presence_penalty": 0,
-            "prompt": "这是用户和助手之间的对话。xxx",
-            "context_template": "你是一个专业的智能信息检索助手xxx",
+            "prompt": "This is a conversation between user and assistant. xxx",
+            "context_template": "You are a professional intelligent information retrieval assistant xxx",
             "no_match_prefix": "<think>\n</think>\nNO_MATCH",
             "temperature": 0.3,
             "seed": 0,
@@ -56,7 +56,7 @@ curl --location 'http://localhost:8080/api/v1/sessions' \
 }'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -69,11 +69,11 @@ curl --location 'http://localhost:8080/api/v1/sessions' \
         "max_rounds": 5,
         "enable_rewrite": true,
         "fallback_strategy": "FIXED_RESPONSE",
-        "fallback_response": "对不起，我无法回答这个问题",
+        "fallback_response": "Sorry, I cannot answer this question",
         "embedding_top_k": 10,
         "keyword_threshold": 0.5,
         "vector_threshold": 0.7,
-        "rerank_model_id": "排序模型ID",
+        "rerank_model_id": "Rerank Model ID",
         "rerank_top_k": 3,
         "rerank_threshold": 0.7,
         "summary_model_id": "8aea788c-bb30-4898-809e-e40c14ffb48c",
@@ -84,8 +84,8 @@ curl --location 'http://localhost:8080/api/v1/sessions' \
             "top_p": 0,
             "frequency_penalty": 0,
             "presence_penalty": 0,
-            "prompt": "这是用户和助手之间的对话。xxx",
-            "context_template": "你是一个专业的智能信息检索助手xxx",
+            "prompt": "This is a conversation between user and assistant. xxx",
+            "context_template": "You are a professional intelligent information retrieval assistant xxx",
             "no_match_prefix": "<think>\n</think>\nNO_MATCH",
             "temperature": 0.3,
             "seed": 0,
@@ -101,9 +101,9 @@ curl --location 'http://localhost:8080/api/v1/sessions' \
 }
 ```
 
-## GET `/sessions/:id` - 获取会话详情
+## GET `/sessions/:id` - Get Session Details
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/sessions/ceb9babb-1e30-41d7-817d-fd584954304b' \
@@ -111,20 +111,20 @@ curl --location 'http://localhost:8080/api/v1/sessions/ceb9babb-1e30-41d7-817d-f
 --header 'Content-Type: application/json'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
     "data": {
         "id": "ceb9babb-1e30-41d7-817d-fd584954304b",
-        "title": "模型优化策略",
+        "title": "Model Optimization Strategy",
         "description": "",
         "tenant_id": 1,
         "knowledge_base_id": "kb-00000001",
         "max_rounds": 5,
         "enable_rewrite": true,
         "fallback_strategy": "fixed",
-        "fallback_response": "抱歉，我无法回答这个问题。",
+        "fallback_response": "Sorry, I cannot answer this question.",
         "embedding_top_k": 10,
         "keyword_threshold": 0.3,
         "vector_threshold": 0.5,
@@ -139,8 +139,8 @@ curl --location 'http://localhost:8080/api/v1/sessions/ceb9babb-1e30-41d7-817d-f
             "top_p": 0,
             "frequency_penalty": 0,
             "presence_penalty": 0,
-            "prompt": "这是用户和助手之间的对话",
-            "context_template": "你是一个专业的智能信息检索助手",
+            "prompt": "This is a conversation between user and assistant",
+            "context_template": "You are a professional intelligent information retrieval assistant",
             "no_match_prefix": "<think>\n</think>\nNO_MATCH",
             "temperature": 0.3,
             "seed": 0,
@@ -156,9 +156,9 @@ curl --location 'http://localhost:8080/api/v1/sessions/ceb9babb-1e30-41d7-817d-f
 }
 ```
 
-## GET `/sessions?page=&page_size=` - 获取租户的会话列表
+## GET `/sessions?page=&page_size=` - Get Tenant's Session List
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/sessions?page=1&page_size=1' \
@@ -166,7 +166,7 @@ curl --location 'http://localhost:8080/api/v1/sessions?page=1&page_size=1' \
 --header 'Content-Type: application/json'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -180,11 +180,11 @@ curl --location 'http://localhost:8080/api/v1/sessions?page=1&page_size=1' \
             "max_rounds": 5,
             "enable_rewrite": true,
             "fallback_strategy": "FIXED_RESPONSE",
-            "fallback_response": "对不起，我无法回答这个问题",
+            "fallback_response": "Sorry, I cannot answer this question",
             "embedding_top_k": 10,
             "keyword_threshold": 0.5,
             "vector_threshold": 0.7,
-            "rerank_model_id": "排序模型ID",
+            "rerank_model_id": "Rerank Model ID",
             "rerank_top_k": 3,
             "rerank_threshold": 0.7,
             "summary_model_id": "8aea788c-bb30-4898-809e-e40c14ffb48c",
@@ -195,8 +195,8 @@ curl --location 'http://localhost:8080/api/v1/sessions?page=1&page_size=1' \
                 "top_p": 0,
                 "frequency_penalty": 0,
                 "presence_penalty": 0,
-                "prompt": "这是用户和助手之间的对话。xxx",
-                "context_template": "你是一个专业的智能信息检索助手xxx",
+                "prompt": "This is a conversation between user and assistant. xxx",
+                "context_template": "You are a professional intelligent information retrieval assistant xxx",
                 "no_match_prefix": "<think>\n</think>\nNO_MATCH",
                 "temperature": 0.3,
                 "seed": 0,
@@ -214,9 +214,9 @@ curl --location 'http://localhost:8080/api/v1/sessions?page=1&page_size=1' \
 }
 ```
 
-## PUT `/sessions/:id` - 更新会话
+## PUT `/sessions/:id` - Update Session
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location --request PUT 'http://localhost:8080/api/v1/sessions/411d6b70-9a85-4d03-bb74-aab0fd8bd12f' \
@@ -229,11 +229,11 @@ curl --location --request PUT 'http://localhost:8080/api/v1/sessions/411d6b70-9a
     "max_rounds": 5,
     "enable_rewrite": true,
     "fallback_strategy": "FIXED_RESPONSE",
-    "fallback_response": "对不起，我无法回答这个问题",
+    "fallback_response": "Sorry, I cannot answer this question",
     "embedding_top_k": 10,
     "keyword_threshold": 0.5,
     "vector_threshold": 0.7,
-    "rerank_model_id": "排序模型ID",
+    "rerank_model_id": "Rerank Model ID",
     "rerank_top_k": 3,
     "rerank_threshold": 0.7,
     "summary_model_id": "8aea788c-bb30-4898-809e-e40c14ffb48c",
@@ -244,8 +244,8 @@ curl --location --request PUT 'http://localhost:8080/api/v1/sessions/411d6b70-9a
         "top_p": 0,
         "frequency_penalty": 0,
         "presence_penalty": 0,
-        "prompt": "这是用户和助手之间的对话。xxx",
-        "context_template": "你是一个专业的智能信息检索助手xxx",
+        "prompt": "This is a conversation between user and assistant. xxx",
+        "context_template": "You are a professional intelligent information retrieval assistant xxx",
         "no_match_prefix": "<think>\n</think>\nNO_MATCH",
         "temperature": 0.3,
         "seed": 0,
@@ -254,7 +254,7 @@ curl --location --request PUT 'http://localhost:8080/api/v1/sessions/411d6b70-9a
 }'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -267,11 +267,11 @@ curl --location --request PUT 'http://localhost:8080/api/v1/sessions/411d6b70-9a
         "max_rounds": 5,
         "enable_rewrite": true,
         "fallback_strategy": "FIXED_RESPONSE",
-        "fallback_response": "对不起，我无法回答这个问题",
+        "fallback_response": "Sorry, I cannot answer this question",
         "embedding_top_k": 10,
         "keyword_threshold": 0.5,
         "vector_threshold": 0.7,
-        "rerank_model_id": "排序模型ID",
+        "rerank_model_id": "Rerank Model ID",
         "rerank_top_k": 3,
         "rerank_threshold": 0.7,
         "summary_model_id": "8aea788c-bb30-4898-809e-e40c14ffb48c",
@@ -282,8 +282,8 @@ curl --location --request PUT 'http://localhost:8080/api/v1/sessions/411d6b70-9a
             "top_p": 0,
             "frequency_penalty": 0,
             "presence_penalty": 0,
-            "prompt": "这是用户和助手之间的对话。xxx",
-            "context_template": "你是一个专业的智能信息检索助手xxx",
+            "prompt": "This is a conversation between user and assistant. xxx",
+            "context_template": "You are a professional intelligent information retrieval assistant xxx",
             "no_match_prefix": "<think>\n</think>\nNO_MATCH",
             "temperature": 0.3,
             "seed": 0,
@@ -297,9 +297,9 @@ curl --location --request PUT 'http://localhost:8080/api/v1/sessions/411d6b70-9a
 }
 ```
 
-## DELETE `/sessions/:id` - 删除会话
+## DELETE `/sessions/:id` - Delete Session
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location --request DELETE 'http://localhost:8080/api/v1/sessions/411d6b70-9a85-4d03-bb74-aab0fd8bd12f' \
@@ -307,7 +307,7 @@ curl --location --request DELETE 'http://localhost:8080/api/v1/sessions/411d6b70
 --header 'Content-Type: application/json'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -316,9 +316,9 @@ curl --location --request DELETE 'http://localhost:8080/api/v1/sessions/411d6b70
 }
 ```
 
-## DELETE `/sessions/batch` - 批量删除会话
+## DELETE `/sessions/batch` - Batch Delete Sessions
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location --request DELETE 'http://localhost:8080/api/v1/sessions/batch' \
@@ -332,7 +332,7 @@ curl --location --request DELETE 'http://localhost:8080/api/v1/sessions/batch' \
 }'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -341,9 +341,9 @@ curl --location --request DELETE 'http://localhost:8080/api/v1/sessions/batch' \
 }
 ```
 
-## POST `/sessions/:session_id/generate_title` - 生成会话标题
+## POST `/sessions/:session_id/generate_title` - Generate Session Title
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/sessions/ceb9babb-1e30-41d7-817d-fd584954304b/generate_title' \
@@ -353,28 +353,28 @@ curl --location 'http://localhost:8080/api/v1/sessions/ceb9babb-1e30-41d7-817d-f
   "messages": [
     {
       "role": "user",
-      "content": "你好，我想了解关于人工智能的知识"
+      "content": "Hello, I would like to learn about artificial intelligence"
     },
     {
       "role": "assistant",
-      "content": "人工智能是计算机科学的一个分支..."
+      "content": "Artificial intelligence is a branch of computer science..."
     }
   ]
 }'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
-    "data": "模型优化策略",
+    "data": "Model Optimization Strategy",
     "success": true
 }
 ```
 
-## POST `/sessions/:session_id/stop` - 停止会话
+## POST `/sessions/:session_id/stop` - Stop Session
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/sessions/7c966c74-610e-4516-8d5b-05e14b2e4ee0/stop' \
@@ -383,7 +383,7 @@ curl --location 'http://localhost:8080/api/v1/sessions/7c966c74-610e-4516-8d5b-0
 --data '{"message_id":"ebbf7e53-dfe6-44d5-882f-36a4104910b5"}'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -392,12 +392,12 @@ curl --location 'http://localhost:8080/api/v1/sessions/7c966c74-610e-4516-8d5b-0
 }
 ```
 
-## GET `/sessions/continue-stream/:session_id` - 继续未完成的会话
+## GET `/sessions/continue-stream/:session_id` - Continue Incomplete Session
 
-**查询参数**:
-- `message_id`: 从 `/messages/:session_id/load` 接口中获取的 `is_completed` 为 `false` 的消息 ID
+**Query Parameters**:
+- `message_id`: Message ID from `/messages/:session_id/load` endpoint where `is_completed` is `false`
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/sessions/continue-stream/ceb9babb-1e30-41d7-817d-fd584954304b?message_id=b8b90eeb-7dd5-4cf9-81c6-5ebcbd759451' \
@@ -405,5 +405,5 @@ curl --location 'http://localhost:8080/api/v1/sessions/continue-stream/ceb9babb-
 --header 'Content-Type: application/json'
 ```
 
-**响应格式**:
-服务器端事件流（Server-Sent Events），与 `/knowledge-chat/:session_id` 返回结果一致
+**Response Format**:
+Server-Sent Events, consistent with `/knowledge-chat/:session_id` response

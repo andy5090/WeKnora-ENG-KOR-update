@@ -684,7 +684,7 @@ onBeforeUnmount(() => {
         >
           <template #empty>
             <div style="padding: 20px; text-align: center; color: #999;">
-              {{ $t('manualEditor.noDocumentKnowledgeBases') || '暂无可用的文档型知识库，请先创建一个文档型知识库' }}
+              {{ $t('manualEditor.noDocumentKnowledgeBases') || 'No available document knowledge bases, please create a document knowledge base first' }}
             </div>
           </template>
         </t-select>

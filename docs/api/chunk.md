@@ -1,16 +1,16 @@
-# 分块管理 API
+# Chunk Management API
 
-[返回目录](./README.md)
+[Back to Index](./README.md)
 
-| 方法   | 路径                        | 描述                     |
-| ------ | --------------------------- | ------------------------ |
-| GET    | `/chunks/:knowledge_id`     | 获取知识的分块列表       |
-| DELETE | `/chunks/:knowledge_id/:id` | 删除分块                 |
-| DELETE | `/chunks/:knowledge_id`     | 删除知识下的所有分块     |
+| Method   | Path                        | Description                    |
+| -------- | --------------------------- | ------------------------------ |
+| GET      | `/chunks/:knowledge_id`     | List chunks for knowledge      |
+| DELETE   | `/chunks/:knowledge_id/:id` | Delete chunk                   |
+| DELETE   | `/chunks/:knowledge_id`     | Delete all chunks under knowledge |
 
-## GET `/chunks/:knowledge_id?page=&page_size=` - 获取知识的分块列表
+## GET `/chunks/:knowledge_id?page=&page_size=` - List Chunks for Knowledge
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/chunks/4c4e7c1a-09cf-485b-a7b5-24b8cdc5acf5?page=1&page_size=1' \
@@ -18,7 +18,7 @@ curl --location 'http://localhost:8080/api/v1/chunks/4c4e7c1a-09cf-485b-a7b5-24b
 --header 'Content-Type: application/json'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -29,7 +29,7 @@ curl --location 'http://localhost:8080/api/v1/chunks/4c4e7c1a-09cf-485b-a7b5-24b
             "knowledge_id": "4c4e7c1a-09cf-485b-a7b5-24b8cdc5acf5",
             "knowledge_base_id": "kb-00000001",
             "tag_id": "",
-            "content": "彗星xxxx",
+            "content": "Comet xxxx",
             "chunk_index": 0,
             "is_enabled": true,
             "status": 2,
@@ -56,9 +56,9 @@ curl --location 'http://localhost:8080/api/v1/chunks/4c4e7c1a-09cf-485b-a7b5-24b
 }
 ```
 
-## DELETE `/chunks/:knowledge_id/:id` - 删除分块
+## DELETE `/chunks/:knowledge_id/:id` - Delete Chunk
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location --request DELETE 'http://localhost:8080/api/v1/chunks/4c4e7c1a-09cf-485b-a7b5-24b8cdc5acf5/df10b37d-cd05-4b14-ba8a-e1bd0eb3bbd7' \
@@ -66,7 +66,7 @@ curl --location --request DELETE 'http://localhost:8080/api/v1/chunks/4c4e7c1a-0
 --header 'Content-Type: application/json'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -75,9 +75,9 @@ curl --location --request DELETE 'http://localhost:8080/api/v1/chunks/4c4e7c1a-0
 }
 ```
 
-## DELETE `/chunks/:knowledge_id` - 删除知识下的所有分块
+## DELETE `/chunks/:knowledge_id` - Delete All Chunks Under Knowledge
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location --request DELETE 'http://localhost:8080/api/v1/chunks/4c4e7c1a-09cf-485b-a7b5-24b8cdc5acf5' \
@@ -85,7 +85,7 @@ curl --location --request DELETE 'http://localhost:8080/api/v1/chunks/4c4e7c1a-0
 --header 'Content-Type: application/json'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {

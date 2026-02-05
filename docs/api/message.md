@@ -1,31 +1,31 @@
-# 消息管理 API
+# Message Management API
 
-[返回目录](./README.md)
+[Back to Index](./README.md)
 
-| 方法   | 路径                         | 描述                     |
-| ------ | ---------------------------- | ------------------------ |
-| GET    | `/messages/:session_id/load` | 获取最近的会话消息列表   |
-| DELETE | `/messages/:session_id/:id`  | 删除消息                 |
+| Method   | Path                         | Description                    |
+| -------- | ---------------------------- | ------------------------------ |
+| GET      | `/messages/:session_id/load` | Get recent session message list |
+| DELETE   | `/messages/:session_id/:id`  | Delete message                 |
 
-## GET `/messages/:session_id/load` - 获取最近的会话消息列表
+## GET `/messages/:session_id/load` - Get Recent Session Message List
 
-**查询参数**:
+**Query Parameters**:
 
-- `before_time`: 上一次拉取的最早一条消息的 created_at 字段，为空拉取最近的消息
-- `limit`: 每页条数(默认 20)
+- `before_time`: The `created_at` field of the earliest message from the last pull, empty to pull recent messages
+- `limit`: Items per page (default 20)
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location --request GET 'http://localhost:8080/api/v1/messages/ceb9babb-1e30-41d7-817d-fd584954304b/load?limit=3&before_time=2030-08-12T14%3A35%3A42.123456789Z' \
 --header 'X-API-Key: sk-vQHV2NZI_LK5W7wHQvH3yGYExX8YnhaHwZipUYbiZKCYJbBQ' \
 --header 'Content-Type: application/json' \
 --data '{
-    "query": "彗尾的形状"
+    "query": "Comet tail shape"
 }'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -34,15 +34,15 @@ curl --location --request GET 'http://localhost:8080/api/v1/messages/ceb9babb-1e
             "id": "b8b90eeb-7dd5-4cf9-81c6-5ebcbd759451",
             "session_id": "ceb9babb-1e30-41d7-817d-fd584954304b",
             "request_id": "hCA8SDjxcAvv",
-            "content": "<think>\n好的",
+            "content": "<think>\nOkay",
             "role": "assistant",
             "knowledge_references": [
                 {
                     "id": "c8347bef-127f-4a22-b962-edf5a75386ec",
-                    "content": "彗星xxx",
+                    "content": "Comet xxx",
                     "knowledge_id": "a6790b93-4700-4676-bd48-0d4804e1456b",
                     "chunk_index": 0,
-                    "knowledge_title": "彗星.txt",
+                    "knowledge_title": "Comet.txt",
                     "start_at": 0,
                     "end_at": 2760,
                     "seq": 0,
@@ -57,15 +57,15 @@ curl --location --request GET 'http://localhost:8080/api/v1/messages/ceb9babb-1e
                     "chunk_type": "text",
                     "parent_chunk_id": "",
                     "image_info": "",
-                    "knowledge_filename": "彗星.txt",
+                    "knowledge_filename": "Comet.txt",
                     "knowledge_source": ""
                 },
                 {
                     "id": "fa3aadee-cadb-4a84-9941-c839edc3e626",
-                    "content": "# 文档名称\n彗星.txt\n\n# 摘要\n彗星是由冰和尘埃构成的太阳系小天体，接近太阳时会释放气体形成彗发和彗尾。其轨道周期差异大，来源包括柯伊伯带和奥尔特云。彗星与小行星的区别逐渐模糊，部分彗星已失去挥发物质，类似小行星。目前已知彗星数量众多，且存在系外彗星。彗星在古代被视为凶兆，现代研究揭示其复杂结构与起源。",
+                    "content": "# Document Name\nComet.txt\n\n# Summary\nComets are small solar system bodies composed of ice and dust. When approaching the sun, they release gas forming a coma and tail. Their orbital periods vary greatly, with sources including the Kuiper Belt and Oort Cloud. The distinction between comets and asteroids is gradually blurring, with some comets having lost volatile material, similar to asteroids. Currently, numerous comets are known, and exocomets exist. Comets were considered omens in ancient times, and modern research reveals their complex structure and origin.",
                     "knowledge_id": "a6790b93-4700-4676-bd48-0d4804e1456b",
                     "chunk_index": 6,
-                    "knowledge_title": "彗星.txt",
+                    "knowledge_title": "Comet.txt",
                     "start_at": 0,
                     "end_at": 0,
                     "seq": 6,
@@ -76,7 +76,7 @@ curl --location --request GET 'http://localhost:8080/api/v1/messages/ceb9babb-1e
                     "chunk_type": "summary",
                     "parent_chunk_id": "c8347bef-127f-4a22-b962-edf5a75386ec",
                     "image_info": "",
-                    "knowledge_filename": "彗星.txt",
+                    "knowledge_filename": "Comet.txt",
                     "knowledge_source": ""
                 }
             ],
@@ -90,7 +90,7 @@ curl --location --request GET 'http://localhost:8080/api/v1/messages/ceb9babb-1e
             "id": "7fa136ae-a045-424e-baac-52113d92ae94",
             "session_id": "ceb9babb-1e30-41d7-817d-fd584954304b",
             "request_id": "3475c004-0ada-4306-9d30-d7f5efce50d2",
-            "content": "彗尾的形状",
+            "content": "Comet tail shape",
             "role": "user",
             "knowledge_references": [],
             "agent_steps": [],
@@ -103,15 +103,15 @@ curl --location --request GET 'http://localhost:8080/api/v1/messages/ceb9babb-1e
             "id": "9bcafbcf-a758-40af-a9a3-c4d8e0f49439",
             "session_id": "ceb9babb-1e30-41d7-817d-fd584954304b",
             "request_id": "3475c004-0ada-4306-9d30-d7f5efce50d2",
-            "content": "<think>\n好的",
+            "content": "<think>\nOkay",
             "role": "assistant",
             "knowledge_references": [
                 {
                     "id": "c8347bef-127f-4a22-b962-edf5a75386ec",
-                    "content": "彗星xxx",
+                    "content": "Comet xxx",
                     "knowledge_id": "a6790b93-4700-4676-bd48-0d4804e1456b",
                     "chunk_index": 0,
-                    "knowledge_title": "彗星.txt",
+                    "knowledge_title": "Comet.txt",
                     "start_at": 0,
                     "end_at": 2760,
                     "seq": 0,
@@ -126,15 +126,15 @@ curl --location --request GET 'http://localhost:8080/api/v1/messages/ceb9babb-1e
                     "chunk_type": "text",
                     "parent_chunk_id": "",
                     "image_info": "",
-                    "knowledge_filename": "彗星.txt",
+                    "knowledge_filename": "Comet.txt",
                     "knowledge_source": ""
                 },
                 {
                     "id": "fa3aadee-cadb-4a84-9941-c839edc3e626",
-                    "content": "# 文档名称\n彗星.txt\n\n# 摘要\n彗星是由冰和尘埃构成的太阳系小天体，接近太阳时会释放气体形成彗发和彗尾。其轨道周期差异大，来源包括柯伊伯带和奥尔特云。彗星与小行星的区别逐渐模糊，部分彗星已失去挥发物质，类似小行星。目前已知彗星数量众多，且存在系外彗星。彗星在古代被视为凶兆，现代研究揭示其复杂结构与起源。",
+                    "content": "# Document Name\nComet.txt\n\n# Summary\nComets are small solar system bodies composed of ice and dust. When approaching the sun, they release gas forming a coma and tail. Their orbital periods vary greatly, with sources including the Kuiper Belt and Oort Cloud. The distinction between comets and asteroids is gradually blurring, with some comets having lost volatile material, similar to asteroids. Currently, numerous comets are known, and exocomets exist. Comets were considered omens in ancient times, and modern research reveals their complex structure and origin.",
                     "knowledge_id": "a6790b93-4700-4676-bd48-0d4804e1456b",
                     "chunk_index": 6,
-                    "knowledge_title": "彗星.txt",
+                    "knowledge_title": "Comet.txt",
                     "start_at": 0,
                     "end_at": 0,
                     "seq": 6,
@@ -145,7 +145,7 @@ curl --location --request GET 'http://localhost:8080/api/v1/messages/ceb9babb-1e
                     "chunk_type": "summary",
                     "parent_chunk_id": "c8347bef-127f-4a22-b962-edf5a75386ec",
                     "image_info": "",
-                    "knowledge_filename": "彗星.txt",
+                    "knowledge_filename": "Comet.txt",
                     "knowledge_source": ""
                 }
             ],
@@ -160,9 +160,9 @@ curl --location --request GET 'http://localhost:8080/api/v1/messages/ceb9babb-1e
 }
 ```
 
-## DELETE `/messages/:session_id/:id` - 删除消息
+## DELETE `/messages/:session_id/:id` - Delete Message
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location --request DELETE 'http://localhost:8080/api/v1/messages/ceb9babb-1e30-41d7-817d-fd584954304b/9bcafbcf-a758-40af-a9a3-c4d8e0f49439' \
@@ -170,7 +170,7 @@ curl --location --request DELETE 'http://localhost:8080/api/v1/messages/ceb9babb
 --header 'Content-Type: application/json'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {

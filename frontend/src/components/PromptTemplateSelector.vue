@@ -15,7 +15,7 @@
             <t-loading size="small" />
           </div>
           <div v-else-if="templates.length === 0" class="template-empty">
-            {{ $t('promptTemplate.noTemplates') || '暂无模板' }}
+            {{ $t('promptTemplate.noTemplates') || 'No templates' }}
           </div>
           <div v-else class="template-list">
             <div
@@ -60,7 +60,7 @@ import { getPromptTemplates, type PromptTemplate, type PromptTemplatesConfig } f
 const props = defineProps<{
   type: 'systemPrompt' | 'contextTemplate' | 'rewriteSystem' | 'rewriteUser' | 'fallback';
   hasKnowledgeBase?: boolean;
-  position?: 'inline' | 'corner';  // inline: 行内显示, corner: 输入框右下角
+  position?: 'inline' | 'corner';  // inline: inline display, corner: bottom right corner of input box
 }>();
 
 const emit = defineEmits<{
@@ -73,7 +73,7 @@ const templatesConfig = ref<PromptTemplatesConfig | null>(null);
 
 const handleVisibleChange = async (visible: boolean) => {
   popupVisible.value = visible;
-  // 首次打开时加载模板
+  // Load templates when first opened
   if (visible && !templatesConfig.value) {
     await loadTemplates();
   }
@@ -92,7 +92,7 @@ const loadTemplates = async () => {
   }
 };
 
-// 根据类型获取对应的模板列表
+// Get corresponding template list based on type
 const templates = computed<PromptTemplate[]>(() => {
   if (!templatesConfig.value) return [];
   
@@ -117,9 +117,9 @@ const selectTemplate = (template: PromptTemplate) => {
   popupVisible.value = false;
 };
 
-// 预加载模板（可选）
+// Preload templates (optional)
 onMounted(() => {
-  // 可以在这里预加载，也可以等用户点击时再加载
+  // Can preload here, or wait for user click to load
   // loadTemplates();
 });
 </script>

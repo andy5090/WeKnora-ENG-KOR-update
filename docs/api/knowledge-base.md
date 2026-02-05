@@ -1,20 +1,20 @@
-# 知识库管理 API
+# Knowledge Base Management API
 
-[返回目录](./README.md)
+[Back to Index](./README.md)
 
-| 方法   | 路径                                 | 描述                     |
-| ------ | ------------------------------------ | ------------------------ |
-| POST   | `/knowledge-bases`                   | 创建知识库               |
-| GET    | `/knowledge-bases`                   | 获取知识库列表           |
-| GET    | `/knowledge-bases/:id`               | 获取知识库详情           |
-| PUT    | `/knowledge-bases/:id`               | 更新知识库               |
-| DELETE | `/knowledge-bases/:id`               | 删除知识库               |
-| POST   | `/knowledge-bases/copy`              | 拷贝知识库               |
-| GET    | `/knowledge-bases/:id/hybrid-search` | 混合搜索（向量+关键词）  |
+| Method   | Path                                 | Description                    |
+| -------- | ------------------------------------ | ------------------------------ |
+| POST     | `/knowledge-bases`                   | Create knowledge base          |
+| GET      | `/knowledge-bases`                   | List knowledge bases           |
+| GET      | `/knowledge-bases/:id`               | Get knowledge base details     |
+| PUT      | `/knowledge-bases/:id`               | Update knowledge base          |
+| DELETE   | `/knowledge-bases/:id`               | Delete knowledge base          |
+| POST     | `/knowledge-bases/copy`              | Copy knowledge base            |
+| GET      | `/knowledge-bases/:id/hybrid-search` | Hybrid search (vector + keyword) |
 
-## POST `/knowledge-bases` - 创建知识库
+## POST `/knowledge-bases` - Create Knowledge Base
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/knowledge-bases' \
@@ -52,7 +52,7 @@ curl --location 'http://localhost:8080/api/v1/knowledge-bases' \
 }'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -95,9 +95,9 @@ curl --location 'http://localhost:8080/api/v1/knowledge-bases' \
 }
 ```
 
-## GET `/knowledge-bases` - 获取知识库列表
+## GET `/knowledge-bases` - List Knowledge Bases
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/knowledge-bases' \
@@ -105,7 +105,7 @@ curl --location 'http://localhost:8080/api/v1/knowledge-bases' \
 --header 'X-API-Key: sk-vQHV2NZI_LK5W7wHQvH3yGYExX8YnhaHwZipUYbiZKCYJbBQ'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -156,9 +156,9 @@ curl --location 'http://localhost:8080/api/v1/knowledge-bases' \
 }
 ```
 
-## GET `/knowledge-bases/:id` - 获取知识库详情
+## GET `/knowledge-bases/:id` - Get Knowledge Base Details
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001' \
@@ -166,7 +166,7 @@ curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001' \
 --header 'X-API-Key: sk-vQHV2NZI_LK5W7wHQvH3yGYExX8YnhaHwZipUYbiZKCYJbBQ'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -215,9 +215,9 @@ curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001' \
 }
 ```
 
-## PUT `/knowledge-bases/:id` - 更新知识库
+## PUT `/knowledge-bases/:id` - Update Knowledge Base
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location --request PUT 'http://localhost:8080/api/v1/knowledge-bases/b5829e4a-3845-4624-a7fb-ea3b35e843b0' \
@@ -248,7 +248,7 @@ curl --location --request PUT 'http://localhost:8080/api/v1/knowledge-bases/b582
 }'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -297,9 +297,9 @@ curl --location --request PUT 'http://localhost:8080/api/v1/knowledge-bases/b582
 }
 ```
 
-## DELETE `/knowledge-bases/:id` - 删除知识库
+## DELETE `/knowledge-bases/:id` - Delete Knowledge Base
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location --request DELETE 'http://localhost:8080/api/v1/knowledge-bases/b5829e4a-3845-4624-a7fb-ea3b35e843b0' \
@@ -307,7 +307,7 @@ curl --location --request DELETE 'http://localhost:8080/api/v1/knowledge-bases/b
 --header 'X-API-Key: sk-vQHV2NZI_LK5W7wHQvH3yGYExX8YnhaHwZipUYbiZKCYJbBQ'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -316,44 +316,44 @@ curl --location --request DELETE 'http://localhost:8080/api/v1/knowledge-bases/b
 }
 ```
 
-## GET `/knowledge-bases/:id/hybrid-search` - 混合搜索
+## GET `/knowledge-bases/:id/hybrid-search` - Hybrid Search
 
-执行向量搜索和关键词搜索的混合检索。
+Perform hybrid retrieval combining vector search and keyword search.
 
-**注意**：此接口使用 GET 方法但需要 JSON 请求体。
+**Note**: This endpoint uses GET method but requires a JSON request body.
 
-**请求参数**：
-- `query_text`: 搜索查询文本（必填）
-- `vector_threshold`: 向量相似度阈值（0-1，可选）
-- `keyword_threshold`: 关键词匹配阈值（可选）
-- `match_count`: 返回结果数量（可选）
-- `disable_keywords_match`: 是否禁用关键词匹配（可选）
-- `disable_vector_match`: 是否禁用向量匹配（可选）
+**Request Parameters**:
+- `query_text`: Search query text (required)
+- `vector_threshold`: Vector similarity threshold (0-1, optional)
+- `keyword_threshold`: Keyword matching threshold (optional)
+- `match_count`: Number of results to return (optional)
+- `disable_keywords_match`: Whether to disable keyword matching (optional)
+- `disable_vector_match`: Whether to disable vector matching (optional)
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location --request GET 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/hybrid-search' \
 --header 'X-API-Key: sk-vQHV2NZI_LK5W7wHQvH3yGYExX8YnhaHwZipUYbiZKCYJbBQ' \
 --header 'Content-Type: application/json' \
 --data '{
-    "query_text": "如何使用知识库",
+    "query_text": "How to use knowledge base",
     "vector_threshold": 0.5,
     "match_count": 10
 }'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
     "data": [
         {
             "id": "chunk-00000001",
-            "content": "知识库是用于存储和检索知识的系统...",
+            "content": "Knowledge base is a system for storing and retrieving knowledge...",
             "knowledge_id": "knowledge-00000001",
             "chunk_index": 0,
-            "knowledge_title": "知识库使用指南",
+            "knowledge_title": "Knowledge Base Usage Guide",
             "start_at": 0,
             "end_at": 500,
             "seq": 1,

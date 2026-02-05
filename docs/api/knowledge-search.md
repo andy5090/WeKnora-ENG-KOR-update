@@ -1,63 +1,63 @@
-# 知识搜索 API
+# Knowledge Search API
 
-[返回目录](./README.md)
+[Back to Index](./README.md)
 
-| 方法 | 路径               | 描述     |
-| ---- | ------------------ | -------- |
-| POST | `/knowledge-search` | 知识搜索 |
+| Method | Path               | Description     |
+| ------ | ------------------ | --------------- |
+| POST   | `/knowledge-search` | Knowledge search |
 
-## POST `/knowledge-search` - 知识搜索
+## POST `/knowledge-search` - Knowledge Search
 
-在知识库中搜索相关内容（不使用 LLM 总结），直接返回检索结果。
+Search for related content in knowledge bases (without LLM summarization), directly returning retrieval results.
 
-**请求参数**:
-- `query`: 搜索查询文本（必填）
-- `knowledge_base_id`: 单个知识库ID（向后兼容）
-- `knowledge_base_ids`: 知识库ID列表（支持多知识库搜索）
-- `knowledge_ids`: 指定知识（文件）ID列表
+**Request Parameters**:
+- `query`: Search query text (required)
+- `knowledge_base_id`: Single knowledge base ID (backward compatible)
+- `knowledge_base_ids`: Knowledge base ID list (supports multi-knowledge base search)
+- `knowledge_ids`: Specified knowledge (file) ID list
 
-**请求**:
+**Request**:
 
 ```curl
-# 搜索单个知识库
+# Search single knowledge base
 curl --location 'http://localhost:8080/api/v1/knowledge-search' \
 --header 'X-API-Key: sk-vQHV2NZI_LK5W7wHQvH3yGYExX8YnhaHwZipUYbiZKCYJbBQ' \
 --header 'Content-Type: application/json' \
 --data '{
-    "query": "如何使用知识库",
+    "query": "How to use knowledge base",
     "knowledge_base_id": "kb-00000001"
 }'
 
-# 搜索多个知识库
+# Search multiple knowledge bases
 curl --location 'http://localhost:8080/api/v1/knowledge-search' \
 --header 'X-API-Key: sk-vQHV2NZI_LK5W7wHQvH3yGYExX8YnhaHwZipUYbiZKCYJbBQ' \
 --header 'Content-Type: application/json' \
 --data '{
-    "query": "如何使用知识库",
+    "query": "How to use knowledge base",
     "knowledge_base_ids": ["kb-00000001", "kb-00000002"]
 }'
 
-# 搜索指定文件
+# Search specified files
 curl --location 'http://localhost:8080/api/v1/knowledge-search' \
 --header 'X-API-Key: sk-vQHV2NZI_LK5W7wHQvH3yGYExX8YnhaHwZipUYbiZKCYJbBQ' \
 --header 'Content-Type: application/json' \
 --data '{
-    "query": "如何使用知识库",
+    "query": "How to use knowledge base",
     "knowledge_ids": ["4c4e7c1a-09cf-485b-a7b5-24b8cdc5acf5"]
 }'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
     "data": [
         {
             "id": "chunk-00000001",
-            "content": "知识库是用于存储和检索知识的系统...",
+            "content": "Knowledge base is a system for storing and retrieving knowledge...",
             "knowledge_id": "knowledge-00000001",
             "chunk_index": 0,
-            "knowledge_title": "知识库使用指南",
+            "knowledge_title": "Knowledge Base Usage Guide",
             "start_at": 0,
             "end_at": 500,
             "seq": 1,

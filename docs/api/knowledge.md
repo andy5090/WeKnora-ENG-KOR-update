@@ -1,41 +1,41 @@
-# 知识管理 API
+# Knowledge Management API
 
-[返回目录](./README.md)
+[Back to Index](./README.md)
 
-| 方法   | 路径                                  | 描述                     |
-| ------ | ------------------------------------- | ------------------------ |
-| POST   | `/knowledge-bases/:id/knowledge/file` | 从文件创建知识           |
-| POST   | `/knowledge-bases/:id/knowledge/url`  | 从 URL 创建知识          |
-| POST   | `/knowledge-bases/:id/knowledge/manual` | 创建手工 Markdown 知识 |
-| GET    | `/knowledge-bases/:id/knowledge`      | 获取知识库下的知识列表   |
-| GET    | `/knowledge/:id`                      | 获取知识详情             |
-| DELETE | `/knowledge/:id`                      | 删除知识                 |
-| GET    | `/knowledge/:id/download`             | 下载知识文件             |
-| PUT    | `/knowledge/:id`                      | 更新知识                 |
-| PUT    | `/knowledge/manual/:id`               | 更新手工 Markdown 知识   |
-| PUT    | `/knowledge/image/:id/:chunk_id`      | 更新图像分块信息         |
-| PUT    | `/knowledge/tags`                     | 批量更新知识标签         |
-| GET    | `/knowledge/batch`                    | 批量获取知识             |
+| Method   | Path                                  | Description                    |
+| -------- | ------------------------------------- | ------------------------------ |
+| POST     | `/knowledge-bases/:id/knowledge/file` | Create knowledge from file      |
+| POST     | `/knowledge-bases/:id/knowledge/url`  | Create knowledge from URL       |
+| POST     | `/knowledge-bases/:id/knowledge/manual` | Create manual Markdown knowledge |
+| GET      | `/knowledge-bases/:id/knowledge`      | List knowledge in knowledge base |
+| GET      | `/knowledge/:id`                      | Get knowledge details           |
+| DELETE   | `/knowledge/:id`                      | Delete knowledge                |
+| GET      | `/knowledge/:id/download`             | Download knowledge file         |
+| PUT      | `/knowledge/:id`                      | Update knowledge                |
+| PUT      | `/knowledge/manual/:id`               | Update manual Markdown knowledge |
+| PUT      | `/knowledge/image/:id/:chunk_id`      | Update image chunk information   |
+| PUT      | `/knowledge/tags`                     | Batch update knowledge tags      |
+| GET      | `/knowledge/batch`                    | Batch get knowledge              |
 
-## POST `/knowledge-bases/:id/knowledge/file` - 从文件创建知识
+## POST `/knowledge-bases/:id/knowledge/file` - Create Knowledge from File
 
-**表单参数**：
-- `file`: 上传的文件（必填）
-- `metadata`: JSON 格式的元数据（可选）
-- `enable_multimodel`: 是否启用多模态处理（可选，true/false）
-- `fileName`: 自定义文件名，用于文件夹上传时保留路径（可选）
+**Form Parameters**:
+- `file`: Uploaded file (required)
+- `metadata`: JSON format metadata (optional)
+- `enable_multimodel`: Whether to enable multimodal processing (optional, true/false)
+- `fileName`: Custom file name, used to preserve path when uploading folders (optional)
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/knowledge/file' \
 --header 'Content-Type: application/json' \
 --header 'X-API-Key: sk-vQHV2NZI_LK5W7wHQvH3yGYExX8YnhaHwZipUYbiZKCYJbBQ' \
---form 'file=@"/Users/xxxx/tests/彗星.txt"' \
+--form 'file=@"/Users/xxxx/tests/Comet.txt"' \
 --form 'enable_multimodel="true"'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -44,13 +44,13 @@ curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/knowle
         "tenant_id": 1,
         "knowledge_base_id": "kb-00000001",
         "type": "file",
-        "title": "彗星.txt",
+        "title": "Comet.txt",
         "description": "",
         "source": "",
         "parse_status": "processing",
         "enable_status": "disabled",
         "embedding_model_id": "dff7bc94-7885-4dd1-bfd5-bd96e4df2fc3",
-        "file_name": "彗星.txt",
+        "file_name": "Comet.txt",
         "file_type": "txt",
         "file_size": 7710,
         "file_hash": "d69476ddbba45223a5e97e786539952c",
@@ -67,9 +67,9 @@ curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/knowle
 }
 ```
 
-## POST `/knowledge-bases/:id/knowledge/url` - 从 URL 创建知识
+## POST `/knowledge-bases/:id/knowledge/url` - Create Knowledge from URL
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/knowledge/url' \
@@ -81,7 +81,7 @@ curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/knowle
 }'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -113,14 +113,14 @@ curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/knowle
 }
 ```
 
-## GET `/knowledge-bases/:id/knowledge` - 获取知识库下的知识列表
+## GET `/knowledge-bases/:id/knowledge` - List Knowledge in Knowledge Base
 
-**查询参数**：
-- `page`: 页码（默认 1）
-- `page_size`: 每页条数（默认 20）
-- `tag_id`: 按标签ID筛选（可选）
+**Query Parameters**:
+- `page`: Page number (default 1)
+- `page_size`: Items per page (default 20)
+- `tag_id`: Filter by tag ID (optional)
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/knowledge?page_size=1&page=1&tag_id=tag-00000001' \
@@ -128,7 +128,7 @@ curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/knowle
 --header 'Content-Type: application/json'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -165,11 +165,11 @@ curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/knowle
 }
 ```
 
-注：parse_status 包含 `pending/processing/failed/completed` 四种状态
+Note: parse_status includes four states: `pending/processing/failed/completed`
 
-## GET `/knowledge/:id` - 获取知识详情
+## GET `/knowledge/:id` - Get Knowledge Details
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/knowledge/4c4e7c1a-09cf-485b-a7b5-24b8cdc5acf5' \
@@ -177,7 +177,7 @@ curl --location 'http://localhost:8080/api/v1/knowledge/4c4e7c1a-09cf-485b-a7b5-
 --header 'Content-Type: application/json'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -186,13 +186,13 @@ curl --location 'http://localhost:8080/api/v1/knowledge/4c4e7c1a-09cf-485b-a7b5-
         "tenant_id": 1,
         "knowledge_base_id": "kb-00000001",
         "type": "file",
-        "title": "彗星.txt",
-        "description": "彗星是由冰和尘埃构成的太阳系小天体，接近太阳时会形成彗发和彗尾。其轨道周期差异大，来源包括柯伊伯带和奥尔特云。彗星与小行星的区别逐渐模糊，部分彗星已失去挥发物质，类似小行星。截至2019年，已知彗星超6600颗，数量庞大。彗星在古代被视为凶兆，现代研究揭示其复杂结构与起源。",
+        "title": "Comet.txt",
+        "description": "Comets are small solar system bodies composed of ice and dust. When approaching the sun, they form a coma and tail. Their orbital periods vary greatly, with sources including the Kuiper Belt and Oort Cloud. The distinction between comets and asteroids is gradually blurring, with some comets having lost volatile material, similar to asteroids. As of 2019, over 6,600 comets are known, a large number. Comets were considered omens in ancient times, and modern research reveals their complex structure and origin.",
         "source": "",
         "parse_status": "completed",
         "enable_status": "enabled",
         "embedding_model_id": "dff7bc94-7885-4dd1-bfd5-bd96e4df2fc3",
-        "file_name": "彗星.txt",
+        "file_name": "Comet.txt",
         "file_type": "txt",
         "file_size": 7710,
         "file_hash": "d69476ddbba45223a5e97e786539952c",
@@ -209,9 +209,9 @@ curl --location 'http://localhost:8080/api/v1/knowledge/4c4e7c1a-09cf-485b-a7b5-
 }
 ```
 
-## GET `/knowledge/batch` - 批量获取知识
+## GET `/knowledge/batch` - Batch Get Knowledge
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/knowledge/batch?ids=9c8af585-ae15-44ce-8f73-45ad18394651&ids=4c4e7c1a-09cf-485b-a7b5-24b8cdc5acf5' \
@@ -219,7 +219,7 @@ curl --location 'http://localhost:8080/api/v1/knowledge/batch?ids=9c8af585-ae15-
 --header 'Content-Type: application/json'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -253,13 +253,13 @@ curl --location 'http://localhost:8080/api/v1/knowledge/batch?ids=9c8af585-ae15-
             "tenant_id": 1,
             "knowledge_base_id": "kb-00000001",
             "type": "file",
-            "title": "彗星.txt",
-            "description": "彗星是由冰和尘埃构成的太阳系小天体，接近太阳时会形成彗发和彗尾。其轨道周期差异大，来源包括柯伊伯带和奥尔特云。彗星与小行星的区别逐渐模糊，部分彗星已失去挥发物质，类似小行星。截至2019年，已知彗星超6600颗，数量庞大。彗星在古代被视为凶兆，现代研究揭示其复杂结构与起源。",
+            "title": "Comet.txt",
+            "description": "Comets are small solar system bodies composed of ice and dust. When approaching the sun, they form a coma and tail. Their orbital periods vary greatly, with sources including the Kuiper Belt and Oort Cloud. The distinction between comets and asteroids is gradually blurring, with some comets having lost volatile material, similar to asteroids. As of 2019, over 6,600 comets are known, a large number. Comets were considered omens in ancient times, and modern research reveals their complex structure and origin.",
             "source": "",
             "parse_status": "completed",
             "enable_status": "enabled",
             "embedding_model_id": "dff7bc94-7885-4dd1-bfd5-bd96e4df2fc3",
-            "file_name": "彗星.txt",
+            "file_name": "Comet.txt",
             "file_type": "txt",
             "file_size": 7710,
             "file_hash": "d69476ddbba45223a5e97e786539952c",
@@ -277,9 +277,9 @@ curl --location 'http://localhost:8080/api/v1/knowledge/batch?ids=9c8af585-ae15-
 }
 ```
 
-## DELETE `/knowledge/:id` - 删除知识
+## DELETE `/knowledge/:id` - Delete Knowledge
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location --request DELETE 'http://localhost:8080/api/v1/knowledge/9c8af585-ae15-44ce-8f73-45ad18394651' \
@@ -287,7 +287,7 @@ curl --location --request DELETE 'http://localhost:8080/api/v1/knowledge/9c8af58
 --header 'Content-Type: application/json'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -296,9 +296,9 @@ curl --location --request DELETE 'http://localhost:8080/api/v1/knowledge/9c8af58
 }
 ```
 
-## GET `/knowledge/:id/download` - 下载知识文件
+## GET `/knowledge/:id/download` - Download Knowledge File
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/knowledge/4c4e7c1a-09cf-485b-a7b5-24b8cdc5acf5/download' \
@@ -306,7 +306,7 @@ curl --location 'http://localhost:8080/api/v1/knowledge/4c4e7c1a-09cf-485b-a7b5-
 --header 'Content-Type: application/json'
 ```
 
-**响应**:
+**Response**:
 
 ```
 attachment

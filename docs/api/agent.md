@@ -1,59 +1,59 @@
-# 智能体（Agent）管理 API
+# Agent Management API
 
-[返回目录](./README.md)
+[Back to Index](./README.md)
 
-## 概述
+## Overview
 
-智能体 API 用于管理自定义智能体（Custom Agent）。系统提供了内置智能体，同时支持用户创建自定义智能体来满足不同的业务场景需求。
+The Agent API is used to manage custom agents. The system provides built-in agents and also supports users creating custom agents to meet different business scenario requirements.
 
-### 内置智能体
+### Built-in Agents
 
-系统默认提供以下内置智能体：
+The system provides the following built-in agents by default:
 
-| ID | 名称 | 描述 | 模式 |
-|----|------|------|------|
-| `builtin-quick-answer` | 快速问答 | 基于知识库的 RAG 问答，快速准确地回答问题 | quick-answer |
-| `builtin-smart-reasoning` | 智能推理 | ReAct 推理框架，支持多步思考和工具调用 | smart-reasoning |
-| `builtin-data-analyst` | 数据分析师 | 专业数据分析智能体，支持 CSV/Excel 文件的 SQL 查询与统计分析 | smart-reasoning |
+| ID | Name | Description | Mode |
+|----|------|-------------|------|
+| `builtin-quick-answer` | Quick Answer | RAG-based Q&A using knowledge base, answering questions quickly and accurately | quick-answer |
+| `builtin-smart-reasoning` | Smart Reasoning | ReAct reasoning framework supporting multi-step thinking and tool calling | smart-reasoning |
+| `builtin-data-analyst` | Data Analyst | Professional data analysis agent supporting SQL queries and statistical analysis for CSV/Excel files | smart-reasoning |
 
-### 智能体模式
+### Agent Modes
 
-| 模式 | 说明 |
-|------|------|
-| `quick-answer` | RAG 模式，快速问答，直接基于知识库检索结果生成回答 |
-| `smart-reasoning` | ReAct 模式，支持多步推理和工具调用 |
+| Mode | Description |
+|------|-------------|
+| `quick-answer` | RAG mode for quick Q&A, directly generating answers based on knowledge base retrieval results |
+| `smart-reasoning` | ReAct mode supporting multi-step reasoning and tool calling |
 
-## API 列表
+## API List
 
-| 方法 | 路径 | 描述 |
-|------|------|------|
-| POST | `/agents` | 创建智能体 |
-| GET | `/agents` | 获取智能体列表 |
-| GET | `/agents/:id` | 获取智能体详情 |
-| PUT | `/agents/:id` | 更新智能体 |
-| DELETE | `/agents/:id` | 删除智能体 |
-| POST | `/agents/:id/copy` | 复制智能体 |
-| GET | `/agents/placeholders` | 获取占位符定义 |
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/agents` | Create agent |
+| GET | `/agents` | List agents |
+| GET | `/agents/:id` | Get agent details |
+| PUT | `/agents/:id` | Update agent |
+| DELETE | `/agents/:id` | Delete agent |
+| POST | `/agents/:id/copy` | Copy agent |
+| GET | `/agents/placeholders` | Get placeholder definitions |
 
 ---
 
-## POST `/agents` - 创建智能体
+## POST `/agents` - Create Agent
 
-创建新的自定义智能体。
+Create a new custom agent.
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/agents' \
 --header 'X-API-Key: your_api_key' \
 --header 'Content-Type: application/json' \
 --data '{
-    "name": "我的智能体",
-    "description": "自定义智能体描述",
+    "name": "My Agent",
+    "description": "Custom agent description",
     "avatar": "🤖",
     "config": {
         "agent_mode": "smart-reasoning",
-        "system_prompt": "你是一个专业的助手...",
+        "system_prompt": "You are a professional assistant...",
         "temperature": 0.7,
         "max_iterations": 10,
         "kb_selection_mode": "all",
@@ -64,31 +64,31 @@ curl --location 'http://localhost:8080/api/v1/agents' \
 }'
 ```
 
-**请求参数**:
+**Request Parameters**:
 
-| 参数 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| `name` | string | 是 | 智能体名称 |
-| `description` | string | 否 | 智能体描述 |
-| `avatar` | string | 否 | 智能体头像（emoji 或图标名称） |
-| `config` | object | 否 | 智能体配置，详见 [配置参数](#配置参数) |
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `name` | string | Yes | Agent name |
+| `description` | string | No | Agent description |
+| `avatar` | string | No | Agent avatar (emoji or icon name) |
+| `config` | object | No | Agent configuration, see [Configuration Parameters](#configuration-parameters) |
 
-**响应**:
+**Response**:
 
 ```json
 {
     "success": true,
     "data": {
         "id": "550e8400-e29b-41d4-a716-446655440000",
-        "name": "我的智能体",
-        "description": "自定义智能体描述",
+        "name": "My Agent",
+        "description": "Custom agent description",
         "avatar": "🤖",
         "is_builtin": false,
         "tenant_id": 1,
         "created_by": "user-123",
         "config": {
             "agent_mode": "smart-reasoning",
-            "system_prompt": "你是一个专业的助手...",
+            "system_prompt": "You are a professional assistant...",
             "temperature": 0.7,
             "max_iterations": 10
         },
@@ -98,27 +98,27 @@ curl --location 'http://localhost:8080/api/v1/agents' \
 }
 ```
 
-**错误响应**:
+**Error Response**:
 
-| 状态码 | 错误码 | 错误 | 说明 |
-|--------|--------|------|------|
-| 400 | 1000 | Bad Request | 请求参数错误或智能体名称为空 |
-| 500 | 1007 | Internal Server Error | 服务器内部错误 |
+| Status Code | Error Code | Error | Description |
+|-------------|------------|-------|-------------|
+| 400 | 1000 | Bad Request | Invalid request parameters or agent name is empty |
+| 500 | 1007 | Internal Server Error | Internal server error |
 
 ---
 
-## GET `/agents` - 获取智能体列表
+## GET `/agents` - List Agents
 
-获取当前租户的所有智能体，包括内置智能体和自定义智能体。
+Get all agents for the current tenant, including built-in agents and custom agents.
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/agents' \
 --header 'X-API-Key: your_api_key'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -126,15 +126,15 @@ curl --location 'http://localhost:8080/api/v1/agents' \
     "data": [
         {
             "id": "builtin-quick-answer",
-            "name": "快速问答",
-            "description": "基于知识库的 RAG 问答，快速准确地回答问题",
+            "name": "Quick Answer",
+            "description": "RAG-based Q&A using knowledge base, answering questions quickly and accurately",
             "avatar": "💬",
             "is_builtin": true,
             "tenant_id": 10000,
             "created_by": "",
             "config": {
                 "agent_mode": "quick-answer",
-                "system_prompt": "你是一个专业的智能信息检索助手，名为WeKnora。你犹如专业的高级秘书，依据检索到的信息回答用户问题，不能利用任何先验知识。\n当用户提出问题时，助手会基于特定的信息进行解答。助手首先在心中思考推理过程，然后向用户提供答案。\n",
+                "system_prompt": "You are a professional intelligent information retrieval assistant named WeKnora. You are like a professional senior secretary, answering user questions based on retrieved information, without using any prior knowledge.\nWhen users ask questions, the assistant will answer based on specific information. The assistant first thinks through the reasoning process, then provides answers to users.\n",
                 "context_template": "...",
                 "model_id": "...",
                 "rerank_model_id": "",
@@ -174,8 +174,8 @@ curl --location 'http://localhost:8080/api/v1/agents' \
         },
         {
             "id": "builtin-smart-reasoning",
-            "name": "智能推理",
-            "description": "ReAct 推理框架，支持多步思考和工具调用",
+            "name": "Smart Reasoning",
+            "description": "ReAct reasoning framework supporting multi-step thinking and tool calling",
             "is_builtin": true,
             "config": {
                 "agent_mode": "smart-reasoning"
@@ -184,8 +184,8 @@ curl --location 'http://localhost:8080/api/v1/agents' \
         },
         {
             "id": "550e8400-e29b-41d4-a716-446655440000",
-            "name": "我的智能体",
-            "description": "自定义智能体描述",
+            "name": "My Agent",
+            "description": "Custom agent description",
             "is_builtin": false,
             "config": {
                 "agent_mode": "smart-reasoning"
@@ -197,32 +197,32 @@ curl --location 'http://localhost:8080/api/v1/agents' \
 
 ---
 
-## GET `/agents/:id` - 获取智能体详情
+## GET `/agents/:id` - Get Agent Details
 
-根据 ID 获取智能体的详细信息。
+Get detailed information about an agent by ID.
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/agents/builtin-quick-answer' \
 --header 'X-API-Key: your_api_key'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
     "success": true,
     "data": {
         "id": "builtin-quick-answer",
-        "name": "快速问答",
-        "description": "基于知识库的 RAG 问答，快速准确地回答问题",
+        "name": "Quick Answer",
+        "description": "RAG-based Q&A using knowledge base, answering questions quickly and accurately",
         "is_builtin": true,
         "tenant_id": 1,
         "config": {
             "agent_mode": "quick-answer",
             "system_prompt": "",
-            "context_template": "请根据以下参考资料回答用户问题...",
+            "context_template": "Please answer the user's question based on the following reference materials...",
             "temperature": 0.7,
             "max_completion_tokens": 2048,
             "kb_selection_mode": "all",
@@ -236,29 +236,29 @@ curl --location 'http://localhost:8080/api/v1/agents/builtin-quick-answer' \
 }
 ```
 
-**错误响应**:
+**Error Response**:
 
-| 状态码 | 错误码 | 错误 | 说明 |
-|--------|--------|------|------|
-| 400 | 1000 | Bad Request | 智能体 ID 为空 |
-| 404 | 1003 | Not Found | 智能体不存在 |
-| 500 | 1007 | Internal Server Error | 服务器内部错误 |
+| Status Code | Error Code | Error | Description |
+|-------------|------------|-------|-------------|
+| 400 | 1000 | Bad Request | Agent ID is empty |
+| 404 | 1003 | Not Found | Agent not found |
+| 500 | 1007 | Internal Server Error | Internal server error |
 
 ---
 
-## PUT `/agents/:id` - 更新智能体
+## PUT `/agents/:id` - Update Agent
 
-更新智能体的名称、描述和配置。内置智能体不可修改。
+Update agent name, description, and configuration. Built-in agents cannot be modified.
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location --request PUT 'http://localhost:8080/api/v1/agents/550e8400-e29b-41d4-a716-446655440000' \
 --header 'X-API-Key: your_api_key' \
 --header 'Content-Type: application/json' \
 --data '{
-    "name": "更新后的智能体",
-    "description": "更新后的描述",
+    "name": "Updated Agent",
+    "description": "Updated description",
     "config": {
         "agent_mode": "smart-reasoning",
         "temperature": 0.8,
@@ -267,24 +267,24 @@ curl --location --request PUT 'http://localhost:8080/api/v1/agents/550e8400-e29b
 }'
 ```
 
-**请求参数**:
+**Request Parameters**:
 
-| 参数 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| `name` | string | 否 | 智能体名称 |
-| `description` | string | 否 | 智能体描述 |
-| `avatar` | string | 否 | 智能体头像 |
-| `config` | object | 否 | 智能体配置 |
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `name` | string | No | Agent name |
+| `description` | string | No | Agent description |
+| `avatar` | string | No | Agent avatar |
+| `config` | object | No | Agent configuration |
 
-**响应**:
+**Response**:
 
 ```json
 {
     "success": true,
     "data": {
         "id": "550e8400-e29b-41d4-a716-446655440000",
-        "name": "更新后的智能体",
-        "description": "更新后的描述",
+        "name": "Updated Agent",
+        "description": "Updated description",
         "config": {
             "agent_mode": "smart-reasoning",
             "temperature": 0.8,
@@ -295,29 +295,29 @@ curl --location --request PUT 'http://localhost:8080/api/v1/agents/550e8400-e29b
 }
 ```
 
-**错误响应**:
+**Error Response**:
 
-| 状态码 | 错误码 | 错误 | 说明 |
-|--------|--------|------|------|
-| 400 | 1000 | Bad Request | 请求参数错误或智能体名称为空 |
-| 403 | 1002 | Forbidden | 无法修改内置智能体的基本信息 |
-| 404 | 1003 | Not Found | 智能体不存在 |
-| 500 | 1007 | Internal Server Error | 服务器内部错误 |
+| Status Code | Error Code | Error | Description |
+|-------------|------------|-------|-------------|
+| 400 | 1000 | Bad Request | Invalid request parameters or agent name is empty |
+| 403 | 1002 | Forbidden | Cannot modify basic information of built-in agent |
+| 404 | 1003 | Not Found | Agent not found |
+| 500 | 1007 | Internal Server Error | Internal server error |
 
 ---
 
-## DELETE `/agents/:id` - 删除智能体
+## DELETE `/agents/:id` - Delete Agent
 
-删除指定的自定义智能体。内置智能体不可删除。
+Delete the specified custom agent. Built-in agents cannot be deleted.
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location --request DELETE 'http://localhost:8080/api/v1/agents/550e8400-e29b-41d4-a716-446655440000' \
 --header 'X-API-Key: your_api_key'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -326,37 +326,37 @@ curl --location --request DELETE 'http://localhost:8080/api/v1/agents/550e8400-e
 }
 ```
 
-**错误响应**:
+**Error Response**:
 
-| 状态码 | 错误码 | 错误 | 说明 |
-|--------|--------|------|------|
-| 400 | 1000 | Bad Request | 智能体 ID 为空 |
-| 403 | 1002 | Forbidden | 无法删除内置智能体 |
-| 404 | 1003 | Not Found | 智能体不存在 |
-| 500 | 1007 | Internal Server Error | 服务器内部错误 |
+| Status Code | Error Code | Error | Description |
+|-------------|------------|-------|-------------|
+| 400 | 1000 | Bad Request | Agent ID is empty |
+| 403 | 1002 | Forbidden | Cannot delete built-in agent |
+| 404 | 1003 | Not Found | Agent not found |
+| 500 | 1007 | Internal Server Error | Internal server error |
 
 ---
 
-## POST `/agents/:id/copy` - 复制智能体
+## POST `/agents/:id/copy` - Copy Agent
 
-复制指定的智能体，创建一个新的副本。支持复制内置智能体。
+Copy the specified agent to create a new copy. Supports copying built-in agents.
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location --request POST 'http://localhost:8080/api/v1/agents/builtin-smart-reasoning/copy' \
 --header 'X-API-Key: your_api_key'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
     "success": true,
     "data": {
         "id": "660e8400-e29b-41d4-a716-446655440001",
-        "name": "智能推理 (副本)",
-        "description": "ReAct 推理框架，支持多步思考和工具调用",
+        "name": "Smart Reasoning (Copy)",
+        "description": "ReAct reasoning framework supporting multi-step thinking and tool calling",
         "is_builtin": false,
         "config": {
             "agent_mode": "smart-reasoning",
@@ -368,28 +368,28 @@ curl --location --request POST 'http://localhost:8080/api/v1/agents/builtin-smar
 }
 ```
 
-**错误响应**:
+**Error Response**:
 
-| 状态码 | 错误码 | 错误 | 说明 |
-|--------|--------|------|------|
-| 400 | 1000 | Bad Request | 智能体 ID 为空 |
-| 404 | 1003 | Not Found | 智能体不存在 |
-| 500 | 1007 | Internal Server Error | 服务器内部错误 |
+| Status Code | Error Code | Error | Description |
+|-------------|------------|-------|-------------|
+| 400 | 1000 | Bad Request | Agent ID is empty |
+| 404 | 1003 | Not Found | Agent not found |
+| 500 | 1007 | Internal Server Error | Internal server error |
 
 ---
 
-## GET `/agents/placeholders` - 获取占位符定义
+## GET `/agents/placeholders` - Get Placeholder Definitions
 
-获取所有可用的提示词占位符定义，按字段类型分组。这些占位符可用于系统提示词和上下文模板中。
+Get all available prompt placeholder definitions, grouped by field type. These placeholders can be used in system prompts and context templates.
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/agents/placeholders' \
 --header 'X-API-Key: your_api_key'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -408,103 +408,103 @@ curl --location 'http://localhost:8080/api/v1/agents/placeholders' \
 
 ---
 
-## 配置参数
+## Configuration Parameters
 
-智能体的 `config` 对象支持以下配置项：
+The agent's `config` object supports the following configuration items:
 
-### 基础设置
+### Basic Settings
 
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `agent_mode` | string | - | 智能体模式：`quick-answer`（RAG）或 `smart-reasoning`（ReAct） |
-| `system_prompt` | string | - | 系统提示词，支持使用占位符 |
-| `context_template` | string | - | 上下文模板（仅 quick-answer 模式使用） |
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `agent_mode` | string | - | Agent mode: `quick-answer` (RAG) or `smart-reasoning` (ReAct) |
+| `system_prompt` | string | - | System prompt, supports placeholders |
+| `context_template` | string | - | Context template (only used in quick-answer mode) |
 
-### 模型设置
+### Model Settings
 
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `model_id` | string | - | 对话模型 ID |
-| `rerank_model_id` | string | - | 重排序模型 ID |
-| `temperature` | float | 0.7 | 温度参数（0-1） |
-| `max_completion_tokens` | int | 2048 | 最大生成 token 数 |
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `model_id` | string | - | Conversation model ID |
+| `rerank_model_id` | string | - | Rerank model ID |
+| `temperature` | float | 0.7 | Temperature parameter (0-1) |
+| `max_completion_tokens` | int | 2048 | Maximum completion tokens |
 
-### Agent 模式设置
+### Agent Mode Settings
 
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `max_iterations` | int | 10 | ReAct 最大迭代次数 |
-| `allowed_tools` | []string | - | 允许使用的工具列表 |
-| `reflection_enabled` | bool | false | 是否启用反思 |
-| `mcp_selection_mode` | string | - | MCP 服务选择模式：`all`/`selected`/`none` |
-| `mcp_services` | []string | - | 选中的 MCP 服务 ID 列表 |
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `max_iterations` | int | 10 | Maximum ReAct iterations |
+| `allowed_tools` | []string | - | List of allowed tools |
+| `reflection_enabled` | bool | false | Whether reflection is enabled |
+| `mcp_selection_mode` | string | - | MCP service selection mode: `all`/`selected`/`none` |
+| `mcp_services` | []string | - | Selected MCP service ID list |
 
-### 知识库设置
+### Knowledge Base Settings
 
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `kb_selection_mode` | string | - | 知识库选择模式：`all`/`selected`/`none` |
-| `knowledge_bases` | []string | - | 关联的知识库 ID 列表 |
-| `supported_file_types` | []string | - | 支持的文件类型（如 `["csv", "xlsx"]`） |
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `kb_selection_mode` | string | - | Knowledge base selection mode: `all`/`selected`/`none` |
+| `knowledge_bases` | []string | - | Associated knowledge base ID list |
+| `supported_file_types` | []string | - | Supported file types (e.g., `["csv", "xlsx"]`) |
 
-### FAQ 策略设置
+### FAQ Strategy Settings
 
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `faq_priority_enabled` | bool | true | FAQ 优先策略开关 |
-| `faq_direct_answer_threshold` | float | 0.9 | FAQ 直接回答阈值 |
-| `faq_score_boost` | float | 1.2 | FAQ 分数加成系数 |
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `faq_priority_enabled` | bool | true | FAQ priority strategy switch |
+| `faq_direct_answer_threshold` | float | 0.9 | FAQ direct answer threshold |
+| `faq_score_boost` | float | 1.2 | FAQ score boost multiplier |
 
-### 网络搜索设置
+### Web Search Settings
 
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `web_search_enabled` | bool | true | 是否启用网络搜索 |
-| `web_search_max_results` | int | 5 | 网络搜索最大结果数 |
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `web_search_enabled` | bool | true | Whether web search is enabled |
+| `web_search_max_results` | int | 5 | Maximum web search results |
 
-### 多轮对话设置
+### Multi-turn Conversation Settings
 
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `multi_turn_enabled` | bool | true | 是否启用多轮对话 |
-| `history_turns` | int | 5 | 保留的历史轮次数 |
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `multi_turn_enabled` | bool | true | Whether multi-turn conversation is enabled |
+| `history_turns` | int | 5 | Number of history turns to keep |
 
-### 检索策略设置
+### Retrieval Strategy Settings
 
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `embedding_top_k` | int | 10 | 向量检索 TopK |
-| `keyword_threshold` | float | 0.3 | 关键词检索阈值 |
-| `vector_threshold` | float | 0.5 | 向量检索阈值 |
-| `rerank_top_k` | int | 5 | 重排序 TopK |
-| `rerank_threshold` | float | 0.5 | 重排序阈值 |
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `embedding_top_k` | int | 10 | Vector retrieval TopK |
+| `keyword_threshold` | float | 0.3 | Keyword retrieval threshold |
+| `vector_threshold` | float | 0.5 | Vector retrieval threshold |
+| `rerank_top_k` | int | 5 | Rerank TopK |
+| `rerank_threshold` | float | 0.5 | Rerank threshold |
 
-### 高级设置
+### Advanced Settings
 
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `enable_query_expansion` | bool | true | 是否启用查询扩展 |
-| `enable_rewrite` | bool | true | 是否启用多轮对话查询改写 |
-| `rewrite_prompt_system` | string | - | 改写系统提示词 |
-| `rewrite_prompt_user` | string | - | 改写用户提示词模板 |
-| `fallback_strategy` | string | model | 回退策略：`fixed`（固定回复）或 `model`（模型生成） |
-| `fallback_response` | string | - | 固定回退回复（`fallback_strategy` 为 `fixed` 时使用） |
-| `fallback_prompt` | string | - | 回退提示词（`fallback_strategy` 为 `model` 时使用） |
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `enable_query_expansion` | bool | true | Whether query expansion is enabled |
+| `enable_rewrite` | bool | true | Whether multi-turn conversation query rewriting is enabled |
+| `rewrite_prompt_system` | string | - | Rewrite system prompt |
+| `rewrite_prompt_user` | string | - | Rewrite user prompt template |
+| `fallback_strategy` | string | model | Fallback strategy: `fixed` (fixed response) or `model` (model generation) |
+| `fallback_response` | string | - | Fixed fallback response (used when `fallback_strategy` is `fixed`) |
+| `fallback_prompt` | string | - | Fallback prompt (used when `fallback_strategy` is `model`) |
 
 ---
 
-## 使用 Agent 进行问答
+## Using Agent for Q&A
 
-创建或获取智能体后，可以通过 `/agent-chat/:session_id` 接口使用智能体进行问答。详情请参考 [聊天功能 API](./chat.md)。
+After creating or obtaining an agent, you can use the agent for Q&A through the `/agent-chat/:session_id` endpoint. For details, please refer to [Chat API](./chat.md).
 
-在问答请求中使用 `agent_id` 参数指定要使用的智能体：
+Use the `agent_id` parameter in the Q&A request to specify the agent to use:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/agent-chat/session-123' \
 --header 'X-API-Key: your_api_key' \
 --header 'Content-Type: application/json' \
 --data '{
-    "query": "帮我分析一下这份数据",
+    "query": "Help me analyze this data",
     "agent_enabled": true,
     "agent_id": "builtin-data-analyst"
 }'
