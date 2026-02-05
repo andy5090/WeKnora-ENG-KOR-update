@@ -8,7 +8,7 @@
         </div>
     </div>
     
-    <!-- 知识库编辑器（创建/编辑统一组件） -->
+    <!-- Knowledge base editor (unified component for create/edit) -->
     <KnowledgeBaseEditorModal 
       :visible="uiStore.showKBEditorModal"
       :mode="uiStore.kbEditorMode"
@@ -47,16 +47,16 @@ async function createNewSession(value: string, modelId: string, mentionedItems: 
     const selectedKbs = settingsStore.settings.selectedKnowledgeBases || [];
     const selectedFiles = settingsStore.settings.selectedFiles || [];
 
-    // 构建 session 数据，包含 Agent 配置
+    // Build session data, including Agent configuration
     const sessionData: any = {};
     
-    // 添加 Agent 配置（知识库信息在 agent_config 中）
+    // Add Agent configuration (knowledge base information is in agent_config)
     sessionData.agent_config = {
         enabled: true,
         max_iterations: settingsStore.agentConfig.maxIterations,
         temperature: settingsStore.agentConfig.temperature,
-        knowledge_bases: selectedKbs,  // 所有选中的知识库
-        knowledge_ids: selectedFiles,  // 所有选中的普通知识/文件
+        knowledge_bases: selectedKbs,  // All selected knowledge bases
+        knowledge_ids: selectedFiles,  // All selected regular knowledge/files
         allowed_tools: settingsStore.agentConfig.allowedTools
     };
 

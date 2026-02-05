@@ -7,7 +7,7 @@ export const useUIStore = defineStore('ui', {
     kbEditorMode: 'create' as 'create' | 'edit',
     currentKBId: null as string | null,
     kbEditorType: 'document' as 'document' | 'faq',
-    // 当前选中的分类ID，用于文件上传时传递
+    // Currently selected category ID, used when uploading files
     selectedTagId: '__untagged__' as string,
     kbEditorInitialSection: null as string | null,
     settingsInitialSection: null as string | null,
@@ -105,7 +105,7 @@ export const useUIStore = defineStore('ui', {
       this.manualEditorOnSuccess = null
     },
 
-    // 设置当前选中的分类ID
+    // Set currently selected category ID
     setSelectedTagId(tagId: string) {
       this.selectedTagId = tagId
     }

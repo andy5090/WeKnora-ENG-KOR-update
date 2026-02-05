@@ -80,13 +80,13 @@ const router = createRouter({
   ],
 });
 
-// 路由守卫：检查认证状态和系统初始化状态
+// Route guard: check authentication status and system initialization status
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
   
-  // 如果访问的是登录页面或初始化页面，直接放行
+  // If accessing login page or initialization page, allow directly
   if (to.meta.requiresAuth === false || to.meta.requiresInit === false) {
-    // 如果已登录用户访问登录页面，重定向到知识库列表页面
+    // If logged-in user accesses login page, redirect to knowledge base list page
     if (to.path === '/login' && authStore.isLoggedIn) {
       next('/platform/knowledge-bases')
       return
@@ -95,25 +95,25 @@ router.beforeEach(async (to, from, next) => {
     return
   }
 
-  // 检查用户认证状态
+  // Check user authentication status
   if (to.meta.requiresAuth !== false) {
     if (!authStore.isLoggedIn) {
-      // 未登录，跳转到登录页面
+      // Not logged in, redirect to login page
       next('/login')
       return
     }
 
-    // 验证Token有效性
+    // Validate token validity
     // try {
     //   const { valid } = await validateToken()
     //   if (!valid) {
-    //     // Token无效，清空认证信息并跳转到登录页面
+    //     // Token invalid, clear authentication info and redirect to login page
     //     authStore.logout()
     //     next('/login')
     //     return
     //   }
     // } catch (error) {
-    //   console.error('Token验证失败:', error)
+    //   console.error('Token validation failed:', error)
     //   authStore.logout()
     //   next('/login')
     //   return

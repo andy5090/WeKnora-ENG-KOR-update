@@ -1,6 +1,6 @@
 import { MessagePlugin } from "tdesign-vue-next";
 
-// 声明全局运行时配置类型
+// Declare global runtime configuration type
 declare global {
   interface Window {
     __RUNTIME_CONFIG__?: {
@@ -9,8 +9,8 @@ declare global {
   }
 }
 
-// 从运行时配置获取最大文件大小(MB)，支持 Docker 环境动态配置
-// 优先级：运行时配置 > 构建时环境变量 > 默认值 50MB
+// Get maximum file size (MB) from runtime configuration, supports dynamic configuration in Docker environment
+// Priority: runtime configuration > build-time environment variable > default value 50MB
 const MAX_FILE_SIZE_MB = window.__RUNTIME_CONFIG__?.MAX_FILE_SIZE_MB 
   || Number(import.meta.env.VITE_MAX_FILE_SIZE_MB) 
   || 50;
@@ -44,7 +44,7 @@ export function kbFileTypeVerification(file: any, silent = false) {
   let type = file.name.substring(file.name.lastIndexOf(".") + 1);
   if (!validTypes.includes(type)) {
     if (!silent) {
-      MessagePlugin.error("文件类型错误！");
+      MessagePlugin.error("Invalid file type!");
     }
     return true;
   }
@@ -53,13 +53,13 @@ export function kbFileTypeVerification(file: any, silent = false) {
     file.size > MAX_FILE_SIZE_BYTES
   ) {
     if (!silent) {
-      MessagePlugin.error(`pdf/doc文件不能超过${MAX_FILE_SIZE_MB}M！`);
+      MessagePlugin.error(`PDF/DOC files cannot exceed ${MAX_FILE_SIZE_MB}MB!`);
     }
     return true;
   }
   if ((type == "txt" || type == "md") && file.size > MAX_FILE_SIZE_BYTES) {
     if (!silent) {
-      MessagePlugin.error(`txt/md文件不能超过${MAX_FILE_SIZE_MB}M！`);
+      MessagePlugin.error(`TXT/MD files cannot exceed ${MAX_FILE_SIZE_MB}MB!`);
     }
     return true;
   }

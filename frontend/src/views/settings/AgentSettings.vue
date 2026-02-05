@@ -217,7 +217,7 @@
       <t-tab-panel value="normal" :label="$t('conversationSettings.normalMode')">
         <div class="tab-content">
           <div class="settings-group">
-            <!-- System Prompt（普通模式，自定义开关） -->
+            <!-- System Prompt (Normal mode, custom toggle) -->
             <div class="setting-row vertical">
               <div class="setting-info">
                 <label>{{ $t('conversationSettings.systemPrompt.label') }}</label>
@@ -242,7 +242,7 @@
               </div>
             </div>
 
-            <!-- Context Template（普通模式） -->
+            <!-- Context Template (Normal mode) -->
             <div class="setting-row vertical">
               <div class="setting-info">
                 <label>{{ $t('conversationSettings.contextTemplate.label') }}</label>
@@ -784,7 +784,7 @@ const saveConversationConfig = async (partial: Partial<ConversationConfig>, toas
   }
 }
 
-// 计算 Agent 是否就绪
+// Calculate if Agent is ready
 const isAgentReady = computed(() => {
   return (
     localAllowedTools.value.length > 0 &&
@@ -804,7 +804,7 @@ const buildAgentConfigPayload = (overrides: Partial<AgentConfig> = {}): AgentCon
   ...overrides,
 })
 
-// 是否缺少模型配置
+// Whether model configuration is missing
 const needsModelConfig = computed(() => {
   return (
     (!localSummaryModelId.value || localSummaryModelId.value.trim() === '') ||
@@ -812,7 +812,7 @@ const needsModelConfig = computed(() => {
   )
 })
 
-// Agent 状态提示消息
+// Agent status prompt message
 const agentStatusMessage = computed(() => {
   const missing: string[] = []
   
@@ -835,7 +835,7 @@ const agentStatusMessage = computed(() => {
   return t('agentSettings.status.pleaseConfigure', { items: missing.join('、') })
 })
 
-// 跳转到模型配置
+// Navigate to model configuration
 const handleGoToModelSettings = () => {
   router.push('/platform/settings')
 
@@ -1667,7 +1667,7 @@ const handleFallbackPromptChange = async () => {
   }
 }
 
-// 模板选择处理函数
+// Template selection handler function
 const handleAgentSystemPromptTemplateSelect = (template: string) => {
   localSystemPrompt.value = template
 }

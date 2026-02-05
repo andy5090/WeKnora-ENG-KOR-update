@@ -1,6 +1,6 @@
 import { get, post, put, del, postUpload, getDown } from "../../utils/request";
 
-// 知识库管理 API（列表、创建、获取、更新、删除、复制）
+// Knowledge base management API (list, create, get, update, delete, copy)
 export function listKnowledgeBases() {
   return get(`/api/v1/knowledge-bases`);
 }
@@ -39,8 +39,8 @@ export function copyKnowledgeBase(data: { source_id: string; target_id?: string 
   return post(`/api/v1/knowledge-bases/copy`, data);
 }
 
-// 知识文件 API（基于具体知识库）
-// data.tag_id: 可选，指定知识所属的分类ID
+// Knowledge file API (based on specific knowledge base)
+// data.tag_id: optional, specifies the category ID the knowledge belongs to
 export function uploadKnowledgeFile(kbId: string, data: { file: File; tag_id?: string; [key: string]: any } = { file: new File([], '') }, onProgress?: (progressEvent: any) => void) {
   const formData = new FormData();
   Object.keys(data).forEach(key => {
@@ -49,14 +49,14 @@ export function uploadKnowledgeFile(kbId: string, data: { file: File; tag_id?: s
   return postUpload(`/api/v1/knowledge-bases/${kbId}/knowledge/file`, formData, onProgress);
 }
 
-// 从URL创建知识
-// data.tag_id: 可选，指定知识所属的分类ID
+// Create knowledge from URL
+// data.tag_id: optional, specifies the category ID the knowledge belongs to
 export function createKnowledgeFromURL(kbId: string, data: { url: string; enable_multimodel?: boolean; tag_id?: string }) {
   return post(`/api/v1/knowledge-bases/${kbId}/knowledge/url`, data);
 }
 
-// 手工创建知识
-// data.tag_id: 可选，指定知识所属的分类ID
+// Manually create knowledge
+// data.tag_id: optional, specifies the category ID the knowledge belongs to
 export function createManualKnowledge(kbId: string, data: { title: string; content: string; status: string; tag_id?: string }) {
   return post(`/api/v1/knowledge-bases/${kbId}/knowledge/manual`, data);
 }

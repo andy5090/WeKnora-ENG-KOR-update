@@ -591,7 +591,7 @@ const handleSave = async (targetStatus: ManualStatus) => {
     if (mode.value === 'edit' && knowledgeId.value) {
       response = await updateManualKnowledge(knowledgeId.value, payload)
     } else {
-      // 创建新知识时，从 store 获取当前选中的分类ID
+      // When creating new knowledge, get the currently selected category ID from store
       const tagIdToUpload = uiStore.selectedTagId !== '__untagged__' ? uiStore.selectedTagId : undefined
       if (tagIdToUpload) {
         payload.tag_id = tagIdToUpload
@@ -1049,7 +1049,7 @@ onBeforeUnmount(() => {
 </style>
 
 <style lang="less">
-// 全局样式：确保 select 下拉列表在 dialog 之上
+// Global styles: Ensure select dropdown list is above dialog
 .t-popup {
   z-index: 2600 !important;
 }

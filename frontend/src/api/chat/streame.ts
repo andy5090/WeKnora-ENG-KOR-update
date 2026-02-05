@@ -5,48 +5,48 @@ import { generateRandomString } from '@/utils/index';
 
 
 interface StreamOptions {
-  // 请求方法 (默认POST)
+  // Request method (default POST)
   method?: 'GET' | 'POST'
-  // 请求头
+  // Request headers
   headers?: Record<string, string>
-  // 请求体自动序列化
+  // Request body auto-serialization
   body?: Record<string, any>
-  // 流式渲染间隔 (ms)
+  // Streaming render interval (ms)
   chunkInterval?: number
 }
 
 export function useStream() {
-  // 响应式状态
-  const output = ref('')              // 显示内容
-  const isStreaming = ref(false)      // 流状态
-  const isLoading = ref(false)        // 初始加载
-  const error = ref<string | null>(null)// 错误信息
+  // Reactive state
+  const output = ref('')              // Display content
+  const isStreaming = ref(false)      // Streaming state
+  const isLoading = ref(false)        // Initial loading
+  const error = ref<string | null>(null)// Error message
   let controller = new AbortController()
 
-  // 流式渲染缓冲
+  // Streaming render buffer
   let buffer: string[] = []
   let renderTimer: number | null = null
 
-  // 启动流式请求
+  // Start streaming request
   const startStream = async (params: { session_id: any; query: any; knowledge_base_ids?: string[]; knowledge_ids?: string[]; agent_enabled?: boolean; agent_id?: string; web_search_enabled?: boolean; summary_model_id?: string; mcp_service_ids?: string[]; mentioned_items?: Array<{id: string; name: string; type: string; kb_type?: string}>; method: string; url: string }) => {
-    // 重置状态
+    // Reset state
     output.value = '';
     error.value = null;
     isStreaming.value = true;
     isLoading.value = true;
 
-    // 获取API配置
+    // Get API configuration
     const apiUrl = import.meta.env.VITE_IS_DOCKER ? "" : "http://localhost:8080";
     
-    // 获取JWT Token
+    // Get JWT token
     const token = localStorage.getItem('weknora_token');
     if (!token) {
-      error.value = "未找到登录令牌，请重新登录";
+      error.value = "Login token not found, please login again";
       stopStream();
       return;
     }
 
-    // 获取跨租户访问请求头
+    // Get cross-tenant access request header
     const selectedTenantId = localStorage.getItem('weknora_selected_tenant_id');
     const defaultTenantId = localStorage.getItem('weknora_tenant');
     let tenantIdHeader: string | null = null;
@@ -131,15 +131,15 @@ export function useStream() {
         },
 
         onmessage: (ev) => {
-          buffer.push(JSON.parse(ev.data)); // 数据存入缓冲
-          // 执行自定义处理
+          buffer.push(JSON.parse(ev.data)); // Store data in buffer
+          // Execute custom processing
           if (chunkHandler) {
             chunkHandler(JSON.parse(ev.data));
           }
         },
 
         onerror: (err) => {
-          throw new Error(`流式连接失败: ${err}`);
+          throw new Error(`Streaming connection failed: ${err}`);
         },
 
         onclose: () => {
@@ -153,30 +153,30 @@ export function useStream() {
   }
 
   let chunkHandler: ((data: any) => void) | null = null
-  // 注册块处理器
+  // Register chunk handler
   const onChunk = (handler: () => void) => {
     chunkHandler = handler
   }
 
 
-  // 停止流
+  // Stop stream
   const stopStream = () => {
     controller.abort();
-    controller = new AbortController(); // 重置控制器（如需重新发起）
+    controller = new AbortController(); // Reset controller (if need to restart)
     isStreaming.value = false;
     isLoading.value = false;
   }
 
-  // 组件卸载时自动清理
+  // Auto cleanup when component unmounts
   onUnmounted(stopStream)
 
   return {
-    output,          // 显示内容
-    isStreaming,     // 是否在流式传输中
-    isLoading,       // 初始连接状态
+    output,          // Display content
+    isStreaming,     // Whether streaming
+    isLoading,       // Initial connection state
     error,
     onChunk,
-    startStream,     // 启动流
-    stopStream       // 手动停止
+    startStream,     // Start stream
+    stopStream       // Manual stop
   }
 }

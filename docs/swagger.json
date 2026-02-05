@@ -168,7 +168,7 @@
             }
           },
           "401": {
-            "description": "未授权",
+            "description": "Unauthorized",
             "schema": {
               "$ref": "#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError"
             }
@@ -313,7 +313,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "only通过Chunk IDgettingChunk details（不requiresknowledge_id）",
+        "description": "Get chunk details only by Chunk ID (does not require knowledge_id)",
         "consumes": [
           "application/json"
         ],
@@ -366,7 +366,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "Delete chunkinGeneratequestions",
+        "description": "Delete chunk in Generate questions",
         "consumes": [
           "application/json"
         ],
@@ -433,7 +433,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "gettingspecifiedKnowledgeunderallChunk list，supportspagination",
+        "description": "Get all Chunk list under specified Knowledge, supports pagination",
         "consumes": [
           "application/json"
         ],
@@ -443,7 +443,7 @@
         "tags": [
           "Chunk Management"
         ],
-        "summary": "gettingKnowledgeChunk list",
+        "summary": "Get Knowledge Chunk list",
         "parameters": [
           {
             "type": "string",
@@ -566,7 +566,7 @@
             "required": true
           },
           {
-            "description": "更newrequest",
+            "description": "Update request",
             "name": "request",
             "in": "body",
             "required": true,
@@ -1656,7 +1656,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "将一个Knowledge basecontentcopytoanotherKnowledge base（Asynchronouslytask）",
+        "description": "Copy content from one Knowledge base to another Knowledge base (Asynchronous task)",
         "consumes": [
           "application/json"
         ],
@@ -1823,7 +1823,7 @@
             "required": true
           },
           {
-            "description": "更newrequest",
+            "description": "Update request",
             "name": "request",
             "in": "body",
             "required": true,
@@ -2103,7 +2103,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "将allFAQ entryExport为CSV file",
+        "description": "Export all FAQ entries as CSV file",
         "consumes": [
           "application/json"
         ],
@@ -2205,7 +2205,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "batch更newFAQ entrytag",
+        "description": "Batch update FAQ entry tags",
         "consumes": [
           "application/json"
         ],
@@ -2319,7 +2319,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "更newspecifiedFAQ entry",
+        "description": "Update specified FAQ entry",
         "consumes": [
           "application/json"
         ],
@@ -2329,7 +2329,7 @@
         "tags": [
           "FAQ Management"
         ],
-        "summary": "更newFAQ entry",
+        "summary": "Update FAQ entry",
         "parameters": [
           {
             "type": "string",
@@ -2382,7 +2382,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "同步CreatesingleFAQ entry",
+        "description": "Synchronously create a single FAQ entry",
         "consumes": [
           "application/json"
         ],
@@ -2438,7 +2438,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "usingHybrid search在FAQinSearch",
+        "description": "Search in FAQ using Hybrid search",
         "consumes": [
           "application/json"
         ],
@@ -2494,7 +2494,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "在Knowledge baseinexecutevectorandkeywordHybrid search",
+        "description": "Execute vector and keyword Hybrid search in Knowledge base",
         "consumes": [
           "application/json"
         ],
@@ -2836,7 +2836,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "gettingKnowledge baseunderalltag及statisticsinformation",
+        "description": "Get all tags under Knowledge base and statistics information",
         "consumes": [
           "application/json"
         ],
@@ -2899,7 +2899,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "在Knowledge baseunderCreatenewtag",
+        "description": "Create a new tag under Knowledge base",
         "consumes": [
           "application/json"
         ],
@@ -2966,7 +2966,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "更newTag information",
+        "description": "Update Tag information",
         "consumes": [
           "application/json"
         ],
@@ -3027,7 +3027,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "Delete tag，可usingforce=trueForce deletereferencedtag，content_only=trueonlyDelete tagundercontent而keeptagitself",
+        "description": "Delete tag, can use force=true to Force delete referenced tag, content_only=true to only Delete tag under content while keeping tag itself",
         "consumes": [
           "application/json"
         ],
@@ -3703,7 +3703,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "更newMCP Serviceconfiguration",
+        "description": "Update MCP Service configuration",
         "consumes": [
           "application/json"
         ],
@@ -3713,7 +3713,7 @@
         "tags": [
           "MCP Service"
         ],
-        "summary": "更newMCP Service",
+        "summary": "Update MCP Service",
         "parameters": [
           {
             "type": "string",
@@ -3734,7 +3734,7 @@
         ],
         "responses": {
           "200": {
-            "description": "更new后MCP Service",
+            "description": "Updated MCP Service",
             "schema": {
               "type": "object",
               "additionalProperties": true
@@ -3804,7 +3804,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "gettingMCP Service提供Resource list",
+        "description": "Get Resource list provided by MCP Service",
         "consumes": [
           "application/json"
         ],
@@ -3851,7 +3851,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "testMCP Serviceif可以normalconnection",
+        "description": "Test if MCP Service can establish normal connection",
         "consumes": [
           "application/json"
         ],
@@ -3898,7 +3898,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "gettingMCP Service提供Tool list",
+        "description": "Get Tool list provided by MCP Service",
         "consumes": [
           "application/json"
         ],
@@ -3945,7 +3945,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "加载SessionMessagehistory，supportspaginationandtimefiltering",
+        "description": "Load Session Message history, supports pagination and time filtering",
         "consumes": [
           "application/json"
         ],
@@ -3955,7 +3955,7 @@
         "tags": [
           "Message"
         ],
-        "summary": "加载Messagehistory",
+        "summary": "Load Message history",
         "parameters": [
           {
             "type": "string",
@@ -4005,7 +4005,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "从SessioninDeletespecifiedMessage",
+        "description": "Delete specified Message from Session",
         "consumes": [
           "application/json"
         ],
@@ -4340,7 +4340,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "Createnewand话Session",
+        "description": "Create new conversation Session",
         "consumes": [
           "application/json"
         ],
@@ -4389,7 +4389,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "在Knowledge baseinSearch（不usingLLMSummary）",
+        "description": "Search in Knowledge base (not using LLM Summary)",
         "consumes": [
           "application/json"
         ],
@@ -4483,7 +4483,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "更newSession属性",
+        "description": "Update Session attributes",
         "consumes": [
           "application/json"
         ],
@@ -4493,7 +4493,7 @@
         "tags": [
           "Session"
         ],
-        "summary": "更newSession",
+        "summary": "Update Session",
         "parameters": [
           {
             "type": "string",
@@ -4514,7 +4514,7 @@
         ],
         "responses": {
           "200": {
-            "description": "更new后Session",
+            "description": "Updated Session",
             "schema": {
               "type": "object",
               "additionalProperties": true
@@ -4584,7 +4584,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "based onAgent智能Q&A，supportsmulti-turnand话andSSEStreaming response",
+        "description": "Agent-based intelligent Q&A, supports multi-turn conversation and SSE Streaming response",
         "consumes": [
           "application/json"
         ],
@@ -4640,7 +4640,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "Continuegetting正在Streaming response",
+        "description": "Continue getting ongoing Streaming response",
         "consumes": [
           "application/json"
         ],
@@ -4882,7 +4882,7 @@
             "Bearer": []
           }
         ],
-        "description": "gettingcurrentuser可accessTenant list",
+        "description": "Get Tenant list that current user can access",
         "consumes": [
           "application/json"
         ],
@@ -4999,7 +4999,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "gettingTenantglobalAgent configuration（defaultapplied于allSession）",
+        "description": "Get Tenant global Agent configuration (default applied to all Session)",
         "consumes": [
           "application/json"
         ],
@@ -5037,7 +5037,7 @@
             "ApiKeyAuth": []
           }
         ],
-        "description": "gettingTenantglobalConversation configuration（defaultapplied于normalmodeSession）",
+        "description": "Get Tenant global Conversation configuration (default applied to normal mode Session)",
         "consumes": [
           "application/json"
         ],
@@ -5328,7 +5328,7 @@
             "Bearer": []
           }
         ],
-        "description": "更newTenant information",
+        "description": "Update Tenant information",
         "consumes": [
           "application/json"
         ],
@@ -6901,7 +6901,7 @@
       "type": "object",
       "properties": {
         "agent_config": {
-          "description": "Agent configuration（Sessionlevel，only存储enabledandknowledge_bases）",
+          "description": "Agent configuration (Session level, only stores enabled and knowledge_bases)",
           "allOf": [
             {
               "$ref": "#/definitions/github_com_Tencent_WeKnora_internal_types.SessionAgentConfig"
@@ -7392,7 +7392,7 @@
           "type": "string"
         },
         "rerank_model_id": {
-          "description": "重排Model ID（用于RAG压缩）",
+          "description": "Rerank Model ID (for RAG compression)",
           "type": "string"
         }
       }

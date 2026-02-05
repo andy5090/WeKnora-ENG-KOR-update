@@ -183,7 +183,7 @@ type VLMConfig struct {
 	Enabled bool   `yaml:"enabled"  json:"enabled"`
 	ModelID string `yaml:"model_id" json:"model_id"`
 
-	// 兼容老版本
+	// Compatible with old version
 	// Model Name
 	ModelName string `yaml:"model_name" json:"model_name"`
 	// Base URL
@@ -194,15 +194,15 @@ type VLMConfig struct {
 	InterfaceType string `yaml:"interface_type" json:"interface_type"`
 }
 
-// IsEnabled 判断多模态是否启用（兼容新老版本）
-// 新版本：Enabled && ModelID != ""
-// 老版本：ModelName != "" && BaseURL != ""
+// IsEnabled determines if multimodal is enabled (compatible with new and old versions)
+// New version: Enabled && ModelID != ""
+// Old version: ModelName != "" && BaseURL != ""
 func (c VLMConfig) IsEnabled() bool {
-	// 新版本配置
+	// New version configuration
 	if c.Enabled && c.ModelID != "" {
 		return true
 	}
-	// 兼容老版本配置
+	// Compatible with old version configuration
 	if c.ModelName != "" && c.BaseURL != "" {
 		return true
 	}
@@ -278,7 +278,7 @@ func (e *ExtractConfig) Scan(value interface{}) error {
 	return json.Unmarshal(b, e)
 }
 
-// FAQConfig 存储 FAQ 知识库的特有配置
+// FAQConfig stores FAQ knowledge base specific configuration
 type FAQConfig struct {
 	IndexMode         FAQIndexMode         `yaml:"index_mode"          json:"index_mode"`
 	QuestionIndexMode FAQQuestionIndexMode `yaml:"question_index_mode" json:"question_index_mode"`
@@ -301,7 +301,7 @@ func (f *FAQConfig) Scan(value interface{}) error {
 	return json.Unmarshal(b, f)
 }
 
-// EnsureDefaults 确保类型与配置具备默认值
+// EnsureDefaults ensures types and configurations have default values
 func (kb *KnowledgeBase) EnsureDefaults() {
 	if kb == nil {
 		return
@@ -328,18 +328,18 @@ func (kb *KnowledgeBase) EnsureDefaults() {
 	}
 }
 
-// IsMultimodalEnabled 判断多模态是否启用（兼容新老版本配置）
-// 新版本：VLMConfig.IsEnabled()
-// 老版本：ChunkingConfig.EnableMultimodal
+// IsMultimodalEnabled determines if multimodal is enabled (compatible with new and old version configurations)
+// New version: VLMConfig.IsEnabled()
+// Old version: ChunkingConfig.EnableMultimodal
 func (kb *KnowledgeBase) IsMultimodalEnabled() bool {
 	if kb == nil {
 		return false
 	}
-	// 新版本配置优先
+	// New version configuration takes priority
 	if kb.VLMConfig.IsEnabled() {
 		return true
 	}
-	// 兼容老版本：chunking_config 中的 enable_multimodal 字段
+	// Compatible with old version: enable_multimodal field in chunking_config
 	if kb.ChunkingConfig.EnableMultimodal {
 		return true
 	}
