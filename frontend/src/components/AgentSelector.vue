@@ -6,7 +6,7 @@
         :style="dropdownStyle"
         @click.stop
       >
-        <!-- 头部 -->
+        <!-- Header -->
         <div class="agent-selector-header">
           <span>{{ $t('agent.selectAgent') }}</span>
           <router-link to="/platform/agents" class="agent-selector-add" @click="$emit('close')">
@@ -15,9 +15,9 @@
           </router-link>
         </div>
         
-        <!-- 内容区域 -->
+        <!-- Content area -->
         <div class="agent-selector-content">
-          <!-- 内置智能体分组 -->
+          <!-- Built-in agents group -->
           <div class="agent-group">
             <div class="agent-group-title">{{ $t('agent.builtinAgents') }}</div>
             <t-popup 
@@ -33,7 +33,7 @@
                 :class="{ 'selected': currentAgentId === agent.id }"
                 @click="selectAgent(agent)"
               >
-                <!-- 快速回答和智能推理使用图标，其他内置智能体使用 avatar -->
+                <!-- Quick Answer and Smart Reasoning use icons, other built-in agents use avatar -->
                 <div v-if="agent.id === BUILTIN_QUICK_ANSWER_ID || agent.id === BUILTIN_SMART_REASONING_ID" 
                      class="builtin-icon" 
                      :class="agent.config?.agent_mode === 'smart-reasoning' ? 'agent' : 'normal'">
@@ -58,7 +58,7 @@
               <template #content>
                 <div class="agent-tooltip-content">
                   <div class="agent-tooltip-header">
-                    <!-- 快速回答和智能推理使用图标，其他内置智能体使用 avatar -->
+                    <!-- Quick Answer and Smart Reasoning use icons, other built-in agents use avatar -->
                     <div v-if="agent.id === BUILTIN_QUICK_ANSWER_ID || agent.id === BUILTIN_SMART_REASONING_ID" 
                          class="builtin-icon" 
                          :class="agent.config?.agent_mode === 'smart-reasoning' ? 'agent' : 'normal'">
@@ -85,7 +85,7 @@
             </t-popup>
           </div>
 
-          <!-- 自定义智能体分组 -->
+          <!-- Custom agents group -->
           <div v-if="customAgents.length > 0" class="agent-group">
             <div class="agent-group-title">{{ $t('agent.customAgents') }}</div>
             <t-popup 
@@ -151,7 +151,7 @@
             </t-popup>
           </div>
 
-          <!-- 空状态 -->
+          <!-- Empty state -->
           <div v-if="builtinAgents.length === 0 && customAgents.length === 0" class="agent-option empty">
             {{ $t('agent.noAgents') }}
           </div>
@@ -184,12 +184,12 @@ const emit = defineEmits<{
 const agents = ref<CustomAgent[]>([]);
 const dropdownStyle = ref<Record<string, string>>({});
 
-// 内置智能体（从 API 获取，对特定 ID 使用本地化名称）
+// Built-in agents (fetched from API, use localized names for specific IDs)
 const builtinAgents = computed(() => {
-  // 从 API 获取的内置智能体
+  // Get built-in agents from API
   const apiBuiltins = agents.value.filter(a => a.is_builtin);
   
-  // 对特定内置智能体使用本地化名称和描述
+  // Use localized names and descriptions for specific built-in agents
   return apiBuiltins.map(agent => {
     if (agent.id === BUILTIN_QUICK_ANSWER_ID) {
       return {
@@ -204,17 +204,17 @@ const builtinAgents = computed(() => {
         description: t('input.agentModeDesc'),
       };
     }
-    // 其他内置智能体使用 API 返回的名称和描述
+    // Other built-in agents use names and descriptions returned by API
     return agent;
   });
 });
 
-// 自定义智能体
+// Custom agents
 const customAgents = computed(() => {
   return agents.value.filter(a => !a.is_builtin);
 });
 
-// 获取知识库能力描述
+// Get knowledge base capability description
 const getKbCapability = (agent: CustomAgent): string => {
   const config = agent.config || {};
   if (config.kb_selection_mode === 'none') {
@@ -227,7 +227,7 @@ const getKbCapability = (agent: CustomAgent): string => {
   return '';
 };
 
-// 加载智能体列表
+// Load agent list
 const loadAgents = async () => {
   try {
     const response = await listAgents();
@@ -237,12 +237,12 @@ const loadAgents = async () => {
   }
 };
 
-// 选择智能体
+// Select agent
 const selectAgent = (agent: CustomAgent) => {
   emit('select', agent);
 };
 
-// 更新下拉框位置（与模型选择器一致）
+// Update dropdown position (consistent with model selector)
 const updateDropdownPosition = () => {
   if (!props.anchorEl) return;
   
@@ -252,13 +252,13 @@ const updateDropdownPosition = () => {
   const vh = window.innerHeight;
   const vw = window.innerWidth;
   
-  // 水平位置：左对齐
+  // Horizontal position: left aligned
   let left = Math.floor(rect.left);
   const minLeft = 16;
   const maxLeft = Math.max(16, vw - dropdownWidth - 16);
   left = Math.max(minLeft, Math.min(maxLeft, left));
   
-  // 垂直位置
+  // Vertical position
   const preferredDropdownHeight = 320;
   const minDropdownHeight = 100;
   const topMargin = 20;
@@ -268,7 +268,7 @@ const updateDropdownPosition = () => {
   let actualHeight: number;
   
   if (spaceBelow >= minDropdownHeight + offsetY) {
-    // 向下弹出
+    // Pop down
     actualHeight = Math.min(preferredDropdownHeight, spaceBelow - offsetY - 16);
     const top = Math.floor(rect.bottom + offsetY);
     
@@ -281,7 +281,7 @@ const updateDropdownPosition = () => {
       zIndex: '9999'
     };
   } else {
-    // 向上弹出
+    // Pop up
     const availableHeight = spaceAbove - offsetY - topMargin;
     actualHeight = availableHeight >= preferredDropdownHeight 
       ? preferredDropdownHeight 
@@ -300,7 +300,7 @@ const updateDropdownPosition = () => {
   }
 };
 
-// 监听显示状态
+// Listen to visibility state
 watch(() => props.visible, (newVal) => {
   if (newVal) {
     loadAgents();
@@ -489,7 +489,7 @@ onMounted(() => {
   margin-left: 6px;
 }
 
-// Tooltip 内容样式
+// Tooltip content styles
 .agent-tooltip-content {
   padding: 4px 0;
   min-width: 200px;
@@ -572,7 +572,7 @@ onMounted(() => {
 }
 </style>
 
-<!-- 全局样式覆盖 TDesign Popup -->
+<!-- Global styles override TDesign Popup -->
 <style lang="less">
 .agent-tooltip-popup {
   &.t-popup__content {

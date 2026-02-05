@@ -236,19 +236,19 @@ func (a *CustomAgent) IsAgentMode() bool {
 func GetBuiltinQuickAnswerAgent(tenantID uint64) *CustomAgent {
 	return &CustomAgent{
 		ID:          BuiltinQuickAnswerID,
-		Name:        "快速问答",
-		Description: "基于知识库的 RAG 问答，快速准确地回答问题",
+		Name:        "Quick Answer",
+		Description: "RAG-based Q&A using knowledge base, answering questions quickly and accurately",
 		IsBuiltin:   true,
 		TenantID:    tenantID,
 		Config: CustomAgentConfig{
 			AgentMode:    AgentModeQuickAnswer,
 			SystemPrompt: "",
-			ContextTemplate: `请根据以下参考资料回答用户问题。
+			ContextTemplate: `Please answer the user's question based on the following reference materials.
 
-参考资料：
+Reference Materials:
 {{contexts}}
 
-用户问题：{{query}}`,
+User Question: {{query}}`,
 			Temperature:                 0.7,
 			MaxCompletionTokens:         2048,
 			WebSearchEnabled:            true,
@@ -279,8 +279,8 @@ func GetBuiltinQuickAnswerAgent(tenantID uint64) *CustomAgent {
 func GetBuiltinSmartReasoningAgent(tenantID uint64) *CustomAgent {
 	return &CustomAgent{
 		ID:          BuiltinSmartReasoningID,
-		Name:        "智能推理",
-		Description: "ReAct 推理框架，支持多步思考和工具调用",
+		Name:        "Smart Reasoning",
+		Description: "ReAct reasoning framework supporting multi-step thinking and tool calling",
 		IsBuiltin:   true,
 		TenantID:    tenantID,
 		Config: CustomAgentConfig{
@@ -316,8 +316,8 @@ func GetBuiltinSmartReasoningAgent(tenantID uint64) *CustomAgent {
 func GetBuiltinDataAnalystAgent(tenantID uint64) *CustomAgent {
 	return &CustomAgent{
 		ID:          BuiltinDataAnalystID,
-		Name:        "数据分析师",
-		Description: "专业数据分析智能体，支持 CSV/Excel 文件的 SQL 查询与统计分析",
+		Name:        "Data Analyst",
+		Description: "Professional data analysis agent supporting SQL queries and statistical analysis for CSV/Excel files",
 		Avatar:      "📊",
 		IsBuiltin:   true,
 		TenantID:    tenantID,

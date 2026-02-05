@@ -1,22 +1,22 @@
-# 标签管理 API
+# Tag Management API
 
-[返回目录](./README.md)
+[Back to Index](./README.md)
 
-| 方法   | 路径                                  | 描述                     |
-| ------ | ------------------------------------- | ------------------------ |
-| GET    | `/knowledge-bases/:id/tags`           | 获取知识库标签列表       |
-| POST   | `/knowledge-bases/:id/tags`           | 创建标签                 |
-| PUT    | `/knowledge-bases/:id/tags/:tag_id`   | 更新标签                 |
-| DELETE | `/knowledge-bases/:id/tags/:tag_id`   | 删除标签                 |
+| Method   | Path                                  | Description                    |
+| -------- | ------------------------------------- | ------------------------------ |
+| GET      | `/knowledge-bases/:id/tags`           | List knowledge base tags       |
+| POST     | `/knowledge-bases/:id/tags`           | Create tag                     |
+| PUT      | `/knowledge-bases/:id/tags/:tag_id`   | Update tag                     |
+| DELETE   | `/knowledge-bases/:id/tags/:tag_id`   | Delete tag                     |
 
-## GET `/knowledge-bases/:id/tags` - 获取知识库标签列表
+## GET `/knowledge-bases/:id/tags` - List Knowledge Base Tags
 
-**查询参数**:
-- `page`: 页码（默认 1）
-- `page_size`: 每页条数（默认 20）
-- `keyword`: 标签名称关键字搜索（可选）
+**Query Parameters**:
+- `page`: Page number (default 1)
+- `page_size`: Items per page (default 20)
+- `keyword`: Tag name keyword search (optional)
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/tags?page=1&page_size=10' \
@@ -24,7 +24,7 @@ curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/tags?p
 --header 'Content-Type: application/json'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -37,7 +37,7 @@ curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/tags?p
                 "id": "tag-00000001",
                 "tenant_id": 1,
                 "knowledge_base_id": "kb-00000001",
-                "name": "技术文档",
+                "name": "Technical Documentation",
                 "color": "#1890ff",
                 "sort_order": 1,
                 "created_at": "2025-08-12T10:00:00+08:00",
@@ -49,7 +49,7 @@ curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/tags?p
                 "id": "tag-00000002",
                 "tenant_id": 1,
                 "knowledge_base_id": "kb-00000001",
-                "name": "常见问题",
+                "name": "FAQ",
                 "color": "#52c41a",
                 "sort_order": 2,
                 "created_at": "2025-08-12T10:00:00+08:00",
@@ -63,22 +63,22 @@ curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/tags?p
 }
 ```
 
-## POST `/knowledge-bases/:id/tags` - 创建标签
+## POST `/knowledge-bases/:id/tags` - Create Tag
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/tags' \
 --header 'X-API-Key: sk-vQHV2NZI_LK5W7wHQvH3yGYExX8YnhaHwZipUYbiZKCYJbBQ' \
 --header 'Content-Type: application/json' \
 --data '{
-    "name": "产品手册",
+    "name": "Product Manual",
     "color": "#faad14",
     "sort_order": 3
 }'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -86,7 +86,7 @@ curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/tags' 
         "id": "tag-00000003",
         "tenant_id": 1,
         "knowledge_base_id": "kb-00000001",
-        "name": "产品手册",
+        "name": "Product Manual",
         "color": "#faad14",
         "sort_order": 3,
         "created_at": "2025-08-12T11:00:00+08:00",
@@ -96,21 +96,21 @@ curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/tags' 
 }
 ```
 
-## PUT `/knowledge-bases/:id/tags/:tag_id` - 更新标签
+## PUT `/knowledge-bases/:id/tags/:tag_id` - Update Tag
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location --request PUT 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/tags/tag-00000003' \
 --header 'X-API-Key: sk-vQHV2NZI_LK5W7wHQvH3yGYExX8YnhaHwZipUYbiZKCYJbBQ' \
 --header 'Content-Type: application/json' \
 --data '{
-    "name": "产品手册更新",
+    "name": "Product Manual Updated",
     "color": "#ff4d4f"
 }'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -118,7 +118,7 @@ curl --location --request PUT 'http://localhost:8080/api/v1/knowledge-bases/kb-0
         "id": "tag-00000003",
         "tenant_id": 1,
         "knowledge_base_id": "kb-00000001",
-        "name": "产品手册更新",
+        "name": "Product Manual Updated",
         "color": "#ff4d4f",
         "sort_order": 3,
         "created_at": "2025-08-12T11:00:00+08:00",
@@ -128,12 +128,12 @@ curl --location --request PUT 'http://localhost:8080/api/v1/knowledge-bases/kb-0
 }
 ```
 
-## DELETE `/knowledge-bases/:id/tags/:tag_id` - 删除标签
+## DELETE `/knowledge-bases/:id/tags/:tag_id` - Delete Tag
 
-**查询参数**:
-- `force`: 设置为 `true` 时强制删除（即使标签被引用）
+**Query Parameters**:
+- `force`: Set to `true` to force delete (even if tag is referenced)
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location --request DELETE 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/tags/tag-00000003?force=true' \
@@ -141,7 +141,7 @@ curl --location --request DELETE 'http://localhost:8080/api/v1/knowledge-bases/k
 --header 'Content-Type: application/json'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {

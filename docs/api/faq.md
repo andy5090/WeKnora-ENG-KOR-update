@@ -1,54 +1,54 @@
-# FAQ管理 API
+# FAQ Management API
 
-[返回目录](./README.md)
+[Back to Index](./README.md)
 
-| 方法   | 路径                                        | 描述                     |
-| ------ | ------------------------------------------- | ------------------------ |
-| GET    | `/knowledge-bases/:id/faq/entries`          | 获取FAQ条目列表          |
-| POST   | `/knowledge-bases/:id/faq/entries`          | 批量导入FAQ条目          |
-| POST   | `/knowledge-bases/:id/faq/entry`            | 创建单个FAQ条目          |
-| PUT    | `/knowledge-bases/:id/faq/entries/:entry_id`| 更新单个FAQ条目          |
-| PUT    | `/knowledge-bases/:id/faq/entries/status`   | 批量更新FAQ启用状态      |
-| PUT    | `/knowledge-bases/:id/faq/entries/tags`     | 批量更新FAQ标签          |
-| DELETE | `/knowledge-bases/:id/faq/entries`          | 批量删除FAQ条目          |
-| POST   | `/knowledge-bases/:id/faq/search`           | 混合搜索FAQ              |
+| Method   | Path                                        | Description                    |
+| -------- | ------------------------------------------- | ----------------------------- |
+| GET      | `/knowledge-bases/:id/faq/entries`          | List FAQ entries              |
+| POST     | `/knowledge-bases/:id/faq/entries`          | Batch import FAQ entries      |
+| POST     | `/knowledge-bases/:id/faq/entry`            | Create single FAQ entry       |
+| PUT      | `/knowledge-bases/:id/faq/entries/:entry_id`| Update single FAQ entry       |
+| PUT      | `/knowledge-bases/:id/faq/entries/status`   | Batch update FAQ enabled status |
+| PUT      | `/knowledge-bases/:id/faq/entries/tags`     | Batch update FAQ tags         |
+| DELETE   | `/knowledge-bases/:id/faq/entries`          | Batch delete FAQ entries      |
+| POST     | `/knowledge-bases/:id/faq/search`           | Hybrid search FAQ             |
 
-## GET `/knowledge-bases/:id/faq/entries` - 获取FAQ条目列表
+## GET `/knowledge-bases/:id/faq/entries` - List FAQ Entries
 
-**查询参数**:
-- `page`: 页码（默认 1）
-- `page_size`: 每页条数（默认 20）
-- `tag_id`: 按标签ID筛选（可选）
-- `keyword`: 关键字搜索（可选）
-- `search_field`: 搜索字段（可选），可选值：
-  - `standard_question`: 只搜索标准问题
-  - `similar_questions`: 只搜索相似问法
-  - `answers`: 只搜索答案
-  - 留空或不传：搜索全部字段
-- `sort_order`: 排序方式（可选），`asc` 表示按更新时间正序，默认按更新时间倒序
+**Query Parameters**:
+- `page`: Page number (default 1)
+- `page_size`: Items per page (default 20)
+- `tag_id`: Filter by tag ID (optional)
+- `keyword`: Keyword search (optional)
+- `search_field`: Search field (optional), options:
+  - `standard_question`: Search only standard questions
+  - `similar_questions`: Search only similar questions
+  - `answers`: Search only answers
+  - Leave empty or omit: Search all fields
+- `sort_order`: Sort order (optional), `asc` means ascending by update time, default is descending by update time
 
-**请求**:
+**Request**:
 
 ```curl
-# 搜索全部字段
-curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/faq/entries?page=1&page_size=10&keyword=密码' \
+# Search all fields
+curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/faq/entries?page=1&page_size=10&keyword=password' \
 --header 'X-API-Key: sk-vQHV2NZI_LK5W7wHQvH3yGYExX8YnhaHwZipUYbiZKCYJbBQ' \
 --header 'Content-Type: application/json'
 
-# 只搜索标准问题
-curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/faq/entries?keyword=密码&search_field=standard_question' \
+# Search only standard questions
+curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/faq/entries?keyword=password&search_field=standard_question' \
 --header 'X-API-Key: sk-vQHV2NZI_LK5W7wHQvH3yGYExX8YnhaHwZipUYbiZKCYJbBQ'
 
-# 只搜索相似问法
-curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/faq/entries?keyword=忘记&search_field=similar_questions' \
+# Search only similar questions
+curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/faq/entries?keyword=forgot&search_field=similar_questions' \
 --header 'X-API-Key: sk-vQHV2NZI_LK5W7wHQvH3yGYExX8YnhaHwZipUYbiZKCYJbBQ'
 
-# 只搜索答案
-curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/faq/entries?keyword=点击&search_field=answers' \
+# Search only answers
+curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/faq/entries?keyword=click&search_field=answers' \
 --header 'X-API-Key: sk-vQHV2NZI_LK5W7wHQvH3yGYExX8YnhaHwZipUYbiZKCYJbBQ'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -64,10 +64,10 @@ curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/faq/en
                 "knowledge_base_id": "kb-00000001",
                 "tag_id": "tag-00000001",
                 "is_enabled": true,
-                "standard_question": "如何重置密码？",
-                "similar_questions": ["忘记密码怎么办", "密码找回"],
-                "negative_questions": ["如何修改用户名"],
-                "answers": ["您可以通过点击登录页面的'忘记密码'链接来重置密码。"],
+                "standard_question": "How to reset password?",
+                "similar_questions": ["What to do if forgot password", "Password recovery"],
+                "negative_questions": ["How to change username"],
+                "answers": ["You can reset your password by clicking the 'Forgot Password' link on the login page."],
                 "index_mode": "hybrid",
                 "chunk_type": "faq",
                 "created_at": "2025-08-12T10:00:00+08:00",
@@ -79,14 +79,14 @@ curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/faq/en
 }
 ```
 
-## POST `/knowledge-bases/:id/faq/entries` - 批量导入FAQ条目
+## POST `/knowledge-bases/:id/faq/entries` - Batch Import FAQ Entries
 
-**请求参数**:
-- `mode`: 导入模式，`append`（追加）或 `replace`（替换）
-- `entries`: FAQ条目数组
-- `knowledge_id`: 关联的知识ID（可选）
+**Request Parameters**:
+- `mode`: Import mode, `append` (append) or `replace` (replace)
+- `entries`: FAQ entry array
+- `knowledge_id`: Associated knowledge ID (optional)
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/faq/entries' \
@@ -96,20 +96,20 @@ curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/faq/en
     "mode": "append",
     "entries": [
         {
-            "standard_question": "如何联系客服？",
-            "similar_questions": ["客服电话", "在线客服"],
-            "answers": ["您可以通过拨打400-xxx-xxxx联系我们的客服。"],
+            "standard_question": "How to contact customer service?",
+            "similar_questions": ["Customer service phone", "Online customer service"],
+            "answers": ["You can contact our customer service by calling 400-xxx-xxxx."],
             "tag_id": "tag-00000001"
         },
         {
-            "standard_question": "退款政策是什么？",
-            "answers": ["我们提供7天无理由退款服务。"]
+            "standard_question": "What is the refund policy?",
+            "answers": ["We offer a 7-day no-questions-asked refund service."]
         }
     ]
 }'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -120,36 +120,36 @@ curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/faq/en
 }
 ```
 
-注：批量导入为异步操作，返回任务ID用于追踪进度。
+Note: Batch import is an asynchronous operation, returns a task ID for tracking progress.
 
-## POST `/knowledge-bases/:id/faq/entry` - 创建单个FAQ条目
+## POST `/knowledge-bases/:id/faq/entry` - Create Single FAQ Entry
 
-同步创建单个FAQ条目，适用于单条录入场景。会自动检查标准问和相似问是否与已有FAQ重复。
+Synchronously create a single FAQ entry, suitable for single entry scenarios. Automatically checks if standard questions and similar questions duplicate existing FAQs.
 
-**请求参数**:
-- `standard_question`: 标准问（必填）
-- `similar_questions`: 相似问数组（可选）
-- `negative_questions`: 反例问题数组（可选）
-- `answers`: 答案数组（必填）
-- `tag_id`: 标签ID（可选）
-- `is_enabled`: 是否启用（可选，默认true）
+**Request Parameters**:
+- `standard_question`: Standard question (required)
+- `similar_questions`: Similar questions array (optional)
+- `negative_questions`: Negative example questions array (optional)
+- `answers`: Answers array (required)
+- `tag_id`: Tag ID (optional)
+- `is_enabled`: Whether enabled (optional, default true)
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/faq/entry' \
 --header 'X-API-Key: sk-vQHV2NZI_LK5W7wHQvH3yGYExX8YnhaHwZipUYbiZKCYJbBQ' \
 --header 'Content-Type: application/json' \
 --data '{
-    "standard_question": "如何联系客服？",
-    "similar_questions": ["客服电话", "在线客服"],
-    "answers": ["您可以通过拨打400-xxx-xxxx联系我们的客服。"],
+    "standard_question": "How to contact customer service?",
+    "similar_questions": ["Customer service phone", "Online customer service"],
+    "answers": ["You can contact our customer service by calling 400-xxx-xxxx."],
     "tag_id": "tag-00000001",
     "is_enabled": true
 }'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -160,10 +160,10 @@ curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/faq/en
         "knowledge_base_id": "kb-00000001",
         "tag_id": "tag-00000001",
         "is_enabled": true,
-        "standard_question": "如何联系客服？",
-        "similar_questions": ["客服电话", "在线客服"],
+        "standard_question": "How to contact customer service?",
+        "similar_questions": ["Customer service phone", "Online customer service"],
         "negative_questions": [],
-        "answers": ["您可以通过拨打400-xxx-xxxx联系我们的客服。"],
+        "answers": ["You can contact our customer service by calling 400-xxx-xxxx."],
         "index_mode": "hybrid",
         "chunk_type": "faq",
         "created_at": "2025-08-12T10:00:00+08:00",
@@ -173,35 +173,35 @@ curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/faq/en
 }
 ```
 
-**错误响应**（标准问或相似问重复时）:
+**Error Response** (when standard question or similar question duplicates):
 
 ```json
 {
     "success": false,
     "error": {
         "code": "BAD_REQUEST",
-        "message": "标准问与已有FAQ重复"
+        "message": "Standard question duplicates existing FAQ"
     }
 }
 ```
 
-## PUT `/knowledge-bases/:id/faq/entries/:entry_id` - 更新单个FAQ条目
+## PUT `/knowledge-bases/:id/faq/entries/:entry_id` - Update Single FAQ Entry
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location --request PUT 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/faq/entries/faq-00000001' \
 --header 'X-API-Key: sk-vQHV2NZI_LK5W7wHQvH3yGYExX8YnhaHwZipUYbiZKCYJbBQ' \
 --header 'Content-Type: application/json' \
 --data '{
-    "standard_question": "如何重置账户密码？",
-    "similar_questions": ["忘记密码怎么办", "密码找回", "重置密码"],
-    "answers": ["您可以通过以下步骤重置密码：1. 点击登录页面的\"忘记密码\" 2. 输入注册邮箱 3. 查收重置邮件"],
+    "standard_question": "How to reset account password?",
+    "similar_questions": ["What to do if forgot password", "Password recovery", "Reset password"],
+    "answers": ["You can reset your password by following these steps: 1. Click \"Forgot Password\" on the login page 2. Enter your registered email 3. Check your email for reset instructions"],
     "is_enabled": true
 }'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -209,9 +209,9 @@ curl --location --request PUT 'http://localhost:8080/api/v1/knowledge-bases/kb-0
 }
 ```
 
-## PUT `/knowledge-bases/:id/faq/entries/status` - 批量更新FAQ启用状态
+## PUT `/knowledge-bases/:id/faq/entries/status` - Batch Update FAQ Enabled Status
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location --request PUT 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/faq/entries/status' \
@@ -226,7 +226,7 @@ curl --location --request PUT 'http://localhost:8080/api/v1/knowledge-bases/kb-0
 }'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -234,9 +234,9 @@ curl --location --request PUT 'http://localhost:8080/api/v1/knowledge-bases/kb-0
 }
 ```
 
-## PUT `/knowledge-bases/:id/faq/entries/tags` - 批量更新FAQ标签
+## PUT `/knowledge-bases/:id/faq/entries/tags` - Batch Update FAQ Tags
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location --request PUT 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/faq/entries/tags' \
@@ -251,9 +251,9 @@ curl --location --request PUT 'http://localhost:8080/api/v1/knowledge-bases/kb-0
 }'
 ```
 
-注：设置为 `null` 可清除标签关联。
+Note: Setting to `null` clears the tag association.
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -261,9 +261,9 @@ curl --location --request PUT 'http://localhost:8080/api/v1/knowledge-bases/kb-0
 }
 ```
 
-## DELETE `/knowledge-bases/:id/faq/entries` - 批量删除FAQ条目
+## DELETE `/knowledge-bases/:id/faq/entries` - Batch Delete FAQ Entries
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location --request DELETE 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/faq/entries' \
@@ -274,7 +274,7 @@ curl --location --request DELETE 'http://localhost:8080/api/v1/knowledge-bases/k
 }'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -282,27 +282,27 @@ curl --location --request DELETE 'http://localhost:8080/api/v1/knowledge-bases/k
 }
 ```
 
-## POST `/knowledge-bases/:id/faq/search` - 混合搜索FAQ
+## POST `/knowledge-bases/:id/faq/search` - Hybrid Search FAQ
 
-**请求参数**:
-- `query_text`: 搜索查询文本
-- `vector_threshold`: 向量相似度阈值（0-1）
-- `match_count`: 返回结果数量（最大200）
+**Request Parameters**:
+- `query_text`: Search query text
+- `vector_threshold`: Vector similarity threshold (0-1)
+- `match_count`: Number of results to return (max 200)
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/faq/search' \
 --header 'X-API-Key: sk-vQHV2NZI_LK5W7wHQvH3yGYExX8YnhaHwZipUYbiZKCYJbBQ' \
 --header 'Content-Type: application/json' \
 --data '{
-    "query_text": "如何重置密码",
+    "query_text": "How to reset password",
     "vector_threshold": 0.5,
     "match_count": 10
 }'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -314,9 +314,9 @@ curl --location 'http://localhost:8080/api/v1/knowledge-bases/kb-00000001/faq/se
             "knowledge_base_id": "kb-00000001",
             "tag_id": "tag-00000001",
             "is_enabled": true,
-            "standard_question": "如何重置密码？",
-            "similar_questions": ["忘记密码怎么办", "密码找回"],
-            "answers": ["您可以通过点击登录页面的'忘记密码'链接来重置密码。"],
+            "standard_question": "How to reset password?",
+            "similar_questions": ["What to do if forgot password", "Password recovery"],
+            "answers": ["You can reset your password by clicking the 'Forgot Password' link on the login page."],
             "chunk_type": "faq",
             "score": 0.95,
             "match_type": "vector",

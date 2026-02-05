@@ -1,18 +1,18 @@
-# 租户管理 API
+# Tenant Management API
 
-[返回目录](./README.md)
+[Back to Index](./README.md)
 
-| 方法   | 路径           | 描述                  |
-| ------ | -------------- | --------------------- |
-| POST   | `/tenants`     | 创建新租户            |
-| GET    | `/tenants/:id` | 获取指定租户信息      |
-| PUT    | `/tenants/:id` | 更新租户信息          |
-| DELETE | `/tenants/:id` | 删除租户              |
-| GET    | `/tenants`     | 获取租户列表          |
+| Method   | Path           | Description              |
+| -------- | -------------- | ------------------------ |
+| POST     | `/tenants`     | Create new tenant        |
+| GET      | `/tenants/:id` | Get specified tenant info |
+| PUT      | `/tenants/:id` | Update tenant info       |
+| DELETE   | `/tenants/:id` | Delete tenant            |
+| GET      | `/tenants`     | List tenants             |
 
-## POST `/tenants` - 创建新租户
+## POST `/tenants` - Create New Tenant
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/tenants' \
@@ -36,7 +36,7 @@ curl --location 'http://localhost:8080/api/v1/tenants' \
 }'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -69,9 +69,9 @@ curl --location 'http://localhost:8080/api/v1/tenants' \
 }
 ```
 
-## GET `/tenants/:id` - 获取指定租户信息
+## GET `/tenants/:id` - Get Specified Tenant Info
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/tenants/10000' \
@@ -79,7 +79,7 @@ curl --location 'http://localhost:8080/api/v1/tenants/10000' \
 --header 'X-API-Key: sk-aaLRAgvCRJcmtiL2vLMeB1FB5UV0Q-qB7DlTE1pJ9KA93XZG'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -112,11 +112,11 @@ curl --location 'http://localhost:8080/api/v1/tenants/10000' \
 }
 ```
 
-## PUT `/tenants/:id` - 更新租户信息
+## PUT `/tenants/:id` - Update Tenant Info
 
-注意 API Key 会变更
+Note: API Key will change
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location --request PUT 'http://localhost:8080/api/v1/tenants/10000' \
@@ -143,7 +143,7 @@ curl --location --request PUT 'http://localhost:8080/api/v1/tenants/10000' \
 }'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -176,9 +176,9 @@ curl --location --request PUT 'http://localhost:8080/api/v1/tenants/10000' \
 }
 ```
 
-## DELETE `/tenants/:id` - 删除租户
+## DELETE `/tenants/:id` - Delete Tenant
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location --request DELETE 'http://localhost:8080/api/v1/tenants/10000' \
@@ -186,7 +186,7 @@ curl --location --request DELETE 'http://localhost:8080/api/v1/tenants/10000' \
 --header 'X-API-Key: sk-IKtd9JGV4-aPGQ6RiL8YJu9Vzb3-ae4lgFkjFJZmhvUn2mLu'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -195,9 +195,9 @@ curl --location --request DELETE 'http://localhost:8080/api/v1/tenants/10000' \
 }
 ```
 
-## GET `/tenants` - 获取租户列表
+## GET `/tenants` - List Tenants
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/tenants' \
@@ -205,7 +205,7 @@ curl --location 'http://localhost:8080/api/v1/tenants' \
 --header 'X-API-Key: sk-An7_t_izCKFIJ4iht9Xjcjnj_MC48ILvwezEDki9ScfIa7KA'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {

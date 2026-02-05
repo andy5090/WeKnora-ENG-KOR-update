@@ -3,23 +3,23 @@
     <Transition name="modal">
       <div v-if="dialogVisible" class="model-editor-overlay" @click.self="handleCancel">
         <div class="model-editor-modal">
-          <!-- 关闭按钮 -->
+          <!-- Close button -->
           <button class="close-btn" @click="handleCancel" :aria-label="$t('common.close')">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
               <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
           </button>
 
-          <!-- 标题区域 -->
+          <!-- Title area -->
           <div class="modal-header">
             <h2 class="modal-title">{{ isEdit ? $t('model.editor.editTitle') : $t('model.editor.addTitle') }}</h2>
             <p class="modal-desc">{{ getModalDescription() }}</p>
           </div>
 
-          <!-- 表单内容区域 -->
+          <!-- Form content area -->
           <div class="modal-body">
             <t-form ref="formRef" :data="formData" :rules="rules" layout="vertical">
-        <!-- 模型来源 -->
+        <!-- Model source -->
         <div class="form-item">
           <label class="form-label required">{{ $t('model.editor.sourceLabel') }}</label>
           <t-radio-group v-model="formData.source">
@@ -32,13 +32,13 @@
             <t-radio value="remote">{{ $t('model.editor.sourceRemote') }}</t-radio>
           </t-radio-group>
 
-          <!-- ReRank模型不支持Ollama的提示信息 -->
+          <!-- ReRank model doesn't support Ollama notification -->
           <div v-if="modelType === 'rerank'" class="ollama-unavailable-tip rerank-tip">
             <t-icon name="info-circle-filled" class="tip-icon info" />
             <span class="tip-text">{{ $t('model.editor.ollamaNotSupportRerank') }}</span>
           </div>
 
-          <!-- Ollama不可用时的提示信息 -->
+          <!-- Notification when Ollama is unavailable -->
           <div v-else-if="ollamaServiceStatus === false" class="ollama-unavailable-tip">
             <t-icon name="error-circle-filled" class="tip-icon" />
             <span class="tip-text">{{ $t('model.editor.ollamaUnavailable') }}</span>
@@ -54,7 +54,7 @@
           </div>
         </div>
 
-        <!-- Ollama 本地模型选择器 -->
+        <!-- Ollama local model selector -->
         <div v-if="formData.source === 'local'" class="form-item">
           <label class="form-label required">{{ $t('model.modelName') }}</label>
           <div class="model-select-row">
@@ -69,7 +69,7 @@
               @focus="loadOllamaModels"
               @visible-change="handleDropdownVisibleChange"
             >
-              <!-- 已下载的模型 -->
+              <!-- Downloaded models -->
               <t-option
                 v-for="model in filteredOllamaModels"
                 :key="model.name"
@@ -83,7 +83,7 @@
                 </div>
               </t-option>
               
-              <!-- 下载新模型选项（仅当搜索词不在列表中时显示） -->
+              <!-- Download new model option (only shown when search term not in list) -->
               <t-option
                 v-if="showDownloadOption"
                 :value="`__download__${searchKeyword}`"
@@ -96,7 +96,7 @@
                 </div>
               </t-option>
               
-              <!-- 下载进度后缀 -->
+              <!-- Download progress suffix -->
               <template v-if="downloading" #suffix>
                 <div class="download-suffix">
                   <t-icon name="loading" class="spinning" />
@@ -105,7 +105,7 @@
               </template>
             </t-select>
             
-            <!-- 刷新按钮 -->
+            <!-- Refresh button -->
             <t-button
               variant="text"
               size="small"
@@ -119,9 +119,9 @@
           </div>
         </div>
 
-        <!-- Remote API 配置 -->
+        <!-- Remote API configuration -->
         <template v-if="formData.source === 'remote'">
-          <!-- 厂商选择器 -->
+          <!-- Provider selector -->
           <div class="form-item">
             <label class="form-label">{{ $t('model.editor.providerLabel') }}</label>
             <t-select 
@@ -143,7 +143,7 @@
             </t-select>
           </div>
 
-          <!-- 模型名称 -->
+          <!-- Model name -->
           <div class="form-item">
             <label class="form-label required">{{ $t('model.modelName') }}</label>
             <t-input 
@@ -169,7 +169,7 @@
             />
           </div>
 
-          <!-- Remote API 校验 -->
+          <!-- Remote API validation -->
           <div class="form-item">
             <label class="form-label">{{ $t('model.editor.connectionTest') }}</label>
             <div class="api-test-section">
@@ -200,7 +200,7 @@
           </div>
         </template>
 
-        <!-- Embedding 专用：维度 -->
+        <!-- Embedding specific: Dimension -->
         <div v-if="modelType === 'embedding'" class="form-item">
           <label class="form-label">{{ $t('model.editor.dimensionLabel') }}</label>
           <div class="dimension-control">
@@ -212,7 +212,7 @@
             :placeholder="$t('model.editor.dimensionPlaceholder')"
               :disabled="formData.source === 'local' && checking"
             />
-            <!-- Ollama 本地模型：自动检测维度按钮 -->
+            <!-- Ollama local model: Auto-detect dimension button -->
             <t-button 
               v-if="formData.source === 'local' && formData.modelName"
               variant="outline"
@@ -233,7 +233,7 @@
       </t-form>
           </div>
 
-          <!-- 底部按钮区域 -->
+          <!-- Bottom button area -->
           <div class="modal-footer">
             <t-button theme="default" variant="outline" @click="handleCancel">
               {{ $t('common.cancel') }}
@@ -287,11 +287,11 @@ const emit = defineEmits<{
   'confirm': [data: ModelFormData]
 }>()
 
-// API 返回的 Provider 列表
+// Provider list returned by API
 const apiProviderOptions = ref<ModelProviderOption[]>([])
 const loadingProviders = ref(false)
 
-// 硬编码的后备 Provider 配置 (当 API 不可用时使用)
+// Hardcoded fallback Provider configuration (used when API unavailable)
 const fallbackProviderOptions = computed(() => [
   { 
     value: 'openai', 
@@ -365,7 +365,7 @@ const fallbackProviderOptions = computed(() => [
   },
 ])
 
-// 从 API 获取 Provider 列表
+// Get Provider list from API
 const loadProviders = async () => {
   loadingProviders.value = true
   try {
@@ -380,13 +380,13 @@ const loadProviders = async () => {
   }
 }
 
-// 根据当前模型类型过滤的 Provider 列表
+// Provider list filtered by current model type
 const providerOptions = computed(() => {
-  // 优先使用 API 返回的数据
+  // Prioritize data returned by API
   if (apiProviderOptions.value.length > 0) {
     return apiProviderOptions.value
   }
-  // 回退到硬编码值，按 modelTypes 过滤
+  // Fallback to hardcoded values, filter by modelTypes
   return fallbackProviderOptions.value.filter(p => 
     p.modelTypes.includes(props.modelType)
   )
@@ -411,7 +411,7 @@ const dimensionChecked = ref(false)
 const dimensionSuccess = ref(false)
 const dimensionMessage = ref('')
 
-// Ollama 模型状态
+// Ollama model state
 const ollamaModelList = ref<OllamaModelInfo[]>([])
 const loadingOllamaModels = ref(false)
 const searchKeyword = ref('')
@@ -420,7 +420,7 @@ const downloadProgress = ref(0)
 const currentDownloadModel = ref('')
 let downloadInterval: any = null
 
-// Ollama 服务状态
+// Ollama service status
 const ollamaServiceStatus = ref<boolean | null>(null)
 const checkingOllamaStatus = ref(false)
 
@@ -464,7 +464,7 @@ const rules = computed(() => ({
         if (!val || !val.trim()) {
           return { result: false, message: t('model.editor.validation.baseUrlEmpty') }
         }
-        // 简单的 URL 格式校验
+        // Simple URL format validation
         try {
           new URL(val.trim())
           return { result: true }
@@ -477,13 +477,13 @@ const rules = computed(() => ({
   ]
 }))
 
-// 获取弹窗描述文字
+// Get modal description text
 const getModalDescription = () => {
   const key = `model.editor.description.${props.modelType}` as const
   return t(key) || t('model.editor.description.default')
 }
 
-// 获取模型名称占位符
+// Get model name placeholder
 const getModelNamePlaceholder = () => {
   if (props.modelType === 'vllm') {
     return formData.value.source === 'local'
@@ -501,51 +501,51 @@ const getBaseUrlPlaceholder = () => {
     : t('model.editor.baseUrlPlaceholder')
 }
 
-// 检查Ollama服务状态
+// Check Ollama service status
 const checkOllamaServiceStatus = async () => {
-  console.log('开始检查Ollama服务状态...')
+  console.log('Starting Ollama service status check...')
   checkingOllamaStatus.value = true
   try {
     const result = await checkOllamaStatus()
     ollamaServiceStatus.value = result.available
-    console.log('Ollama服务状态检查完成:', result.available)
+    console.log('Ollama service status check completed:', result.available)
   } catch (error) {
-    console.error('检查Ollama服务状态失败:', error)
+    console.error('Ollama service status check failed:', error)
     ollamaServiceStatus.value = false
   } finally {
     checkingOllamaStatus.value = false
   }
 }
 
-// 打开Ollama设置窗口
+// Open Ollama settings window
 const goToOllamaSettings = async () => {
-  console.log('点击跳转到Ollama设置按钮')
-  // 关闭当前弹窗
+  console.log('Clicking navigate to Ollama settings button')
+  // Close current modal
   emit('update:visible', false)
   
-  // 先关闭设置弹窗（如果已打开）
+  // First close settings modal (if already open)
   if (uiStore.showSettingsModal) {
     uiStore.closeSettings()
-    // 等待 DOM 更新
+    // Wait for DOM update
     await nextTick()
   }
   
-  // 打开设置窗口并直接跳转到Ollama设置
-  console.log('调用uiStore.openSettings')
+  // Open settings window and directly navigate to Ollama settings
+  console.log('Calling uiStore.openSettings')
   uiStore.openSettings('ollama')
-  console.log('uiStore.openSettings调用完成')
+  console.log('uiStore.openSettings call completed')
 }
 
-// 监听 visible 变化，初始化表单
+// Listen to visible changes, initialize form
 watch(() => props.visible, (val) => {
   if (val) {
-    // 锁定背景滚动
+    // Lock background scrolling
     document.body.style.overflow = 'hidden'
 
-    // 检查Ollama服务状态
+    // Check Ollama service status
     checkOllamaServiceStatus()
 
-    // 从 API 加载 Model Provider 列表
+    // Load Model Provider list from API
     loadProviders()
 
     if (props.modelData) {
@@ -554,27 +554,27 @@ watch(() => props.visible, (val) => {
       resetForm()
     }
 
-    // ReRank 模型强制使用 remote 来源（Ollama 不支持 ReRank）
+    // ReRank model forced to use remote source (Ollama doesn't support ReRank)
     if (props.modelType === 'rerank') {
       formData.value.source = 'remote'
     }
   } else {
-    // 恢复背景滚动
+    // Restore background scrolling
     document.body.style.overflow = ''
   }
 })
 
-// 重置表单
+// Reset form
 const resetForm = () => {
   formData.value = {
     id: generateId(),
-    name: '', // 保留字段但不使用，保存时用 modelName
+    name: '', // Reserved field but not used, use modelName when saving
     source: 'local',
     provider: 'generic',
     modelName: '',
     baseUrl: '',
     apiKey: '',
-    dimension: undefined, // 默认不填，让用户手动输入或通过检测按钮获取
+    dimension: undefined, // Default empty, let user manually input or get via detection button
     interfaceType: undefined,
     isDefault: false
   }
@@ -588,30 +588,30 @@ const resetForm = () => {
   dimensionMessage.value = ''
 }
 
-// 处理厂商选择变化 (自动填充默认 URL)
+// Handle provider selection change (auto-fill default URL)
 const handleProviderChange = (value: string) => {
   const provider = providerOptions.value.find(opt => opt.value === value)
   if (provider && provider.defaultUrls) {
-    // 根据当前模型类型获取对应的默认 URL
+    // Get corresponding default URL based on current model type
     const defaultUrl = provider.defaultUrls[props.modelType]
     if (defaultUrl) {
       formData.value.baseUrl = defaultUrl
     }
-    // 重置校验状态
+    // Reset validation state
     remoteChecked.value = false
     remoteAvailable.value = false
     remoteMessage.value = ''
   }
 }
 
-// 监听来源变化，重置校验状态（已合并到下面的 watch）
+// Listen to source changes, reset validation state (merged into watch below)
 
-// 生成唯一ID
+// Generate unique ID
 const generateId = () => {
   return `model_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
 }
 
-// 过滤后的模型列表
+// Filtered model list
 const filteredOllamaModels = computed(() => {
   if (!searchKeyword.value) return ollamaModelList.value
   return ollamaModelList.value.filter(model => 
@@ -619,25 +619,25 @@ const filteredOllamaModels = computed(() => {
   )
 })
 
-// 是否显示"下载模型"选项
+// Whether to show "download model" option
 const showDownloadOption = computed(() => {
   if (!searchKeyword.value.trim()) return false
-  // 检查搜索词是否已存在于模型列表中
+  // Check if search term already exists in model list
   const exists = ollamaModelList.value.some(model => 
     model.name.toLowerCase() === searchKeyword.value.toLowerCase()
   )
   return !exists
 })
 
-// 自定义过滤逻辑（捕获搜索关键词）
+// Custom filter logic (capture search keywords)
 const handleModelFilter = (filterWords: string) => {
   searchKeyword.value = filterWords
-  return true // 让 TDesign 使用我们的 filteredOllamaModels
+  return true // Let TDesign use our filteredOllamaModels
 }
 
-// 加载 Ollama 模型列表
+// Load Ollama model list
 const loadOllamaModels = async () => {
-  // 只在选择 local 来源时加载
+  // Only load when local source selected
   if (formData.value.source !== 'local') return
   
   loadingOllamaModels.value = true
@@ -652,46 +652,46 @@ const loadOllamaModels = async () => {
   }
 }
 
-// 刷新模型列表
+// Refresh model list
 const refreshOllamaModels = async () => {
-  ollamaModelList.value = [] // 清空以强制重新加载
+  ollamaModelList.value = [] // Clear to force reload
   await loadOllamaModels()
   MessagePlugin.success(t('model.editor.listRefreshed'))
 }
 
-// 监听下拉框可见性变化
+// Listen to dropdown visibility changes
 const handleDropdownVisibleChange = (visible: boolean) => {
   if (!visible) {
     searchKeyword.value = ''
   }
 }
 
-// 格式化模型大小
+// Format model size
 const formatModelSize = (bytes: number): string => {
   if (!bytes || bytes === 0) return ''
   const gb = bytes / (1024 * 1024 * 1024)
   return gb >= 1 ? `${gb.toFixed(1)} GB` : `${(bytes / (1024 * 1024)).toFixed(0)} MB`
 }
 
-// 检查模型状态（Ollama本地模型）
+// Check model status (Ollama local model)
 const checkModelStatus = async () => {
   if (!formData.value.modelName || formData.value.source !== 'local') {
     return
   }
   
   try {
-    // 调用真实 Ollama API 检查模型是否存在
+    // Call real Ollama API to check if model exists
     const result = await checkOllamaModels([formData.value.modelName])
     modelChecked.value = true
     modelAvailable.value = result.models[formData.value.modelName] || false
   } catch (error) {
-    console.error('检查模型状态失败:', error)
+    console.error('Model status check failed:', error)
     modelChecked.value = false
     modelAvailable.value = false
   }
 }
 
-// 检查 Ollama 本地 Embedding 模型维度
+// Check Ollama local Embedding model dimension
 const checkOllamaDimension = async () => {
   if (!formData.value.modelName || formData.value.source !== 'local' || props.modelType !== 'embedding') {
     return
@@ -720,7 +720,7 @@ const checkOllamaDimension = async () => {
       MessagePlugin.warning(dimensionMessage.value)
     }
   } catch (error: any) {
-    console.error('检测 Ollama 模型维度失败:', error)
+    console.error('Ollama model dimension detection failed:', error)
     dimensionChecked.value = true
     dimensionSuccess.value = false
     dimensionMessage.value = error.message || t('model.editor.dimensionFailed')
@@ -730,7 +730,7 @@ const checkOllamaDimension = async () => {
   }
 }
 
-// 检查 Remote API 连接（根据模型类型调用不同的接口）
+// Check Remote API connection (call different interfaces based on model type)
 const checkRemoteAPI = async () => {
   if (!formData.value.modelName || !formData.value.baseUrl) {
     MessagePlugin.warning(t('model.editor.fillModelAndUrl'))
@@ -744,10 +744,10 @@ const checkRemoteAPI = async () => {
   try {
     let result: any
     
-    // 根据模型类型调用不同的校验接口
+    // Call different validation interfaces based on model type
     switch (props.modelType) {
       case 'chat':
-        // 对话模型（KnowledgeQA）
+        // Chat model (KnowledgeQA)
         result = await checkRemoteModel({
           modelName: formData.value.modelName,
           baseUrl: formData.value.baseUrl,
@@ -756,7 +756,7 @@ const checkRemoteAPI = async () => {
         break
         
       case 'embedding':
-        // Embedding 模型
+        // Embedding model
         result = await testEmbeddingModel({
           source: 'remote',
           modelName: formData.value.modelName,
@@ -765,7 +765,7 @@ const checkRemoteAPI = async () => {
           dimension: formData.value.dimension,
           provider: formData.value.provider
         })
-        // 如果测试成功且返回了维度，自动填充
+        // If test successful and dimension returned, auto-fill
         if (result.available && result.dimension) {
           formData.value.dimension = result.dimension
         MessagePlugin.info(t('model.editor.remoteDimensionDetected', { value: result.dimension }))
@@ -773,7 +773,7 @@ const checkRemoteAPI = async () => {
         break
         
       case 'rerank':
-        // Rerank 模型
+        // Rerank model
         result = await checkRerankModel({
           modelName: formData.value.modelName,
           baseUrl: formData.value.baseUrl,
@@ -782,8 +782,8 @@ const checkRemoteAPI = async () => {
         break
         
       case 'vllm':
-        // VLLM 模型（多模态）
-        // VLLM 使用 checkRemoteModel 进行基础连接测试
+        // VLLM model (multimodal)
+        // VLLM uses checkRemoteModel for basic connection test
         result = await checkRemoteModel({
           modelName: formData.value.modelName,
           baseUrl: formData.value.baseUrl,
@@ -806,7 +806,7 @@ const checkRemoteAPI = async () => {
       MessagePlugin.error(remoteMessage.value)
     }
   } catch (error: any) {
-    console.error('Remote API 校验失败:', error)
+    console.error('Remote API validation failed:', error)
     remoteChecked.value = true
     remoteAvailable.value = false
     remoteMessage.value = error.message || t('model.editor.connectionConfigError')
@@ -816,10 +816,10 @@ const checkRemoteAPI = async () => {
   }
 }
 
-// 确认保存
+// Confirm save
 const handleConfirm = async () => {
   try {
-    // 手动校验必填字段
+    // Manually validate required fields
     if (!formData.value.modelName || !formData.value.modelName.trim()) {
       MessagePlugin.warning(t('model.editor.validation.modelNameRequired'))
       return
@@ -830,14 +830,14 @@ const handleConfirm = async () => {
       return
     }
     
-    // 如果是 remote 类型，必须填写 baseUrl
+    // If remote type, must fill baseUrl
     if (formData.value.source === 'remote') {
       if (!formData.value.baseUrl || !formData.value.baseUrl.trim()) {
         MessagePlugin.warning(t('model.editor.remoteBaseUrlRequired'))
         return
       }
       
-      // 校验 Base URL 格式
+      // Validate Base URL format
       try {
         new URL(formData.value.baseUrl.trim())
       } catch {
@@ -846,91 +846,91 @@ const handleConfirm = async () => {
       }
     }
     
-    // 执行表单验证
+    // Execute form validation
     await formRef.value?.validate()
     saving.value = true
     
-    // 如果是新增且没有 id，生成一个
+    // If new and no id, generate one
     if (!formData.value.id) {
       formData.value.id = generateId()
     }
     
     emit('confirm', { ...formData.value })
     dialogVisible.value = false
-    // 移除此处的成功提示，由父组件统一处理
+    // Remove success message here, handled uniformly by parent component
   } catch (error) {
-    console.error('表单验证失败:', error)
+    console.error('Form validation failed:', error)
   } finally {
     saving.value = false
   }
 }
 
-// 监听模型选择变化（处理下载逻辑和自动维度检测提示）
+// Listen to model selection changes (handle download logic and auto dimension detection prompt)
 watch(() => formData.value.modelName, async (newValue, oldValue) => {
   if (!newValue) return
   
-  // 处理下载逻辑
+  // Handle download logic
   if (newValue.startsWith('__download__')) {
-  // 提取模型名称
+  // Extract model name
   const modelName = newValue.replace('__download__', '')
   
-  // 重置选择（避免显示 __download__ 前缀）
+  // Reset selection (avoid showing __download__ prefix)
   formData.value.modelName = ''
   
-  // 开始下载
+  // Start download
   await startDownload(modelName)
     return
   }
   
-  // 如果是 embedding 模型且选择的是 Ollama 本地模型，且模型名称发生了实际变化
+  // If embedding model and selected Ollama local model, and model name actually changed
   if (props.modelType === 'embedding' && 
       formData.value.source === 'local' && 
       newValue !== oldValue && 
       oldValue !== '') {
-    // 提示用户可以检测维度
+    // Prompt user can detect dimension
     MessagePlugin.info(t('model.editor.dimensionHint'))
   }
 })
 
-// 开始下载模型
+// Start downloading model
 const startDownload = async (modelName: string) => {
   downloading.value = true
   downloadProgress.value = 0
   currentDownloadModel.value = modelName
   
   try {
-    // 启动下载
+    // Start download
     const result = await downloadOllamaModel(modelName)
     const taskId = result.taskId
     
     MessagePlugin.success(t('model.editor.downloadStarted', { name: modelName }))
     
-    // 轮询下载进度
+    // Poll download progress
     downloadInterval = setInterval(async () => {
       try {
         const progress = await getDownloadProgress(taskId)
         downloadProgress.value = progress.progress
         
         if (progress.status === 'completed') {
-          // 下载完成
+          // Download completed
           clearInterval(downloadInterval)
           downloadInterval = null
           downloading.value = false
           
           MessagePlugin.success(t('model.editor.downloadCompleted', { name: modelName }))
           
-          // 刷新模型列表
+          // Refresh model list
           await loadOllamaModels()
           
-          // 自动选中新下载的模型
+          // Auto-select newly downloaded model
           formData.value.modelName = modelName
           
-          // 重置状态
+          // Reset state
           downloadProgress.value = 0
           currentDownloadModel.value = ''
           
         } else if (progress.status === 'failed') {
-          // 下载失败
+          // Download failed
           clearInterval(downloadInterval)
           downloadInterval = null
           downloading.value = false
@@ -939,9 +939,9 @@ const startDownload = async (modelName: string) => {
           currentDownloadModel.value = ''
         }
       } catch (error) {
-        console.error('获取下载进度失败:', error)
+        console.error('Failed to get download progress:', error)
       }
-    }, 1000) // 每秒查询一次
+    }, 1000) // Query once per second
     
   } catch (error: any) {
     downloading.value = false
@@ -951,16 +951,16 @@ const startDownload = async (modelName: string) => {
   }
 }
 
-// 组件卸载时清理定时器
+// Clean up timer when component unmounts
 onUnmounted(() => {
   if (downloadInterval) {
     clearInterval(downloadInterval)
   }
 })
 
-// 监听来源变化，清理所有状态
+// Listen to source changes, clean up all state
 watch(() => formData.value.source, () => {
-  // 重置校验状态
+  // Reset validation state
   modelChecked.value = false
   modelAvailable.value = false
   remoteChecked.value = false
@@ -970,7 +970,7 @@ watch(() => formData.value.source, () => {
   dimensionSuccess.value = false
   dimensionMessage.value = ''
   
-  // 清理下载状态
+  // Clean up download state
   searchKeyword.value = ''
   if (downloadInterval) {
     clearInterval(downloadInterval)
@@ -981,21 +981,21 @@ watch(() => formData.value.source, () => {
   currentDownloadModel.value = ''
 })
 
-// 监听模型名称变化，清理维度检测状态
+// Listen to model name changes, clean up dimension detection state
 watch(() => formData.value.modelName, () => {
   dimensionChecked.value = false
   dimensionSuccess.value = false
   dimensionMessage.value = ''
 })
 
-// 取消
+// Cancel
 const handleCancel = () => {
   dialogVisible.value = false
 }
 </script>
 
 <style lang="less" scoped>
-// 遮罩层
+// Overlay
 .model-editor-overlay {
   position: fixed;
   top: 0;
@@ -1012,7 +1012,7 @@ const handleCancel = () => {
   padding: 20px;
 }
 
-// 弹窗主体
+// Modal body
 .model-editor-modal {
   position: relative;
   width: 100%;
@@ -1026,7 +1026,7 @@ const handleCancel = () => {
   overflow: hidden;
 }
 
-// 关闭按钮
+// Close button
 .close-btn {
   position: absolute;
   top: 16px;
@@ -1050,7 +1050,7 @@ const handleCancel = () => {
   }
 }
 
-// 标题区域
+// Title area
 .modal-header {
   padding: 24px 24px 16px;
   border-bottom: 1px solid #e5e7eb;
@@ -1071,14 +1071,14 @@ const handleCancel = () => {
   line-height: 1.5;
 }
 
-// 内容区域
+// Content area
 .modal-body {
   flex: 1;
   overflow-y: auto;
   padding: 24px;
   background: #ffffff;
 
-  // 自定义滚动条
+  // Custom scrollbar
   &::-webkit-scrollbar {
     width: 6px;
   }
@@ -1105,7 +1105,7 @@ const handleCancel = () => {
   }
 }
 
-// 表单项样式
+// Form item styles
 .form-item {
   margin-bottom: 20px;
 
@@ -1129,7 +1129,7 @@ const handleCancel = () => {
   }
 }
 
-// 输入框样式
+// Input styles
 :deep(.t-input),
 :deep(.t-select),
 :deep(.t-textarea),
@@ -1163,7 +1163,7 @@ const handleCancel = () => {
   }
 }
 
-// 厂商选择器样式
+// Provider selector styles
 .provider-option {
   display: flex;
   flex-direction: column;
@@ -1182,7 +1182,7 @@ const handleCancel = () => {
   }
 }
 
-// 单选按钮组
+// Radio button group
 :deep(.t-radio-group) {
   display: flex;
   gap: 24px;
@@ -1210,7 +1210,7 @@ const handleCancel = () => {
   }
 }
 
-// 复选框
+// Checkbox
 :deep(.t-checkbox) {
   font-size: 13px;
 
@@ -1220,7 +1220,7 @@ const handleCancel = () => {
   }
 }
 
-// 底部按钮区域
+// Bottom button area
 .modal-footer {
   padding: 16px 24px;
   border-top: 1px solid #e5e7eb;
@@ -1266,7 +1266,7 @@ const handleCancel = () => {
   }
 }
 
-// 过渡动画
+// Transition animation
 .modal-enter-active,
 .modal-leave-active {
   transition: opacity 0.2s ease;
@@ -1286,7 +1286,7 @@ const handleCancel = () => {
   }
 }
 
-// API 测试区域
+// API test area
 .api-test-section {
   display: flex;
   align-items: center;
@@ -1328,7 +1328,7 @@ const handleCancel = () => {
   }
 }
 
-// Ollama 模型选择器样式
+// Ollama model selector styles
 .model-option {
   display: flex;
   align-items: center;
@@ -1368,7 +1368,7 @@ const handleCancel = () => {
   }
 }
 
-// 下载进度后缀样式
+// Download progress suffix styles
 .download-suffix {
   display: flex;
   align-items: center;
@@ -1388,7 +1388,7 @@ const handleCancel = () => {
   }
 }
 
-// 下载中的选择框进度条效果
+// Select box progress bar effect during download
 :deep(.t-select.downloading) {
   .t-input {
     position: relative;
@@ -1450,7 +1450,7 @@ const handleCancel = () => {
   to { transform: rotate(360deg); }
 }
 
-// 维度控制样式
+// Dimension control styles
 .dimension-control {
   display: flex;
   align-items: center;
@@ -1477,7 +1477,7 @@ const handleCancel = () => {
   }
 }
 
-// Ollama不可用提示样式
+// Ollama unavailable notification styles
 .ollama-unavailable-tip {
   display: flex;
   align-items: center;
@@ -1506,7 +1506,7 @@ const handleCancel = () => {
     line-height: 1.5;
   }
 
-  // ReRank提示使用主题绿色风格，与主页面保持一致
+  // ReRank notification uses theme green style, consistent with main page
   &.rerank-tip {
     background: #f0fdf6;
     border: 1px solid #d1fae5;

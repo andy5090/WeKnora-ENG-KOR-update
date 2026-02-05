@@ -1,67 +1,67 @@
-# 模型管理 API
+# Model Management API
 
-[返回目录](./README.md)
+[Back to Index](./README.md)
 
-| 方法   | 路径                    | 描述                  |
-| ------ | ----------------------- | --------------------- |
-| POST   | `/models`               | 创建模型              |
-| GET    | `/models`               | 获取模型列表          |
-| GET    | `/models/:id`           | 获取模型详情          |
-| PUT    | `/models/:id`           | 更新模型              |
-| DELETE | `/models/:id`           | 删除模型              |
-| GET    | `/models/providers`     | 获取模型服务商列表    |
+| Method   | Path                    | Description              |
+| -------- | ----------------------- | ------------------------ |
+| POST     | `/models`               | Create model             |
+| GET      | `/models`               | List models              |
+| GET      | `/models/:id`           | Get model details        |
+| PUT      | `/models/:id`           | Update model             |
+| DELETE   | `/models/:id`           | Delete model             |
+| GET      | `/models/providers`     | List model providers     |
 
-## 服务商支持 (Provider Support)
+## Provider Support
 
-WeKnora 支持多种主流 AI 模型服务商，在创建模型时可通过 `provider` 字段指定服务商类型以获得更好的兼容性。
+WeKnora supports multiple mainstream AI model providers. When creating models, you can specify the provider type through the `provider` field for better compatibility.
 
-### 支持的服务商列表
+### Supported Provider List
 
-| 服务商标识     | 名称                         | 支持的模型类型                  |
-| -------------- | ---------------------------- | ------------------------------- |
-| `generic`      | 自定义 (OpenAI兼容接口)  | Chat, Embedding, Rerank, VLLM   |
+| Provider ID    | Name                         | Supported Model Types            |
+| -------------- | ---------------------------- | -------------------------------- |
+| `generic`      | Custom (OpenAI compatible)   | Chat, Embedding, Rerank, VLLM   |
 | `openai`       | OpenAI                       | Chat, Embedding, Rerank, VLLM   |
-| `aliyun`       | 阿里云 DashScope             | Chat, Embedding, Rerank, VLLM   |
-| `zhipu`        | 智谱 BigModel                | Chat, Embedding, Rerank, VLLM   |
-| `volcengine`   | 火山引擎 Volcengine          | Chat, Embedding, VLLM           |
-| `hunyuan`      | 腾讯混元 Hunyuan             | Chat, Embedding                 |
-| `deepseek`     | DeepSeek                     | Chat                            |
-| `minimax`      | MiniMax                      | Chat                            |
-| `mimo`         | 小米 MiMo                    | Chat                            |
-| `siliconflow`  | 硅基流动 SiliconFlow         | Chat, Embedding, Rerank, VLLM   |
-| `jina`         | Jina                         | Embedding, Rerank               |
-| `openrouter`   | OpenRouter                   | Chat, VLLM                      |
-| `gemini`       | Google Gemini                | Chat                            |
-| `modelscope`   | 魔搭 ModelScope              | Chat, Embedding, VLLM           |
-| `moonshot`     | 月之暗面 Moonshot            | Chat, VLLM                      |
-| `qianfan`      | 百度千帆 Baidu Cloud         | Chat, Embedding, Rerank, VLLM   |
-| `qiniu`        | 七牛云 Qiniu                 | Chat                            |
-| `longcat`      | LongCat AI                   | Chat                            |
-| `gpustack`     | GPUStack                     | Chat, Embedding, Rerank, VLLM   |
+| `aliyun`       | Alibaba Cloud DashScope      | Chat, Embedding, Rerank, VLLM   |
+| `zhipu`        | Zhipu BigModel               | Chat, Embedding, Rerank, VLLM   |
+| `volcengine`   | ByteDance Volcengine          | Chat, Embedding, VLLM           |
+| `hunyuan`      | Tencent Hunyuan               | Chat, Embedding                 |
+| `deepseek`     | DeepSeek                      | Chat                            |
+| `minimax`      | MiniMax                       | Chat                            |
+| `mimo`         | Xiaomi MiMo                   | Chat                            |
+| `siliconflow`  | SiliconFlow                   | Chat, Embedding, Rerank, VLLM   |
+| `jina`         | Jina                          | Embedding, Rerank               |
+| `openrouter`   | OpenRouter                    | Chat, VLLM                      |
+| `gemini`       | Google Gemini                 | Chat                            |
+| `modelscope`   | ModelScope                    | Chat, Embedding, VLLM           |
+| `moonshot`     | Moonshot                      | Chat, VLLM                      |
+| `qianfan`      | Baidu Cloud Qianfan           | Chat, Embedding, Rerank, VLLM   |
+| `qiniu`        | Qiniu Cloud                   | Chat                            |
+| `longcat`      | LongCat AI                    | Chat                            |
+| `gpustack`     | GPUStack                      | Chat, Embedding, Rerank, VLLM   |
 
-## GET `/models/providers` - 获取模型服务商列表
+## GET `/models/providers` - List Model Providers
 
-根据模型类型获取支持的服务商列表及配置信息。
+Get the list of supported providers and configuration information based on model type.
 
-**请求参数**:
+**Request Parameters**:
 
-| 参数       | 类型   | 必填 | 描述                                           |
-| ---------- | ------ | ---- | ---------------------------------------------- |
-| model_type | string | 否   | 模型类型：`chat`, `embedding`, `rerank`, `vllm` |
+| Parameter   | Type   | Required | Description                                    |
+| ----------- | ------ | -------- | ---------------------------------------------- |
+| model_type  | string | No       | Model type: `chat`, `embedding`, `rerank`, `vllm` |
 
-**请求**:
+**Request**:
 
 ```curl
-# 获取所有服务商
+# Get all providers
 curl --location 'http://localhost:8080/api/v1/models/providers' \
 --header 'X-API-Key: your_api_key'
 
-# 获取支持 Embedding 类型的服务商
+# Get providers supporting Embedding type
 curl --location 'http://localhost:8080/api/v1/models/providers?model_type=embedding' \
 --header 'X-API-Key: your_api_key'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -69,7 +69,7 @@ curl --location 'http://localhost:8080/api/v1/models/providers?model_type=embedd
     "data": [
         {
             "value": "aliyun",
-            "label": "阿里云 DashScope",
+            "label": "Alibaba Cloud DashScope",
             "description": "qwen-plus, tongyi-embedding-vision-plus, qwen3-rerank, etc.",
             "defaultUrls": {
                 "chat": "https://dashscope.aliyuncs.com/compatible-mode/v1",
@@ -80,7 +80,7 @@ curl --location 'http://localhost:8080/api/v1/models/providers?model_type=embedd
         },
         {
             "value": "zhipu",
-            "label": "智谱 BigModel",
+            "label": "Zhipu BigModel",
             "description": "glm-4.7, embedding-3, rerank, etc.",
             "defaultUrls": {
                 "chat": "https://open.bigmodel.cn/api/paas/v4",
@@ -93,11 +93,11 @@ curl --location 'http://localhost:8080/api/v1/models/providers?model_type=embedd
 }
 ```
 
-## POST `/models` - 创建模型
+## POST `/models` - Create Model
 
-### 创建对话模型（KnowledgeQA）
+### Create Chat Model (KnowledgeQA)
 
-**本地 Ollama 模型**:
+**Local Ollama Model**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/models' \
@@ -115,7 +115,7 @@ curl --location 'http://localhost:8080/api/v1/models' \
 }'
 ```
 
-**远程 API 模型（指定服务商）**:
+**Remote API Model (Specify Provider)**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/models' \
@@ -125,7 +125,7 @@ curl --location 'http://localhost:8080/api/v1/models' \
     "name": "qwen-plus",
     "type": "KnowledgeQA",
     "source": "remote",
-    "description": "阿里云 Qwen 大模型",
+    "description": "Alibaba Cloud Qwen Large Model",
     "parameters": {
         "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
         "api_key": "sk-your-dashscope-api-key",
@@ -134,9 +134,9 @@ curl --location 'http://localhost:8080/api/v1/models' \
 }'
 ```
 
-### 创建嵌入模型（Embedding）
+### Create Embedding Model
 
-**本地 Ollama 模型**:
+**Local Ollama Model**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/models' \
@@ -158,7 +158,7 @@ curl --location 'http://localhost:8080/api/v1/models' \
 }'
 ```
 
-**远程 API 模型（阿里云 DashScope）**:
+**Remote API Model (Alibaba Cloud DashScope)**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/models' \
@@ -168,7 +168,7 @@ curl --location 'http://localhost:8080/api/v1/models' \
     "name": "text-embedding-v3",
     "type": "Embedding",
     "source": "remote",
-    "description": "阿里云通义千问 Embedding 模型",
+    "description": "Alibaba Cloud Tongyi Qianwen Embedding Model",
     "parameters": {
         "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
         "api_key": "sk-your-dashscope-api-key",
@@ -181,7 +181,7 @@ curl --location 'http://localhost:8080/api/v1/models' \
 }'
 ```
 
-**远程 API 模型（Jina AI）**:
+**Remote API Model (Jina AI)**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/models' \
@@ -191,7 +191,7 @@ curl --location 'http://localhost:8080/api/v1/models' \
     "name": "jina-embeddings-v3",
     "type": "Embedding",
     "source": "remote",
-    "description": "Jina AI Embedding 模型",
+    "description": "Jina AI Embedding Model",
     "parameters": {
         "base_url": "https://api.jina.ai/v1",
         "api_key": "jina_your_api_key",
@@ -204,9 +204,9 @@ curl --location 'http://localhost:8080/api/v1/models' \
 }'
 ```
 
-### 创建排序模型（Rerank）
+### Create Rerank Model
 
-**远程 API 模型（阿里云 DashScope）**:
+**Remote API Model (Alibaba Cloud DashScope)**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/models' \
@@ -216,7 +216,7 @@ curl --location 'http://localhost:8080/api/v1/models' \
     "name": "gte-rerank",
     "type": "Rerank",
     "source": "remote",
-    "description": "阿里云 GTE Rerank 模型",
+    "description": "Alibaba Cloud GTE Rerank Model",
     "parameters": {
         "base_url": "https://dashscope.aliyuncs.com/api/v1/services/rerank/text-rerank/text-rerank",
         "api_key": "sk-your-dashscope-api-key",
@@ -225,7 +225,7 @@ curl --location 'http://localhost:8080/api/v1/models' \
 }'
 ```
 
-**远程 API 模型（Jina AI）**:
+**Remote API Model (Jina AI)**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/models' \
@@ -235,7 +235,7 @@ curl --location 'http://localhost:8080/api/v1/models' \
     "name": "jina-reranker-v2-base-multilingual",
     "type": "Rerank",
     "source": "remote",
-    "description": "Jina AI Rerank 模型",
+    "description": "Jina AI Rerank Model",
     "parameters": {
         "base_url": "https://api.jina.ai/v1",
         "api_key": "jina_your_api_key",
@@ -244,7 +244,7 @@ curl --location 'http://localhost:8080/api/v1/models' \
 }'
 ```
 
-### 创建视觉模型（VLLM）
+### Create Vision Model (VLLM)
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/models' \
@@ -254,7 +254,7 @@ curl --location 'http://localhost:8080/api/v1/models' \
     "name": "qwen-vl-plus",
     "type": "VLLM",
     "source": "remote",
-    "description": "阿里云通义千问视觉模型",
+    "description": "Alibaba Cloud Tongyi Qianwen Vision Model",
     "parameters": {
         "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
         "api_key": "sk-your-dashscope-api-key",
@@ -263,7 +263,7 @@ curl --location 'http://localhost:8080/api/v1/models' \
 }'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -274,7 +274,7 @@ curl --location 'http://localhost:8080/api/v1/models' \
         "name": "text-embedding-v3",
         "type": "Embedding",
         "source": "remote",
-        "description": "阿里云通义千问 Embedding 模型",
+        "description": "Alibaba Cloud Tongyi Qianwen Embedding Model",
         "parameters": {
             "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
             "api_key": "sk-***",
@@ -293,9 +293,9 @@ curl --location 'http://localhost:8080/api/v1/models' \
 }
 ```
 
-## GET `/models` - 获取模型列表
+## GET `/models` - List Models
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/models' \
@@ -303,7 +303,7 @@ curl --location 'http://localhost:8080/api/v1/models' \
 --header 'X-API-Key: your_api_key'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -315,7 +315,7 @@ curl --location 'http://localhost:8080/api/v1/models' \
             "name": "text-embedding-v3",
             "type": "Embedding",
             "source": "remote",
-            "description": "阿里云通义千问 Embedding 模型",
+            "description": "Alibaba Cloud Tongyi Qianwen Embedding Model",
             "parameters": {
                 "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
                 "api_key": "sk-***",
@@ -337,7 +337,7 @@ curl --location 'http://localhost:8080/api/v1/models' \
             "name": "qwen-plus",
             "type": "KnowledgeQA",
             "source": "remote",
-            "description": "阿里云 Qwen 大模型",
+            "description": "Alibaba Cloud Qwen Large Model",
             "parameters": {
                 "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
                 "api_key": "sk-***",
@@ -357,9 +357,9 @@ curl --location 'http://localhost:8080/api/v1/models' \
 }
 ```
 
-## GET `/models/:id` - 获取模型详情
+## GET `/models/:id` - Get Model Details
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location 'http://localhost:8080/api/v1/models/dff7bc94-7885-4dd1-bfd5-bd96e4df2fc3' \
@@ -367,7 +367,7 @@ curl --location 'http://localhost:8080/api/v1/models/dff7bc94-7885-4dd1-bfd5-bd9
 --header 'X-API-Key: your_api_key'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -378,7 +378,7 @@ curl --location 'http://localhost:8080/api/v1/models/dff7bc94-7885-4dd1-bfd5-bd9
         "name": "text-embedding-v3",
         "type": "Embedding",
         "source": "remote",
-        "description": "阿里云通义千问 Embedding 模型",
+        "description": "Alibaba Cloud Tongyi Qianwen Embedding Model",
         "parameters": {
             "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
             "api_key": "sk-***",
@@ -397,9 +397,9 @@ curl --location 'http://localhost:8080/api/v1/models/dff7bc94-7885-4dd1-bfd5-bd9
 }
 ```
 
-## PUT `/models/:id` - 更新模型
+## PUT `/models/:id` - Update Model
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location --request PUT 'http://localhost:8080/api/v1/models/8fdc464d-8eaa-44d4-a85b-094b28af5330' \
@@ -407,7 +407,7 @@ curl --location --request PUT 'http://localhost:8080/api/v1/models/8fdc464d-8eaa
 --header 'X-API-Key: your_api_key' \
 --data '{
     "name": "gte-rerank-v2",
-    "description": "阿里云 GTE Rerank 模型 V2",
+    "description": "Alibaba Cloud GTE Rerank Model V2",
     "parameters": {
         "base_url": "https://dashscope.aliyuncs.com/api/v1/services/rerank/text-rerank/text-rerank",
         "api_key": "sk-your-new-api-key",
@@ -416,7 +416,7 @@ curl --location --request PUT 'http://localhost:8080/api/v1/models/8fdc464d-8eaa
 }'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -427,7 +427,7 @@ curl --location --request PUT 'http://localhost:8080/api/v1/models/8fdc464d-8eaa
         "name": "gte-rerank-v2",
         "type": "Rerank",
         "source": "remote",
-        "description": "阿里云 GTE Rerank 模型 V2",
+        "description": "Alibaba Cloud GTE Rerank Model V2",
         "parameters": {
             "base_url": "https://dashscope.aliyuncs.com/api/v1/services/rerank/text-rerank/text-rerank",
             "api_key": "sk-***",
@@ -446,9 +446,9 @@ curl --location --request PUT 'http://localhost:8080/api/v1/models/8fdc464d-8eaa
 }
 ```
 
-## DELETE `/models/:id` - 删除模型
+## DELETE `/models/:id` - Delete Model
 
-**请求**:
+**Request**:
 
 ```curl
 curl --location --request DELETE 'http://localhost:8080/api/v1/models/8fdc464d-8eaa-44d4-a85b-094b28af5330' \
@@ -456,7 +456,7 @@ curl --location --request DELETE 'http://localhost:8080/api/v1/models/8fdc464d-8
 --header 'X-API-Key: your_api_key'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -465,37 +465,37 @@ curl --location --request DELETE 'http://localhost:8080/api/v1/models/8fdc464d-8
 }
 ```
 
-## 参数说明
+## Parameter Description
 
-### ModelType (模型类型)
+### ModelType
 
-| 值           | 说明         | 用途                           |
-| ------------ | ------------ | ------------------------------ |
-| KnowledgeQA  | 对话模型     | 知识库问答、对话生成           |
-| Embedding    | 嵌入模型     | 文本向量化、知识库检索         |
-| Rerank       | 排序模型     | 检索结果重排序、相关性优化     |
-| VLLM         | 视觉语言模型 | 多模态分析、图文理解           |
+| Value        | Description        | Usage                                    |
+| ------------ | ------------------ | ---------------------------------------- |
+| KnowledgeQA  | Chat Model         | Knowledge base Q&A, conversation generation |
+| Embedding    | Embedding Model    | Text vectorization, knowledge base retrieval |
+| Rerank       | Rerank Model       | Retrieval result reranking, relevance optimization |
+| VLLM         | Vision Language Model | Multimodal analysis, image-text understanding |
 
-### ModelSource (模型来源)
+### ModelSource
 
-| 值       | 说明       | 配置要求                       |
-| -------- | ---------- | ------------------------------ |
-| local    | 本地模型   | 需要已安装 Ollama 并拉取模型   |
-| remote   | 远程 API   | 需要提供 `base_url` 和 `api_key` |
+| Value   | Description    | Configuration Requirements                    |
+| ------- | -------------- | --------------------------------------------- |
+| local   | Local Model    | Requires Ollama installed and model pulled   |
+| remote  | Remote API     | Requires `base_url` and `api_key`             |
 
-### Parameters (模型参数)
+### Parameters
 
-| 字段                 | 类型   | 说明                                         |
-| -------------------- | ------ | -------------------------------------------- |
-| base_url             | string | API 服务地址（远程模型必填）                 |
-| api_key              | string | API 密钥（远程模型必填）                     |
-| provider             | string | 服务商标识（可选，用于选择特定的 API 适配器）|
-| embedding_parameters | object | Embedding 模型专用参数                       |
-| extra_config         | object | 服务商特定的额外配置                         |
+| Field                 | Type   | Description                                    |
+| --------------------- | ------ | ---------------------------------------------- |
+| base_url              | string | API service address (required for remote models) |
+| api_key               | string | API key (required for remote models)           |
+| provider              | string | Provider identifier (optional, for selecting specific API adapter) |
+| embedding_parameters  | object | Embedding model specific parameters            |
+| extra_config          | object | Provider-specific extra configuration          |
 
-### EmbeddingParameters (嵌入参数)
+### EmbeddingParameters
 
-| 字段                   | 类型 | 说明                       |
-| ---------------------- | ---- | -------------------------- |
-| dimension              | int  | 向量维度（如：768, 1024）  |
-| truncate_prompt_tokens | int  | 截断 Token 数（0 表示不截断）|
+| Field                  | Type | Description                              |
+| ---------------------- | ---- | ---------------------------------------- |
+| dimension              | int  | Vector dimension (e.g., 768, 1024)      |
+| truncate_prompt_tokens | int  | Truncate token count (0 means no truncation) |

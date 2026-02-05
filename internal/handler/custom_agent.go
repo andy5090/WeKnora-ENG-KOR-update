@@ -41,14 +41,14 @@ type UpdateAgentRequest struct {
 }
 
 // CreateAgent godoc
-// @Summary      创建智能体
-// @Description  创建新的自定义智能体
-// @Tags         智能体
+// @Summary      Create agent
+// @Description  Create a new custom agent
+// @Tags         Agent
 // @Accept       json
 // @Produce      json
-// @Param        request  body      CreateAgentRequest  true  "智能体信息"
-// @Success      201      {object}  map[string]interface{}  "创建的智能体"
-// @Failure      400      {object}  errors.AppError         "请求参数错误"
+// @Param        request  body      CreateAgentRequest  true  "Agent information"
+// @Success      201      {object}  map[string]interface{}  "Created agent"
+// @Failure      400      {object}  errors.AppError         "Invalid request parameters"
 // @Security     Bearer
 // @Security     ApiKeyAuth
 // @Router       /agents [post]
@@ -97,15 +97,15 @@ func (h *CustomAgentHandler) CreateAgent(c *gin.Context) {
 }
 
 // GetAgent godoc
-// @Summary      获取智能体详情
-// @Description  根据ID获取智能体详情
-// @Tags         智能体
+// @Summary      Get agent details
+// @Description  Get agent details by ID
+// @Tags         Agent
 // @Accept       json
 // @Produce      json
-// @Param        id   path      string  true  "智能体ID"
-// @Success      200  {object}  map[string]interface{}  "智能体详情"
-// @Failure      400  {object}  errors.AppError         "请求参数错误"
-// @Failure      404  {object}  errors.AppError         "智能体不存在"
+// @Param        id   path      string  true  "Agent ID"
+// @Success      200  {object}  map[string]interface{}  "Agent details"
+// @Failure      400  {object}  errors.AppError         "Invalid request parameters"
+// @Failure      404  {object}  errors.AppError         "Agent not found"
 // @Security     Bearer
 // @Security     ApiKeyAuth
 // @Router       /agents/{id} [get]
@@ -140,13 +140,13 @@ func (h *CustomAgentHandler) GetAgent(c *gin.Context) {
 }
 
 // ListAgents godoc
-// @Summary      获取智能体列表
-// @Description  获取当前租户的所有智能体（包括内置智能体）
-// @Tags         智能体
+// @Summary      List agents
+// @Description  Get all agents for the current tenant (including built-in agents)
+// @Tags         Agent
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  map[string]interface{}  "智能体列表"
-// @Failure      500  {object}  errors.AppError         "服务器错误"
+// @Success      200  {object}  map[string]interface{}  "Agent list"
+// @Failure      500  {object}  errors.AppError         "Server error"
 // @Security     Bearer
 // @Security     ApiKeyAuth
 // @Router       /agents [get]
@@ -168,16 +168,16 @@ func (h *CustomAgentHandler) ListAgents(c *gin.Context) {
 }
 
 // UpdateAgent godoc
-// @Summary      更新智能体
-// @Description  更新智能体的名称、描述和配置
-// @Tags         智能体
+// @Summary      Update agent
+// @Description  Update agent name, description and configuration
+// @Tags         Agent
 // @Accept       json
 // @Produce      json
-// @Param        id       path      string              true  "智能体ID"
-// @Param        request  body      UpdateAgentRequest  true  "更新请求"
-// @Success      200      {object}  map[string]interface{}  "更新后的智能体"
-// @Failure      400      {object}  errors.AppError         "请求参数错误"
-// @Failure      403      {object}  errors.AppError         "无法修改内置智能体"
+// @Param        id       path      string              true  "Agent ID"
+// @Param        request  body      UpdateAgentRequest  true  "Update request"
+// @Success      200      {object}  map[string]interface{}  "Updated agent"
+// @Failure      400      {object}  errors.AppError         "Invalid request parameters"
+// @Failure      403      {object}  errors.AppError         "Cannot modify built-in agent"
 // @Security     Bearer
 // @Security     ApiKeyAuth
 // @Router       /agents/{id} [put]
@@ -241,16 +241,16 @@ func (h *CustomAgentHandler) UpdateAgent(c *gin.Context) {
 }
 
 // DeleteAgent godoc
-// @Summary      删除智能体
-// @Description  删除指定的智能体
-// @Tags         智能体
+// @Summary      Delete agent
+// @Description  Delete the specified agent
+// @Tags         Agent
 // @Accept       json
 // @Produce      json
-// @Param        id   path      string  true  "智能体ID"
-// @Success      200  {object}  map[string]interface{}  "删除成功"
-// @Failure      400  {object}  errors.AppError         "请求参数错误"
-// @Failure      403  {object}  errors.AppError         "无法删除内置智能体"
-// @Failure      404  {object}  errors.AppError         "智能体不存在"
+// @Param        id   path      string  true  "Agent ID"
+// @Success      200  {object}  map[string]interface{}  "Delete successful"
+// @Failure      400  {object}  errors.AppError         "Invalid request parameters"
+// @Failure      403  {object}  errors.AppError         "Cannot delete built-in agent"
+// @Failure      404  {object}  errors.AppError         "Agent not found"
 // @Security     Bearer
 // @Security     ApiKeyAuth
 // @Router       /agents/{id} [delete]
@@ -294,15 +294,15 @@ func (h *CustomAgentHandler) DeleteAgent(c *gin.Context) {
 }
 
 // CopyAgent godoc
-// @Summary      复制智能体
-// @Description  复制指定的智能体
-// @Tags         智能体
+// @Summary      Copy agent
+// @Description  Copy the specified agent
+// @Tags         Agent
 // @Accept       json
 // @Produce      json
-// @Param        id   path      string  true  "智能体ID"
-// @Success      201  {object}  map[string]interface{}  "复制成功"
-// @Failure      400  {object}  errors.AppError         "请求参数错误"
-// @Failure      404  {object}  errors.AppError         "智能体不存在"
+// @Param        id   path      string  true  "Agent ID"
+// @Success      201  {object}  map[string]interface{}  "Copy successful"
+// @Failure      400  {object}  errors.AppError         "Invalid request parameters"
+// @Failure      404  {object}  errors.AppError         "Agent not found"
 // @Security     Bearer
 // @Security     ApiKeyAuth
 // @Router       /agents/{id}/copy [post]
@@ -345,12 +345,12 @@ func (h *CustomAgentHandler) CopyAgent(c *gin.Context) {
 }
 
 // GetPlaceholders godoc
-// @Summary      获取占位符定义
-// @Description  获取所有可用的提示词占位符定义，按字段类型分组
-// @Tags         智能体
+// @Summary      Get placeholder definitions
+// @Description  Get all available prompt placeholder definitions, grouped by field type
+// @Tags         Agent
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  map[string]interface{}  "占位符定义"
+// @Success      200  {object}  map[string]interface{}  "Placeholder definitions"
 // @Security     Bearer
 // @Security     ApiKeyAuth
 // @Router       /agents/placeholders [get]

@@ -1,19 +1,19 @@
-# 评估功能 API
+# Evaluation API
 
-[返回目录](./README.md)
+[Back to Index](./README.md)
 
-| 方法 | 路径          | 描述                  |
-| ---- | ------------- | --------------------- |
-| GET  | `/evaluation` | 获取评估任务          |
-| POST | `/evaluation` | 创建评估任务          |
+| Method | Path          | Description          |
+| ------ | ------------- | -------------------- |
+| GET    | `/evaluation` | Get evaluation task   |
+| POST   | `/evaluation` | Create evaluation task |
 
-## GET `/evaluation` - 获取评估任务
+## GET `/evaluation` - Get Evaluation Task
 
-**请求参数**:
-- `task_id`: 从 `POST /evaluation` 接口中获取到的任务 ID
-- `X-API-Key`: 用户 API Key
+**Request Parameters**:
+- `task_id`: Task ID obtained from `POST /evaluation` endpoint
+- `X-API-Key`: User API Key
 
-**请求**:
+**Request**:
 
 ```bash
 curl --location 'http://localhost:8080/api/v1/evaluation?task_id=c34563ad-b09f-4858-b72e-e92beb80becb' \
@@ -21,7 +21,7 @@ curl --location 'http://localhost:8080/api/v1/evaluation?task_id=c34563ad-b09f-4
 --header 'Content-Type: application/json'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -53,15 +53,15 @@ curl --location 'http://localhost:8080/api/v1/evaluation?task_id=c34563ad-b09f-4
                 "top_p": 0,
                 "frequency_penalty": 0,
                 "presence_penalty": 0,
-                "prompt": "这是用户和助手之间的对话。",
-                "context_template": "你是一个专业的智能信息检索助手",
+                "prompt": "This is a conversation between user and assistant.",
+                "context_template": "You are a professional intelligent information retrieval assistant",
                 "no_match_prefix": "<think>\n</think>\nNO_MATCH",
                 "temperature": 0.3,
                 "seed": 0,
                 "max_completion_tokens": 2048
             },
             "fallback_strategy": "",
-            "fallback_response": "抱歉，我无法回答这个问题。"
+            "fallback_response": "Sorry, I cannot answer this question."
         },
         "metric": {
             "retrieval_metrics": {
@@ -86,15 +86,15 @@ curl --location 'http://localhost:8080/api/v1/evaluation?task_id=c34563ad-b09f-4
 }
 ```
 
-## POST `/evaluation` - 创建评估任务
+## POST `/evaluation` - Create Evaluation Task
 
-**请求参数**:
-- `dataset_id`: 评估使用的数据集，暂时只支持官方测试数据集 `default`
-- `knowledge_base_id`: 评估使用的知识库
-- `chat_id`: 评估使用的对话模型
-- `rerank_id`: 评估使用的重排序模型
+**Request Parameters**:
+- `dataset_id`: Dataset used for evaluation, currently only supports official test dataset `default`
+- `knowledge_base_id`: Knowledge base used for evaluation
+- `chat_id`: Chat model used for evaluation
+- `rerank_id`: Rerank model used for evaluation
 
-**请求**:
+**Request**:
 
 ```bash
 curl --location 'http://localhost:8080/api/v1/evaluation' \
@@ -108,7 +108,7 @@ curl --location 'http://localhost:8080/api/v1/evaluation' \
 }'
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -138,15 +138,15 @@ curl --location 'http://localhost:8080/api/v1/evaluation' \
                 "top_p": 0,
                 "frequency_penalty": 0,
                 "presence_penalty": 0,
-                "prompt": "这是用户和助手之间的对话。",
-                "context_template": "你是一个专业的智能信息检索助手，xxx",
+                "prompt": "This is a conversation between user and assistant.",
+                "context_template": "You are a professional intelligent information retrieval assistant, xxx",
                 "no_match_prefix": "<think>\n</think>\nNO_MATCH",
                 "temperature": 0.3,
                 "seed": 0,
                 "max_completion_tokens": 2048
             },
             "fallback_strategy": "",
-            "fallback_response": "抱歉，我无法回答这个问题。"
+            "fallback_response": "Sorry, I cannot answer this question."
         }
     },
     "success": true
