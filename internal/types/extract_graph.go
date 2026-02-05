@@ -27,18 +27,11 @@ type DocumentProcessPayload struct {
 	KnowledgeID              string   `json:"knowledge_id"`
 	KnowledgeBaseID          string   `json:"knowledge_base_id"`
 	FilePath                 string   `json:"file_path,omitempty"` // File path (used for file import)
-	FileName                 string   `json:"file_name,omitempty"` // 文件名（文件导入时使用）
-	FileType                 string   `json:"file_type,omitempty"` // 文件类型（文件导入时使用）
-	URL                      string   `json:"url,omitempty"`       // URL（URL导入时使用）
-	FileURL                  string   `json:"file_url,omitempty"`  // 文件资源链接（file_url导入时使用）
-	Passages                 []string `json:"passages,omitempty"`  // 文本段落（文本导入时使用）
-=======
-	FilePath                 string   `json:"file_path,omitempty"` // File path (used for file import)
-	FileName                 string   `json:"file_name,omitempty"` // File name (used for file import)
-	FileType                 string   `json:"file_type,omitempty"` // File type (used for file import)
-	URL                      string   `json:"url,omitempty"`       // URL (used for URL import)
+	FileName                 string   `json:"file_name,omitempty"`  // File name (used for file import)
+	FileType                 string   `json:"file_type,omitempty"`   // File type (used for file import)
+	URL                      string   `json:"url,omitempty"`        // URL (used for URL import)
+	FileURL                  string   `json:"file_url,omitempty"`  // File resource URL (used for file_url import)
 	Passages                 []string `json:"passages,omitempty"`  // Text passages (used for text import)
->>>>>>> 2167f87 (docs: translate configuration and comments from Chinese to English)
 	EnableMultimodel         bool     `json:"enable_multimodel"`
 	EnableQuestionGeneration bool     `json:"enable_question_generation"` // Whether to enable question generation
 	QuestionCount            int      `json:"question_count,omitempty"`   // Number of questions to generate per chunk

@@ -1,6 +1,6 @@
 <template>
   <div class="agent-list-container">
-    <!-- 头部：仅标题与副标题 -->
+    <!-- Header: title and subtitle only -->
     <div class="header">
       <div class="header-title">
         <h2>{{ $t('agent.title') }}</h2>
@@ -8,7 +8,7 @@
       </div>
     </div>
 
-    <!-- 左侧菜单 + 主内容 -->
+    <!-- Left sidebar + main content -->
     <div class="agent-list-body">
       <ListSpaceSidebar
         v-model="spaceSelection"
@@ -40,7 +40,7 @@
         </template>
       </ListSpaceSidebar>
       <div class="agent-list-main">
-    <!-- 全部：我的 + 共享 -->
+    <!-- All: mine + shared -->
     <div v-if="spaceSelection === 'all' && filteredAgents.length > 0" class="agent-card-wrap">
       <div
         v-for="agent in filteredAgents"
@@ -54,7 +54,7 @@
         }"
         @click="handleCardClick(agent)"
       >
-        <!-- 装饰星星 -->
+        <!-- Decorative stars -->
         <div class="card-decoration">
           <svg class="star-icon" width="24" height="24" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M10 3L10.8 6.2C10.9 6.7 11.3 7.1 11.8 7.2L15 8L11.8 8.8C11.3 8.9 10.9 9.3 10.8 9.8L10 13L9.2 9.8C9.1 9.3 8.7 8.9 8.2 8.8L5 8L8.2 7.2C8.7 7.1 9.1 6.7 9.2 6.2L10 3Z" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" fill="currentColor" fill-opacity="0.15"/>
@@ -159,7 +159,7 @@
               </t-tooltip>
             </div>
           </div>
-          <!-- 右下角：内置 / 自定义 / 空间图标+名称 -->
+          <!-- Bottom right: built-in / custom / space icon+name -->
           <div v-if="!agent.isMine" class="card-bottom-source">
             <img src="@/assets/img/organization-green.svg" class="org-icon" alt="" aria-hidden="true" />
             <span class="org-source-text">{{ agent.org_name }}</span>
@@ -175,7 +175,7 @@
       </div>
     </div>
 
-    <!-- 我的智能体 -->
+    <!-- My agents -->
     <div v-if="spaceSelection === 'mine' && agents.length > 0" class="agent-card-wrap">
       <div 
         v-for="agent in agents" 
@@ -188,7 +188,7 @@
         }"
         @click="handleCardClick(agent)"
       >
-        <!-- 装饰星星 -->
+        <!-- Decorative stars -->
         <div class="card-decoration">
           <svg class="star-icon" width="24" height="24" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M10 3L10.8 6.2C10.9 6.7 11.3 7.1 11.8 7.2L15 8L11.8 8.8C11.3 8.9 10.9 9.3 10.8 9.8L10 13L9.2 9.8C9.1 9.3 8.7 8.9 8.2 8.8L5 8L8.2 7.2C8.7 7.1 9.1 6.7 9.2 6.2L10 3Z" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" fill="currentColor" fill-opacity="0.15"/>
@@ -198,10 +198,10 @@
           </svg>
         </div>
         
-        <!-- 卡片头部 -->
+        <!-- Card header -->
         <div class="card-header">
           <div class="card-header-left">
-            <!-- 内置智能体使用简洁图标 -->
+            <!-- Built-in agents use simple icon -->
             <div v-if="agent.is_builtin" class="builtin-avatar" :class="agent.config?.agent_mode === 'smart-reasoning' ? 'agent' : 'normal'">
               <t-icon :name="agent.config?.agent_mode === 'smart-reasoning' ? 'control-platform' : 'chat'" size="18px" />
             </div>
@@ -248,14 +248,14 @@
           </t-popup>
         </div>
 
-        <!-- 卡片内容 -->
+        <!-- Card content -->
         <div class="card-content">
           <div class="card-description">
             {{ agent.description || $t('agent.noDescription') }}
           </div>
         </div>
 
-        <!-- 卡片底部 -->
+        <!-- Card bottom -->
         <div class="card-bottom">
           <div class="bottom-left">
             <div class="feature-badges">
@@ -292,7 +292,7 @@
               </t-tooltip>
             </div>
           </div>
-          <!-- 右下角：内置 / 自定义 -->
+          <!-- Bottom right: built-in / custom -->
           <div v-if="agent.is_builtin" class="builtin-badge">
             <t-icon name="lock-on" size="12px" />
             <span>{{ $t('agent.builtin') }}</span>
@@ -304,7 +304,7 @@
       </div>
     </div>
 
-    <!-- 按空间筛选：该空间内全部智能体（含我共享的） -->
+    <!-- Filter by space: all agents in that space (including mine shared) -->
     <div v-if="spaceSelectionOrgId && spaceAgentsLoading" class="agent-list-main-loading">
       <t-loading size="large" text="" />
     </div>
@@ -382,7 +382,7 @@
               </t-tooltip>
             </div>
           </div>
-          <!-- 右下角：空间图标+名称 -->
+          <!-- Bottom right: space icon+name -->
           <div class="card-bottom-source">
             <img src="@/assets/img/organization-green.svg" class="org-icon" alt="" aria-hidden="true" />
             <span class="org-source-text">{{ shared.org_name }}</span>
@@ -391,7 +391,8 @@
       </div>
     </div>
 
-    <!-- 空状态：全部 -->
+    <!-- Empty state: all -->
+    <div v-if="spaceSelection === 'all' && filteredAgents.length === 0 && !loading" class="empty-state">
     <div v-if="spaceSelection === 'all' && filteredAgents.length === 0 && !loading" class="empty-state">
       <img class="empty-img" src="@/assets/img/upload.svg" alt="">
       <span class="empty-txt">{{ $t('agent.empty.title') }}</span>
@@ -409,7 +410,7 @@
         <span>{{ $t('agent.createAgent') }}</span>
       </t-button>
     </div>
-    <!-- 空状态：我的 -->
+    <!-- Empty state: mine -->
     <div v-if="spaceSelection === 'mine' && agents.length === 0 && !loading" class="empty-state">
       <img class="empty-img" src="@/assets/img/upload.svg" alt="">
       <span class="empty-txt">{{ $t('agent.empty.title') }}</span>
@@ -427,7 +428,7 @@
         <span>{{ $t('agent.createAgent') }}</span>
       </t-button>
     </div>
-    <!-- 空状态：空间下 -->
+    <!-- Empty state: space -->
     <div v-if="spaceSelectionOrgId && !spaceAgentsLoading && spaceAgentsList.length === 0" class="empty-state">
       <img class="empty-img" src="@/assets/img/upload.svg" alt="">
       <span class="empty-txt">{{ $t('agent.empty.sharedTitle') }}</span>
@@ -436,7 +437,7 @@
       </div>
     </div>
 
-    <!-- 删除确认对话框 -->
+    <!-- Delete confirmation dialog -->
     <t-dialog 
       v-model:visible="deleteVisible" 
       dialogClassName="del-agent-dialog" 
@@ -459,7 +460,7 @@
       </div>
     </t-dialog>
 
-    <!-- 共享智能体详情侧边栏 -->
+    <!-- Shared agent detail sidebar -->
     <Transition name="shared-detail-drawer">
       <div v-if="sharedDetailVisible && currentSharedAgent" class="shared-detail-drawer-overlay" @click.self="closeSharedAgentDetail">
         <div class="shared-detail-drawer">
@@ -519,7 +520,7 @@
       </div>
     </Transition>
 
-    <!-- 智能体编辑器弹窗 -->
+    <!-- Agent editor modal -->
     <AgentEditorModal 
       :visible="editorVisible"
       :mode="editorMode"
@@ -555,14 +556,14 @@ const orgStore = useOrganizationStore()
 
 interface AgentWithUI extends CustomAgent {
   showMore?: boolean
-  /** 当前租户在对话下拉中停用（仅影响本租户） */
+  /** Disabled by current tenant in conversation dropdown (affects only this tenant) */
   disabled_by_me?: boolean
 }
 
 /** Merged agent for "all" tab: my agents (isMine: true) or shared (isMine: false, org_name, source_tenant_id, share_id, disabled_by_me?) */
 type DisplayAgent = (AgentWithUI & { isMine: true }) | (CustomAgent & { isMine: false; org_name: string; source_tenant_id: number; share_id: string; showMore?: boolean; disabled_by_me?: boolean })
 
-// 左侧空间选择：我的 / 空间 ID（已去掉「全部」）
+// Left space selection: mine / space ID (no "all" option)
 const spaceSelection = ref<'all' | 'mine' | string>('mine')
 const agents = ref<AgentWithUI[]>([])
 const sharedAgents = computed<SharedAgentInfo[]>(() => orgStore.sharedAgents || [])
@@ -579,12 +580,12 @@ const sharedAgentsByOrg = computed(() => {
   return sharedAgents.value.filter(s => s.organization_id === orgId)
 })
 
-// 空间视角：该空间内全部智能体（含我共享的），选中空间时请求新接口
+// Space view: all agents in that space (including mine shared), fetch when space selected
 const spaceAgentsList = ref<OrganizationSharedAgentItem[]>([])
 const spaceAgentsLoading = ref(false)
 const spaceAgentCountByOrg = ref<Record<string, number>>({})
 
-// 各空间下的共享智能体数量（用于侧栏展示）：优先用接口返回的该空间总数
+// Shared agent count per space (for sidebar): prefer API-returned total for that space
 const sharedCountByOrg = computed<Record<string, number>>(() => {
   const map: Record<string, number> = {}
   sharedAgents.value.forEach(s => {
@@ -655,7 +656,7 @@ const editorVisible = ref(false)
 const editorMode = ref<'create' | 'edit'>('create')
 const editingAgent = ref<CustomAgent | null>(null)
 const editorInitialSection = ref<string>('basic')
-/** 当前打开三点菜单的卡片 agent.id（用于受控弹出层，避免 computed 项无持久引用导致菜单不响应） */
+/** Agent ID of card with open more menu (for controlled popup, avoid menu not responding due to computed ref) */
 const openMoreAgentId = ref<string | null>(null)
 
 const fetchList = () => {
@@ -674,13 +675,13 @@ const fetchList = () => {
     orgStore.fetchSharedAgents(),
     orgStore.fetchOrganizations()
   ]).finally(() => { loading.value = false }).then(() => {
-    // 各空间智能体数量已由 GET /organizations 的 resource_counts 带回，存于 orgStore.resourceCounts
+    // Space agent counts from GET /organizations resource_counts, stored in orgStore.resourceCounts
     const counts = orgStore.resourceCounts?.agents?.by_organization
     if (counts) spaceAgentCountByOrg.value = { ...counts }
   })
 }
 
-// 检查 URL 参数并打开编辑模态框
+// Check URL parameters and open edit modal
 const checkAndOpenEditModal = () => {
   const editId = route.query.edit as string
   const section = route.query.section as string
@@ -692,19 +693,19 @@ const checkAndOpenEditModal = () => {
       editorInitialSection.value = section || 'basic'
       editorVisible.value = true
     }
-    // 清除 URL 中的参数
+    // Clear parameters from URL
     router.replace({ path: route.path, query: {} })
   }
 }
 
-// 监听菜单创建智能体事件
+// Listen to menu create agent event
 const handleOpenAgentEditor = (event: CustomEvent) => {
   if (event.detail?.mode === 'create') {
     openCreateModal()
   }
 }
 
-// 选中空间时请求该空间内全部智能体（含我共享的）
+// When space selected, fetch all agents in that space (including mine shared)
 watch(spaceSelection, (val) => {
   if (val === 'all' || val === 'mine' || !val) {
     spaceAgentsList.value = []
@@ -799,11 +800,11 @@ async function handleUseSharedAgentInChat(shared: SharedAgentInfo) {
         query: { agent_id: shared.agent.id, source_tenant_id: String(shared.source_tenant_id) }
       })
     } else {
-      MessagePlugin.error(t('createChat.messages.createFailed') || '创建会话失败')
+      MessagePlugin.error(t('createChat.messages.createFailed') || 'Create session failed')
     }
   } catch (e) {
     console.error('Create session for shared agent failed', e)
-    MessagePlugin.error(t('createChat.messages.createError') || '创建会话出错')
+    MessagePlugin.error(t('createChat.messages.createError') || 'Create session error')
   }
 }
 
@@ -834,7 +835,7 @@ const handleCopy = (agent: AgentWithUI) => {
   })
 }
 
-/** 切换「我的」智能体停用状态（仅影响当前租户对话下拉显示） */
+/** Toggle "My" agent disabled state (affects only current tenant's conversation dropdown) */
 const handleToggleDisabled = (agent: AgentWithUI) => {
   openMoreAgentId.value = null
   const nextDisabled = !agent.disabled_by_me
@@ -911,14 +912,14 @@ const formatDate = (dateStr: string) => {
   return formatStringDate(new Date(dateStr))
 }
 
-// 暴露创建方法供外部调用
+// Expose create method for external calls
 const openCreateModal = () => {
   editingAgent.value = null
   editorMode.value = 'create'
   editorVisible.value = true
 }
 
-// 创建智能体
+// Create agent
 const handleCreateAgent = () => {
   openCreateModal()
 }
@@ -1148,7 +1149,7 @@ defineExpose({
   grid-template-columns: 1fr;
 }
 
-/* 与知识库列表卡片统一尺寸：160px 高、18px 20px 内边距、12px 圆角 */
+/* Match knowledge list card size: 160px height, 18px 20px padding, 12px radius */
 .agent-card {
   border: 1px solid #f0f0f0;
   border-radius: 12px;
@@ -1170,7 +1171,7 @@ defineExpose({
     box-shadow: 0 4px 12px rgba(7, 192, 95, 0.12);
   }
 
-  // 普通模式样式
+  // Normal mode styles
   &.agent-mode-normal {
     background: linear-gradient(135deg, #ffffff 0%, #f8fcfa 100%);
     border-color: #e8f5ed;
@@ -1189,7 +1190,7 @@ defineExpose({
     }
   }
 
-  // Agent 模式样式
+  // Agent mode styles
   &.agent-mode-agent {
     background: linear-gradient(135deg, #ffffff 0%, #f8f5ff 100%);
     border-color: #ede8ff;
@@ -1209,7 +1210,7 @@ defineExpose({
     }
   }
 
-  // 确保内容在装饰之上
+  // Ensure content is above decoration
   .card-header,
   .card-content,
   .card-bottom {
@@ -1402,7 +1403,7 @@ defineExpose({
   }
 }
 
-/* 与知识库卡片内容区一致 */
+/* Match knowledge card content area */
 .card-content {
   flex: 1;
   min-height: 0;
@@ -1413,7 +1414,7 @@ defineExpose({
   gap: 6px;
 }
 
-/* 三个列表卡片统一：描述字体 */
+/* All three list cards: description font */
 .card-description {
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -1557,7 +1558,7 @@ defineExpose({
   }
 }
 
-// 响应式布局
+// Responsive layout
 @media (min-width: 900px) {
   .agent-card-wrap {
     grid-template-columns: repeat(2, 1fr);
@@ -1576,7 +1577,7 @@ defineExpose({
   }
 }
 
-// 删除确认对话框样式
+// Delete confirmation dialog styles
 :deep(.del-agent-dialog) {
   padding: 0px !important;
   border-radius: 6px !important;
@@ -1662,7 +1663,7 @@ defineExpose({
 </style>
 
 <style lang="less">
-// 更多操作弹窗样式
+// More actions popup styles
 .card-more-popup {
   z-index: 99 !important;
 
@@ -1723,7 +1724,7 @@ defineExpose({
   }
 }
 
-// 共享智能体详情侧边栏
+// Shared agent detail sidebar
 .shared-detail-drawer-overlay {
   position: fixed;
   top: 0;

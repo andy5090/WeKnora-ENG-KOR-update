@@ -32,9 +32,9 @@ const showAgentModeSelector = ref(false);
 const agentModeButtonRef = ref<HTMLElement>();
 const agentModeDropdownStyle = ref<Record<string, string>>({});
 
-// 智能体相关状态（完整列表供选中态解析；对话下拉用 enabledAgents）
+// Agent related state (full list for selection parsing; enabledAgents for conversation dropdown)
 const agents = ref<CustomAgent[]>([]);
-/** 当前租户在对话下拉中停用的「我的」智能体 ID（仅影响本租户） */
+/** IDs of "My" agents disabled by current tenant in conversation dropdown (affects only this tenant) */
 const disabledOwnAgentIds = ref<string[]>([]);
 const selectedAgentId = computed({
   get: () => settingsStore.selectedAgentId || BUILTIN_QUICK_ANSWER_ID,
@@ -58,16 +58,16 @@ const selectedAgent = computed(() => {
   } as CustomAgent;
 });
 
-// 判断是否为自定义智能体（非内置）
+// Determine if it is a custom agent (non-built-in)
 const isCustomAgent = computed(() => {
   const agent = selectedAgent.value;
   return agent && !agent.is_builtin;
 });
 
-// 判断是否有智能体配置（包括内置智能体）
+// Determine if agent configuration exists (including built-in agents)
 const hasAgentConfig = computed(() => {
   const agent = selectedAgent.value;
-  // 内置智能体需要从 agents 列表中获取实际配置
+  // Built-in agents need to get actual configuration from agents list
   if (agent?.is_builtin) {
     const builtinAgent = agents.value.find(a => a.id === agent.id);
     return !!builtinAgent?.config;
@@ -75,7 +75,7 @@ const hasAgentConfig = computed(() => {
   return !!agent?.config;
 });
 
-// 获取当前智能体的实际配置（内置智能体从 agents 列表获取）
+// Get current agent's actual configuration (built-in agents get from agents list)
 const currentAgentConfig = computed(() => {
   const agent = selectedAgent.value;
   if (agent?.is_builtin) {
@@ -85,20 +85,33 @@ const currentAgentConfig = computed(() => {
   return agent?.config || {};
 });
 
-// 智能体预配置的知识库 IDs
+// Agent pre-configured knowledge base IDs
 const agentKnowledgeBases = computed(() => {
   if (!hasAgentConfig.value) return [];
   return currentAgentConfig.value?.knowledge_bases || [];
 });
 
-// 智能体的知识库选择模式
+// When agent changes, sync agent-configured knowledge bases to store
+// This allows users to remove these knowledge bases
+watch([selectedAgentId, agentKnowledgeBases], ([newAgentId, newAgentKbs], [oldAgentId]) => {
+  if (newAgentId !== oldAgentId && newAgentKbs && newAgentKbs.length > 0) {
+    // Agent switched, add new agent's configured knowledge bases to store
+    const currentSelected = settingsStore.settings.selectedKnowledgeBases || [];
+    const toAdd = newAgentKbs.filter((id: string) => !currentSelected.includes(id));
+    if (toAdd.length > 0) {
+      settingsStore.selectKnowledgeBases([...currentSelected, ...toAdd]);
+    }
+  }
+}, { immediate: true });
+
+// Agent's knowledge base selection mode
 const agentKBSelectionMode = computed(() => {
-  if (!hasAgentConfig.value) return null; // null 表示不受智能体控制
+  if (!hasAgentConfig.value) return null; // null means not controlled by agent
   return currentAgentConfig.value?.kb_selection_mode || 'all';
 });
 
-// 当智能体改变时，模型、网络搜索、可@知识库列表均跟随新智能体配置
-// 知识库：用新智能体配置的列表替换当前选中，使已选与可@列表一致（含共享智能体）
+// When agent changes, model, web search, and @ mention list follow new agent config
+// Knowledge bases: replace current selection with new agent's list (including shared agents)
 watch([selectedAgentId, agentKnowledgeBases, agentKBSelectionMode], ([newAgentId, newAgentKbs, newKbMode], [oldAgentId]) => {
   if (newAgentId !== oldAgentId && oldAgentId !== undefined) {
     if (newKbMode === 'none') {
@@ -106,14 +119,14 @@ watch([selectedAgentId, agentKnowledgeBases, agentKBSelectionMode], ([newAgentId
     } else {
       settingsStore.selectKnowledgeBases(newAgentKbs && newAgentKbs.length > 0 ? [...newAgentKbs] : []);
     }
-    // 若 @ 面板已打开，刷新可@列表以立即反映新智能体的知识库范围
+    // If @ panel is open, refresh mention list to reflect new agent's KB scope
     if (showMention.value) {
       loadMentionItems(mentionQuery.value, true);
     }
   }
 }, { immediate: true });
 
-// 共享智能体时预取该智能体知识库列表，使已选标签在未打开 @ 时也能显示共享空间角标
+// Prefetch shared agent's KB list so selected tags show org badge even when @ panel is closed
 watch([selectedAgentId, () => settingsStore.selectedAgentSourceTenantId], async ([agentId, sourceTenantId]) => {
   if (sourceTenantId && agentId) {
     try {
@@ -134,45 +147,45 @@ watch([selectedAgentId, () => settingsStore.selectedAgentSourceTenantId], async 
   }
 }, { immediate: true });
 
-// 智能体是否启用了网络搜索
+// Whether agent has enabled web search
 const agentWebSearchEnabled = computed(() => {
-  if (!hasAgentConfig.value) return null; // null 表示不受智能体控制
+  if (!hasAgentConfig.value) return null; // null means not controlled by agent
   return currentAgentConfig.value?.web_search_enabled ?? true;
 });
 
-// 网络搜索是否被智能体禁用（只读状态）- 只有明确设置为 false 时才禁用
+// Whether web search is disabled by agent (read-only state) - only disabled when explicitly set to false
 const isWebSearchDisabledByAgent = computed(() => {
   return hasAgentConfig.value && agentWebSearchEnabled.value === false;
 });
 
-// 知识库选择是否被智能体锁定
-// 1. 如果智能体配置了 kb_selection_mode = 'none' → 完全禁用知识库
-// 其他情况用户都可以在允许的范围内通过 @ 选择知识库
+// Whether knowledge base selection is locked by agent
+// 1. If agent configured kb_selection_mode = 'none' → completely disable knowledge base
+// In other cases, users can select knowledge bases via @ within allowed range
 const isKnowledgeBaseLockedByAgent = computed(() => {
   if (!hasAgentConfig.value) return false;
-  // 只有禁用了知识库才锁定
+  // Only lock when knowledge base is disabled
   return agentKBSelectionMode.value === 'none';
 });
 
-// 知识库是否被智能体完全禁用（kb_selection_mode = 'none'）
+// Whether knowledge base is completely disabled by agent (kb_selection_mode = 'none')
 const isKnowledgeBaseDisabledByAgent = computed(() => {
   if (!hasAgentConfig.value) return false;
   return agentKBSelectionMode.value === 'none';
 });
 
-// 智能体配置的模型 ID
+// Agent configured model ID
 const agentModelId = computed(() => {
   if (!hasAgentConfig.value) return null;
   return currentAgentConfig.value?.model_id || null;
 });
 
-// 智能体支持的文件类型（空数组表示支持所有类型）
+// Agent supported file types (empty array means support all types)
 const agentSupportedFileTypes = computed(() => {
   if (!hasAgentConfig.value) return [];
   return currentAgentConfig.value?.supported_file_types || [];
 });
 
-// 模型选择是否被智能体锁定 - 已移除锁定逻辑，允许用户自由切换模型
+// Whether model selection is locked by agent - locking logic removed, allowing users to freely switch models
 const isModelLockedByAgent = computed(() => {
   return false;
 });
@@ -181,7 +194,7 @@ const isModelLockedByAgent = computed(() => {
 const showMention = ref(false);
 const mentionQuery = ref("");
 const mentionItems = ref<Array<{ id: string; name: string; type: 'kb' | 'file'; kbType?: 'document' | 'faq'; count?: number; kbName?: string; orgName?: string; kbId?: string }>>([]);
-/** 文件 ID -> 知识库 ID（用于批量查询时传 kb_id，支持共享知识库下的文档） */
+/** File ID -> Knowledge base ID (for batch query with kb_id, supports shared KB documents) */
 const fileIdToKbId = ref<Record<string, string>>({});
 const mentionActiveIndex = ref(0);
 const mentionStyle = ref<Record<string, string>>({});
@@ -194,7 +207,7 @@ const mentionLoading = ref(false);
 const mentionOffset = ref(0);
 const MENTION_PAGE_SIZE = 20;
 
-// 共享智能体时用于标识「共享空间」的展示名（组织名或共享者），供 @ 列表与已选标签显示角标
+// Shared agent org display name (org name or sharer) for @ list and selected tag badges
 const sharedAgentOrgName = computed(() => {
   const sourceTenantId = settingsStore.selectedAgentSourceTenantId;
   const agentId = selectedAgentId.value;
@@ -205,7 +218,7 @@ const sharedAgentOrgName = computed(() => {
   return shared?.org_name || shared?.shared_by_username || '';
 });
 
-// 共享智能体下的知识库列表（来自 listKnowledgeBases(agent_id)），用于已选知识库展示与 org 角标
+// Shared agent's KB list (from listKnowledgeBases(agent_id)) for selected KB display and org badge
 const sharedAgentKbList = ref<Array<{ id: string; name: string; type?: string; knowledge_count?: number; chunk_count?: number }>>([]);
 
 const props = defineProps({
@@ -229,11 +242,11 @@ const selectedKbIds = computed(() => settingsStore.settings.selectedKnowledgeBas
 const selectedFileIds = computed(() => settingsStore.settings.selectedFiles || []);
 const isWebSearchConfigured = ref(false);
 
-// 获取已选择的知识库信息
+// Get selected knowledge base information
 const knowledgeBases = ref<Array<{ id: string; name: string; type?: 'document' | 'faq'; knowledge_count?: number; chunk_count?: number }>>([]);
 const fileList = ref<Array<{ id: string; name: string }>>([]);
 
-// 选中的知识库：包含自己的 + 组织共享的 + 共享智能体下的（用于展示已选列表与 org 角标）
+// Selected knowledge bases: own + org shared + shared agent's (for display and org badge)
 const selectedKbs = computed(() => {
   const own = knowledgeBases.value.filter(kb => selectedKbIds.value.includes(kb.id));
   const sharedList = orgStore.sharedKnowledgeBases || [];
@@ -272,13 +285,13 @@ const selectedFiles = computed(() => {
   });
 });
 
-  // 合并所有选中项（用于输入框内显示）
-  // 现在智能体配置的知识库也在 store 中，统一从 selectedKbs 获取
+  // Merge all selected items (for display in input box)
+  // Agent-configured knowledge bases are now also in store, unified retrieval from selectedKbs
   const allSelectedItems = computed(() => {
-    // 获取智能体预配置的知识库 IDs（用于标记和排序）
+    // Get agent pre-configured knowledge base IDs (for marking and sorting)
     const agentKbIds = agentKnowledgeBases.value;
     
-    // 所有选中的知识库，标记是否为智能体配置
+    // All selected knowledge bases, mark whether they are agent-configured
     const allKbs = selectedKbs.value.map(kb => ({ 
       ...kb, 
       type: 'kb' as const,
@@ -286,7 +299,7 @@ const selectedFiles = computed(() => {
       isAgentConfigured: agentKbIds.includes(kb.id)
     }));
     
-    // 用户选择的文件（根据 fileIdToKbId + 共享列表/共享智能体补全 org_name，用于角标）
+    // User selected files (add org_name from fileIdToKbId + shared list/shared agent for badge)
     const sharedKbOrgMap: Record<string, string> = {};
     (orgStore.sharedKnowledgeBases || []).forEach((s: any) => {
       if (s.knowledge_base?.id != null && s.org_name) {
@@ -309,14 +322,14 @@ const selectedFiles = computed(() => {
       };
     });
     
-    // 智能体配置的放在前面
+    // Agent-configured ones placed first
     const agentConfiguredKbs = allKbs.filter(kb => kb.isAgentConfigured);
     const userSelectedKbs = allKbs.filter(kb => !kb.isAgentConfigured);
     
     return [...agentConfiguredKbs, ...userSelectedKbs, ...files];
   });
 
-// 移除选中项（智能体配置的项也可以移除）
+// Remove selected item (agent-configured items can also be removed)
 const removeSelectedItem = (item: { id: string; type: 'kb' | 'file'; isAgentConfigured?: boolean }) => {
   if (item.type === 'kb') {
     settingsStore.removeKnowledgeBase(item.id);
@@ -325,9 +338,9 @@ const removeSelectedItem = (item: { id: string; type: 'kb' | 'file'; isAgentConf
   }
 };
 
-// 模型相关状态
+// Model related state
 const availableModels = ref<ModelConfig[]>([]);
-// 使用 computed 从 store 读取，并通过 setter 同步回 store
+// Use computed to read from store, and sync back to store via setter
 const selectedModelId = computed({
   get: () => settingsStore.conversationModels.selectedChatModelId || '',
   set: (val: string) => settingsStore.updateConversationModels({ selectedChatModelId: val })
@@ -338,15 +351,15 @@ const showModelSelector = ref(false);
 const modelButtonRef = ref<HTMLElement>();
 const modelDropdownStyle = ref<Record<string, string>>({});
 
-// 显示的知识库标签（最多显示2个）
+// Displayed knowledge base tags (max 2 displayed)
 const displayedKbs = computed(() => selectedKbs.value.slice(0, 2));
 const remainingCount = computed(() => Math.max(0, selectedKbs.value.length - 2));
 
-// 根据不同状态组合计算输入框的 placeholder
+// Calculate input box placeholder based on different state combinations
 const inputPlaceholder = computed(() => {
-  // 如果选择了自定义智能体
+  // If custom agent is selected
   if (isCustomAgent.value && selectedAgent.value) {
-    // 有描述时显示描述，否则显示"向 [名称] 提问"
+    // Show description if available, otherwise show "Ask [name]"
     if (selectedAgent.value.description) {
       return selectedAgent.value.description;
     }
@@ -357,21 +370,21 @@ const inputPlaceholder = computed(() => {
   const hasWebSearch = isWebSearchEnabled.value && isWebSearchConfigured.value;
   
   if (hasKnowledge && hasWebSearch) {
-    // 有知识库 + 有网络搜索
+    // Has knowledge base + has web search
     return t('input.placeholderKbAndWeb');
   } else if (hasKnowledge) {
-    // 有知识库 + 无网络搜索
+    // Has knowledge base + no web search
     return t('input.placeholderWithContext');
   } else if (hasWebSearch) {
-    // 无知识库 + 有网络搜索
+    // No knowledge base + has web search
     return t('input.placeholderWebOnly');
   } else {
-    // 无知识库 + 无网络搜索（纯模型对话）
+    // No knowledge base + no web search (pure model conversation)
     return t('input.placeholder');
   }
 });
 
-// 加载知识库列表（自己的 + 共享的，用于 @ 提及等）
+// Load knowledge base list (own + shared, for @ mention etc.)
 const loadKnowledgeBases = async () => {
   try {
     const response: any = await listKnowledgeBases();
@@ -382,10 +395,10 @@ const loadKnowledgeBases = async () => {
       );
       knowledgeBases.value = validKbs;
 
-      // 拉取共享知识库（供 @ 提及与清理选中项时识别）
+      // Fetch shared knowledge bases (for @ mention and cleanup)
       await orgStore.fetchSharedKnowledgeBases().catch(() => {});
 
-      // 清理无效的知识库ID：只移除既不在自己列表、也不在组织共享、也不在共享智能体知识库中的 ID（刷新后保留共享智能体下已选知识库）
+      // Clean up invalid KB IDs: only remove IDs not in own list, org shared, or shared agent KBs (preserve shared agent selections after refresh)
       const validKbIds = new Set(validKbs.map((kb: any) => kb.id));
       const sharedKbIds = new Set(
         (orgStore.sharedKnowledgeBases || []).map((s: any) => s.knowledge_base?.id).filter(Boolean)
@@ -424,7 +437,7 @@ const loadFiles = async () => {
   if (missingIds.length === 0) return;
 
   try {
-    // 按 kb_id 分组：共享知识库下的文档需带 kb_id 才能正确查询
+    // Group by kb_id: shared KB documents need kb_id for correct query
     const byKbId = new Map<string, string[]>();
     const noKbId: string[] = [];
     missingIds.forEach((id: string) => {
@@ -485,7 +498,7 @@ const loadWebSearchConfig = async () => {
   }
 };
 
-// 加载智能体列表（我的 + 共享，供选中态与就绪检查用）
+// Load agent list (mine + shared, for selection and readiness check)
 const loadAgents = async () => {
   try {
     const [agentsRes] = await Promise.all([
@@ -500,7 +513,7 @@ const loadAgents = async () => {
   }
 }
 
-// 对话下拉中展示的「我的」智能体（排除当前租户已停用的）
+// "My" agents shown in conversation dropdown (excluding those disabled by current tenant)
 const enabledAgents = computed(() =>
   agents.value.filter(a => !disabledOwnAgentIds.value.includes(a.id))
 );
@@ -511,11 +524,11 @@ const loadConversationConfig = async () => {
     conversationConfig.value = response.data;
     const modelId = response.data?.summary_model_id || '';
     
-    // 保留当前已选择的模型（如果有），避免覆盖从其他页面传递的模型选择
+    // Preserve currently selected model (if any), avoid overwriting model selection passed from other pages
     const currentSelectedModel = settingsStore.conversationModels.selectedChatModelId;
     settingsStore.updateConversationModels({
       summaryModelId: modelId,
-      selectedChatModelId: currentSelectedModel || modelId,  // 优先保留当前选择
+      selectedChatModelId: currentSelectedModel || modelId,  // Prioritize preserving current selection
       rerankModelId: response.data?.rerank_model_id || '',
     });
     if (!selectedModelId.value) {
@@ -580,7 +593,7 @@ const handleModelChange = async (value: string | number | Array<string | number>
     return;
   }
   
-  // 保存到后端
+  // Save to backend
   try {
     if (conversationConfig.value) {
       const updatedConfig = {
@@ -589,12 +602,12 @@ const handleModelChange = async (value: string | number | Array<string | number>
       };
       const response = await updateConversationConfig(updatedConfig);
       
-      // 更新本地状态
+      // Update local state
       conversationConfig.value = response.data;
       selectedModelId.value = val;
       showModelSelector.value = false;
       
-      // 同步到 store
+      // Sync to store
       settingsStore.updateConversationModels({
         summaryModelId: val,
         selectedChatModelId: val,
@@ -604,9 +617,9 @@ const handleModelChange = async (value: string | number | Array<string | number>
       MessagePlugin.success(t('conversationSettings.toasts.chatModelSaved'));
     }
   } catch (error) {
-    console.error('保存模型配置失败:', error);
+    console.error('Failed to save model configuration:', error);
     MessagePlugin.error(t('conversationSettings.toasts.saveFailed'));
-    // 恢复到之前的值
+    // Restore to previous value
     selectedModelId.value = conversationConfig.value?.summary_model_id || '';
   }
 };
@@ -615,7 +628,7 @@ const selectedModel = computed(() => {
   return availableModels.value.find(model => model.id === selectedModelId.value);
 });
 
-// 模型展示名：本租户列表中有则用名称；若为共享智能体且其 model_id 不在本租户列表中则显示“共享智能体配置的模型”
+// Model display name: use name if in tenant list; for shared agent with model_id not in tenant list, show "shared agent configured model"
 const selectedModelDisplayName = computed(() => {
   if (selectedModel.value) return selectedModel.value.name;
   if (!selectedModelId.value) return t('input.notConfigured');
@@ -637,7 +650,7 @@ const updateModelDropdownPosition = () => {
     return;
   }
   
-  // 获取按钮相对于视口的位置
+  // Get button position relative to viewport
   const rect = anchor.getBoundingClientRect();
   console.log('[Model Dropdown] Button rect:', {
     top: rect.top,
@@ -653,22 +666,22 @@ const updateModelDropdownPosition = () => {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   
-  // 左对齐到触发元素的左边缘
-  // 使用 Math.floor 而不是 Math.round，避免像素对齐问题
+  // Left align to trigger element's left edge
+  // Use Math.floor instead of Math.round to avoid pixel alignment issues
   let left = Math.floor(rect.left);
   
-  // 边界处理：不超出视口左右（留 16px margin）
+  // Boundary handling: don't exceed viewport left/right (leave 16px margin)
   const minLeft = 16;
   const maxLeft = Math.max(16, vw - dropdownWidth - 16);
   left = Math.max(minLeft, Math.min(maxLeft, left));
 
-  // 垂直定位：紧贴按钮，使用合理的高度避免空白
-  const preferredDropdownHeight = 280; // 优选高度（紧凑且够用）
-  const maxDropdownHeight = 360; // 最大高度
-  const minDropdownHeight = 200; // 最小高度
-  const topMargin = 20; // 顶部留白
-  const spaceBelow = vh - rect.bottom; // 下方剩余空间
-  const spaceAbove = rect.top; // 上方剩余空间
+  // Vertical positioning: close to button, use reasonable height to avoid blank space
+  const preferredDropdownHeight = 280; // Preferred height (compact and sufficient)
+  const maxDropdownHeight = 360; // Maximum height
+  const minDropdownHeight = 200; // Minimum height
+  const topMargin = 20; // Top margin
+  const spaceBelow = vh - rect.bottom; // Remaining space below
+  const spaceAbove = rect.top; // Remaining space above
   
   console.log('[Model Dropdown] Space check:', {
     spaceBelow,
@@ -679,29 +692,29 @@ const updateModelDropdownPosition = () => {
   let actualHeight: number;
   let shouldOpenBelow: boolean;
   
-  // 优先考虑下方空间
+  // Prioritize space below
   if (spaceBelow >= minDropdownHeight + offsetY) {
-    // 下方有足够空间，向下弹出
+    // Enough space below, pop down
     actualHeight = Math.min(preferredDropdownHeight, spaceBelow - offsetY - 16);
     shouldOpenBelow = true;
     console.log('[Model Dropdown] Position: below button', { actualHeight });
   } else {
-    // 向上弹出，优先使用 preferredHeight，必要时才扩展到 maxHeight
+    // Pop up, prioritize using preferredHeight, only expand to maxHeight when necessary
     const availableHeight = spaceAbove - offsetY - topMargin;
     if (availableHeight >= preferredDropdownHeight) {
-      // 有足够空间显示优选高度
+      // Enough space to display preferred height
       actualHeight = preferredDropdownHeight;
     } else {
-      // 空间不够，使用可用空间（但不小于最小高度）
+      // Not enough space, use available space (but not less than minimum height)
       actualHeight = Math.max(minDropdownHeight, availableHeight);
     }
     shouldOpenBelow = false;
     console.log('[Model Dropdown] Position: above button', { actualHeight });
   }
   
-  // 根据弹出方向使用不同的定位方式
+  // Use different positioning methods based on popup direction
   if (shouldOpenBelow) {
-    // 向下弹出：使用 top 定位，左对齐
+    // Pop down: use top positioning, left align
     const top = Math.floor(rect.bottom + offsetY);
     console.log('[Model Dropdown] Opening below, top:', top);
     modelDropdownStyle.value = {
@@ -715,7 +728,7 @@ const updateModelDropdownPosition = () => {
       padding: '0 !important'
     };
   } else {
-    // 向上弹出：使用 bottom 定位，左对齐
+    // Pop up: use bottom positioning, left align
     const bottom = vh - rect.top + offsetY;
     console.log('[Model Dropdown] Opening above, bottom:', bottom);
     modelDropdownStyle.value = {
@@ -742,14 +755,14 @@ const loadMentionItems = async (q: string, resetIndex = true, append = false) =>
     mentionOffset.value = 0;
   }
   
-  // 根据智能体的 kb_selection_mode 过滤知识库；选中共享智能体时使用该租户下的知识库，否则使用本租户 + 共享给自己的
+  // Filter KBs by agent's kb_selection_mode; when shared agent selected use that tenant's KBs, else own + shared
   let kbItems: any[] = [];
   if (!append) {
     let availableKbs: any[];
     const sourceTenantId = settingsStore.selectedAgentSourceTenantId;
     const agentId = selectedAgentId.value;
     if (sourceTenantId && agentId) {
-      // 共享智能体：按 agent_id 拉取该智能体配置的知识库范围（后端从共享关系解析租户）
+      // Shared agent: fetch KB scope by agent_id (backend resolves tenant from share relation)
       try {
         const res: any = await listKnowledgeBases({ agent_id: agentId });
         const list = res?.data && Array.isArray(res.data) ? res.data : [];
@@ -821,7 +834,7 @@ const loadMentionItems = async (q: string, resetIndex = true, append = false) =>
   }
   
   // Fetch Files from API
-  // 如果智能体禁用了知识库，也不显示文件
+  // If agent disabled knowledge base, don't show files either
   let fileItems: any[] = [];
   const shouldLoadFiles = !hasAgentConfig.value || agentKBSelectionMode.value !== 'none';
   
@@ -842,7 +855,8 @@ const loadMentionItems = async (q: string, resetIndex = true, append = false) =>
       console.log('[Mention] searchKnowledge response:', res);
       if (res.data && Array.isArray(res.data)) {
         let files = res.data;
-        if (!sourceTenantId && hasAgentConfig.value && agentKBSelectionMode.value === 'selected') {
+        // If agent configured kb_selection_mode === 'selected', only show files from specified knowledge bases
+        if (hasAgentConfig.value && agentKBSelectionMode.value === 'selected') {
           const configuredKbIds = agentKnowledgeBases.value;
           files = files.filter((f: any) => configuredKbIds.includes(f.knowledge_base_id ?? f.kb_id));
         }
@@ -916,7 +930,7 @@ const getTextareaEl = () => {
 };
 
 const onInput = (val: string | InputEvent) => {
-  // 如果正在输入法组合中，不处理搜索逻辑，等待 compositionend
+  // If in IME composition, don't process search logic, wait for compositionend
   if (isComposing.value) return;
 
   // TDesign t-textarea passes the value directly, not an event
@@ -934,7 +948,7 @@ const onInput = (val: string | InputEvent) => {
   console.log('[Mention] onInput called', { inputVal, cursor, textBeforeCursor, showMention: showMention.value });
   
   if (showMention.value) {
-    // 如果不是按钮触发的，检查 @ 符号
+    // If not triggered by button, check @ symbol
     if (!isMentionTriggeredByButton.value) {
       if (!inputVal || inputVal.length <= mentionStartPos.value || inputVal.charAt(mentionStartPos.value) !== '@') {
         showMention.value = false;
@@ -942,15 +956,15 @@ const onInput = (val: string | InputEvent) => {
       }
     }
 
-    // 如果是按钮触发的，mentionStartPos 指向的是光标位置（即虚拟的 @ 位置前），所以实际上不应该往左删
-    // 但如果用户删除了前面的内容导致长度变短，也需要处理
+    // If triggered by button, mentionStartPos points to cursor position (i.e., before virtual @ position), so shouldn't delete left
+    // But if user deleted content before causing length to shorten, also need to handle
     if (cursor < mentionStartPos.value) {
       showMention.value = false;
       return;
     }
     
     // Get query
-    // 如果是按钮触发，mentionStartPos 是起始位置，不需要 +1 跳过 @
+    // If triggered by button, mentionStartPos is start position, don't need +1 to skip @
     const start = isMentionTriggeredByButton.value ? mentionStartPos.value : mentionStartPos.value + 1;
     const q = inputVal.slice(start, cursor);
     
@@ -965,11 +979,11 @@ const onInput = (val: string | InputEvent) => {
     }
   } else {
     if (textBeforeCursor.endsWith('@')) {
-      // 如果智能体禁用了知识库，不触发 @ 菜单
+      // If agent disabled knowledge base, don't trigger @ menu
       if (isKnowledgeBaseDisabledByAgent.value) {
         return;
       }
-      // 如果智能体锁定了知识库且不允许用户选择，也不触发 @ 菜单
+      // If agent locked knowledge base and doesn't allow user selection, also don't trigger @ menu
       if (isKnowledgeBaseLockedByAgent.value) {
         return;
       }
@@ -983,7 +997,7 @@ const onInput = (val: string | InputEvent) => {
       const coords = getCaretCoordinates(textarea, cursor);
       const rect = textarea.getBoundingClientRect();
       const scrollTop = textarea.scrollTop;
-      const menuHeight = 320; // 预估最大高度
+      const menuHeight = 320; // Estimated maximum height
       
       let left = rect.left + coords.left;
       // Prevent menu from going off-screen horizontally
@@ -991,9 +1005,9 @@ const onInput = (val: string | InputEvent) => {
         left = window.innerWidth - 300 - 10;
       }
       
-      // 光标相对于视口的实际 top 位置
+      // Cursor's actual top position relative to viewport
       const cursorAbsoluteTop = rect.top + coords.top - scrollTop;
-      const lineHeight = coords.height; // 光标高度
+      const lineHeight = coords.height; // Cursor height
 
       // Check vertical space below cursor
       const spaceBelow = window.innerHeight - (cursorAbsoluteTop + lineHeight);
@@ -1028,16 +1042,16 @@ const onCompositionStart = () => {
 
 const onCompositionEnd = (e: CompositionEvent) => {
   isComposing.value = false;
-  // 手动触发 onInput 逻辑
-  // 注意：在 compositionend 时，v-model 可能还没更新，或者已经更新但我们需要用最新值
-  // TDesign textarea 可能需要 nextTick
+  // Manually trigger onInput logic
+  // Note: At compositionend, v-model may not be updated yet, or already updated but we need latest value
+  // TDesign textarea may need nextTick
   nextTick(() => {
     onInput(query.value);
   });
 };
 
 const triggerMention = () => {
-  // 如果智能体锁定或禁用了知识库，不允许打开选择器
+  // If agent locked or disabled knowledge base, don't allow opening selector
   if (isKnowledgeBaseLockedByAgent.value) {
     const msgKey = isKnowledgeBaseDisabledByAgent.value ? 'input.kbDisabledByAgent' : 'input.kbLockedByAgent';
     MessagePlugin.warning(t(msgKey));
@@ -1047,13 +1061,13 @@ const triggerMention = () => {
   const textarea = getTextareaEl();
   if (!textarea) return;
   
-  // 关闭其他选择器
+  // Close other selectors
   showAgentModeSelector.value = false;
   showModelSelector.value = false;
 
   textarea.focus();
   
-  // 直接显示菜单，不插入 @
+  // Directly show menu, don't insert @
   showMention.value = true;
   isMentionTriggeredByButton.value = true;
   mentionQuery.value = "";
@@ -1062,11 +1076,11 @@ const triggerMention = () => {
   const rect = textarea.getBoundingClientRect();
   const menuHeight = 320;
   
-  // 判断输入框上方空间
+  // Determine space above input box
   const spaceAbove = rect.top;
   const spaceBelow = window.innerHeight - rect.bottom;
   
-  // 优先显示在上方，除非上方空间不足且下方空间充足
+  // Prioritize showing above, unless space above is insufficient and space below is sufficient
   if (spaceAbove > menuHeight || spaceAbove > spaceBelow) {
     // Show above textarea
     mentionStyle.value = {
@@ -1103,7 +1117,7 @@ const onMentionSelect = (item: any) => {
   
   const textarea = getTextareaEl();
   if (textarea) {
-    // 如果是通过输入 @ 触发的，需要删除 @ 和后面的查询文字
+    // If triggered by typing @, need to delete @ and following query text
     if (!isMentionTriggeredByButton.value) {
       const cursor = textarea.selectionStart;
       const textBeforeAt = query.value.slice(0, mentionStartPos.value);
@@ -1115,7 +1129,7 @@ const onMentionSelect = (item: any) => {
         textarea.focus();
       });
     } else {
-      // 通过按钮触发的，如果用户输入了查询词，需要删除查询词
+      // Triggered by button, if user entered query text, need to delete query text
       const cursor = textarea.selectionStart;
       if (cursor > mentionStartPos.value) {
          const textBeforeStart = query.value.slice(0, mentionStartPos.value);
@@ -1127,7 +1141,7 @@ const onMentionSelect = (item: any) => {
            textarea.focus();
          });
       } else {
-         // 直接聚焦
+         // Directly focus
          textarea.focus();
       }
     }
@@ -1142,13 +1156,13 @@ const removeFile = (id: string) => {
 };
 
 const toggleModelSelector = () => {
-  // 如果智能体锁定了模型，不允许打开选择器
+  // If agent locked model, don't allow opening selector
   if (isModelLockedByAgent.value) {
     MessagePlugin.warning(t('input.modelLockedByAgent'));
     return;
   }
   
-  // 互斥：关闭其他
+  // Mutually exclusive: close others
   showMention.value = false;
   showAgentModeSelector.value = false;
 
@@ -1157,7 +1171,7 @@ const toggleModelSelector = () => {
     if (!availableModels.value.length) {
       loadChatModels();
     }
-    // 多次更新位置确保准确
+    // Update position multiple times to ensure accuracy
     nextTick(() => {
       updateModelDropdownPosition();
       requestAnimationFrame(() => {
@@ -1174,21 +1188,21 @@ const closeModelSelector = () => {
   showModelSelector.value = false;
 };
 
-// 关闭 Agent 模式选择器（点击外部）
+// Close Agent mode selector (click outside)
 const closeAgentModeSelector = () => {
   showAgentModeSelector.value = false;
 };
 
 const closeMentionSelector = (e: MouseEvent) => {
   const target = e.target as HTMLElement;
-  // 如果点击的是输入框区域，不关闭 Mention 列表（由光标逻辑控制）
+  // If clicked input box area, don't close Mention list (controlled by cursor logic)
   if (target.closest('.rich-input-container')) {
     return;
   }
   showMention.value = false;
 };
 
-// 窗口事件处理器
+// Window event handlers
 let resizeHandler: (() => void) | null = null;
 let scrollHandler: (() => void) | null = null;
 
@@ -1199,7 +1213,7 @@ onMounted(() => {
   loadChatModels();
   loadAgents();
 
-  // 从持久化恢复 fileId -> kbId，刷新后共享知识库文件可带 kb_id 拉取（仅保留当前仍选中的文件）
+  // Restore fileId -> kbId from persistence; shared KB files can be fetched with kb_id after refresh (only keep currently selected files)
   const persisted = settingsStore.settings.selectedFileKbMap;
   const ids = settingsStore.settings.selectedFiles || [];
   if (persisted && typeof persisted === 'object' && ids.length > 0) {
@@ -1210,18 +1224,18 @@ onMounted(() => {
     fileIdToKbId.value = next;
   }
   
-  // 如果从知识库内部进入，自动选中该知识库
+  // If entered from inside knowledge base, automatically select that knowledge base
   const kbId = (route.params as any)?.kbId as string;
   if (kbId && !selectedKbIds.value.includes(kbId)) {
     settingsStore.addKnowledgeBase(kbId);
   }
 
-  // 监听点击外部关闭下拉菜单
+  // Listen for clicks outside to close dropdown menu
   document.addEventListener('click', closeAgentModeSelector);
   document.addEventListener('click', closeModelSelector);
   document.addEventListener('click', closeMentionSelector);
   
-  // 监听窗口大小变化和滚动，重新计算位置
+  // Listen for window size changes and scroll, recalculate position
   resizeHandler = () => {
     if (showModelSelector.value) {
       updateModelDropdownPosition();
@@ -1255,7 +1269,7 @@ onUnmounted(() => {
   }
 });
 
-// 监听路由变化
+// Listen for route changes
 watch(() => route.params.kbId, (newKbId) => {
   if (newKbId && typeof newKbId === 'string' && !selectedKbIds.value.includes(newKbId)) {
     settingsStore.addKnowledgeBase(newKbId);
@@ -1284,7 +1298,7 @@ const createSession = async (val: string) => {
   if (props.isReplying) {
     return MessagePlugin.error(t('input.messages.replying'));
   }
-  // 发送前校验当前选中的智能体（含默认快速问答）是否已配置完成
+  // Validate selected agent (including default quick-answer) is fully configured before sending
   const agentToCheck = selectedAgent.value;
   let actualAgent = agentToCheck;
   if (agentToCheck.is_builtin) {
@@ -1303,7 +1317,7 @@ const createSession = async (val: string) => {
     showAgentNotReadyMessage(actualAgent, notReadyReasons);
     return;
   }
-  // 获取@提及的知识库和文件信息
+  // Get @ mentioned knowledge base and file information
   const mentionedItems = allSelectedItems.value.map(item => ({
     id: item.id,
     name: item.name,
@@ -1333,14 +1347,14 @@ const updateAgentModeDropdownPosition = () => {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   
-  // 水平位置：左对齐
+  // Horizontal position: left align
   let left = Math.floor(rect.left);
   const minLeft = 16;
   const maxLeft = Math.max(16, vw - dropdownWidth - 16);
   left = Math.max(minLeft, Math.min(maxLeft, left));
   
-  // 垂直位置：紧贴按钮，使用合理的高度避免空白
-  const preferredDropdownHeight = 140; // Agent 模式选择器内容较少，用更小的优选高度
+  // Vertical position: close to button, use reasonable height to avoid blank space
+  const preferredDropdownHeight = 140; // Agent mode selector has less content, use smaller preferred height
   const maxDropdownHeight = 150;
   const minDropdownHeight = 100;
   const topMargin = 20;
@@ -1355,9 +1369,9 @@ const updateAgentModeDropdownPosition = () => {
   
   let actualHeight: number;
   
-  // 优先考虑下方空间
+  // Prioritize space below
   if (spaceBelow >= minDropdownHeight + offsetY) {
-    // 下方有足够空间，向下弹出
+    // Enough space below, pop down
     actualHeight = Math.min(preferredDropdownHeight, spaceBelow - offsetY - 16);
     const top = Math.floor(rect.bottom + offsetY);
     
@@ -1373,7 +1387,7 @@ const updateAgentModeDropdownPosition = () => {
     };
     console.log('[Agent Dropdown] Position: below button', { actualHeight });
   } else {
-    // 向上弹出，使用 bottom 定位确保紧贴按钮
+    // Pop up, use bottom positioning to ensure close to button
     const availableHeight = spaceAbove - offsetY - topMargin;
     if (availableHeight >= preferredDropdownHeight) {
       actualHeight = preferredDropdownHeight;
@@ -1387,7 +1401,7 @@ const updateAgentModeDropdownPosition = () => {
       position: 'fixed !important',
       width: `${dropdownWidth}px`,
       left: `${left}px`,
-      bottom: `${bottom}px`, // 使用 bottom 定位，确保紧贴按钮
+      bottom: `${bottom}px`, // Use bottom positioning to ensure close to button
       maxHeight: `${actualHeight}px`,
       transform: 'none !important',
       margin: '0 !important',
@@ -1398,15 +1412,15 @@ const updateAgentModeDropdownPosition = () => {
 };
 
 const toggleAgentModeSelector = () => {
-  // 互斥
+  // Mutually exclusive
   showMention.value = false;
   showModelSelector.value = false;
 
   showAgentModeSelector.value = !showAgentModeSelector.value;
   if (showAgentModeSelector.value) {
-    // 重新加载智能体列表
+    // Reload agent list
     loadAgents();
-    // 多次更新位置确保准确
+    // Update position multiple times to ensure accuracy
     nextTick(() => {
       updateAgentModeDropdownPosition();
       requestAnimationFrame(() => {
@@ -1435,19 +1449,19 @@ const selectAgentMode = (mode: 'quick-answer' | 'smart-reasoning') => {
   const shouldEnableAgent = mode === 'smart-reasoning';
   if (shouldEnableAgent !== isAgentEnabled.value) {
     settingsStore.toggleAgent(shouldEnableAgent);
-    // 同时更新选中的智能体
+    // Also update selected agent
     settingsStore.selectAgent(shouldEnableAgent ? BUILTIN_SMART_REASONING_ID : BUILTIN_QUICK_ANSWER_ID);
     MessagePlugin.success(shouldEnableAgent ? t('input.messages.agentSwitchedOn') : t('input.messages.agentSwitchedOff'));
   }
   showAgentModeSelector.value = false;
 }
 
-// 选择智能体（新版）；sourceTenantId 为共享智能体时传入
+// Select agent (new version); pass sourceTenantId when selecting shared agent
 const handleSelectAgent = (agent: CustomAgent, sourceTenantId?: string) => {
-  // 根据智能体的 agent_mode 判断是否为 Agent 模式
+  // Determine if it's Agent mode based on agent's agent_mode
   const isAgentType = agent.config?.agent_mode === 'smart-reasoning';
   
-  // 统一检查智能体是否就绪（内置和自定义智能体使用相同逻辑）
+  // Unified check if agent is ready (built-in and custom agents use same logic)
   const actualAgent = agent.is_builtin 
     ? (agents.value.find(a => a.id === agent.id) || agent)
     : agent;
@@ -1464,20 +1478,21 @@ const handleSelectAgent = (agent: CustomAgent, sourceTenantId?: string) => {
   settingsStore.selectAgent(agent.id, sourceTenantId);
   settingsStore.toggleAgent(!!isAgentType);
   
-  // 同步智能体的配置状态（含内置、自定义、共享智能体）：模型、网络搜索、知识库由 watch 同步
-  // 1. 同步网络搜索状态
+  // Sync agent config state (built-in, custom, shared): model, web search, KB synced by watch
+  // 1. Sync web search state
   const agentWebSearch = agent.config?.web_search_enabled;
   if (agentWebSearch !== undefined) {
     settingsStore.toggleWebSearch(agentWebSearch);
   } else if (agent.is_builtin) {
-    // 内置智能体未配置时保留当前用户设置
+    // Built-in agent: keep current user settings when not configured
   }
   
-  // 2. 同步模型（选中的对话模型随智能体切换，含共享智能体）
+  // 2. Sync model (selected chat model follows agent switch, including shared agents)
   const agentModel = agent.config?.model_id;
   if (agentModel && agentModel.trim() !== '') {
     selectedModelId.value = agentModel;
-  } else {
+  } else if (agent.is_builtin) {
+    // Built-in agent without specific model: restore to system default
     if (conversationConfig.value?.summary_model_id) {
       selectedModelId.value = conversationConfig.value.summary_model_id;
     }
@@ -1520,7 +1535,7 @@ const onKeydown = (val: string, event: { e: { preventDefault(): unknown; keyCode
     }
   }
 
-  // 退格键：当输入框为空且有选中项时，删除最后一个选中项
+  // Backspace: When input box is empty and has selected items, delete last selected item
   if (event.e.keyCode === 8) { // Backspace
     const textarea = getTextareaEl();
     if (textarea && textarea.selectionStart === 0 && textarea.selectionEnd === 0 && query.value === '') {
@@ -1551,7 +1566,7 @@ const handleGoToWebSearchSettings = () => {
 };
 
 const handleGoToAgentSettings = (section?: string) => {
-  // 跳转到智能体列表页并打开编辑弹窗
+  // Navigate to agent list page and open edit modal
   if (selectedAgent.value && !selectedAgent.value.is_builtin) {
     const query: Record<string, string> = { edit: selectedAgent.value.id };
     if (section) {
@@ -1563,24 +1578,24 @@ const handleGoToAgentSettings = (section?: string) => {
   }
 };
 
-// 获取内置智能体不就绪的原因
+// Get reasons why built-in agent is not ready
 const getBuiltinAgentNotReadyReasons = (agent: CustomAgent, isAgentMode: boolean): string[] => {
   const reasons: string[] = []
   const config = agent.config || {}
   
-  // 检查对话模型（Summary Model）
+  // Check conversation model (Summary Model)
   if (!config.model_id || config.model_id.trim() === '') {
     reasons.push(t('input.customAgentMissingSummaryModel'))
   }
   
-  // 检查重排模型（Rerank Model）- 如果使用知识库则需要
+  // Check rerank model (Rerank Model) - required if using knowledge base
   if (config.kb_selection_mode !== 'none') {
     if (!config.rerank_model_id || config.rerank_model_id.trim() === '') {
       reasons.push(t('input.customAgentMissingRerankModel'))
     }
   }
   
-  // Agent 模式还需要检查允许的工具
+  // Agent mode also needs to check allowed tools
   if (isAgentMode) {
     if (!config.allowed_tools || config.allowed_tools.length === 0) {
       reasons.push(t('input.agentMissingAllowedTools'))
@@ -1590,16 +1605,16 @@ const getBuiltinAgentNotReadyReasons = (agent: CustomAgent, isAgentMode: boolean
   return reasons
 }
 
-// 获取自定义智能体不就绪的原因（非 Agent 模式，快速回答）
+// Get reasons why custom agent is not ready (non-Agent mode, quick answer)
 const getCustomAgentNotReadyReasons = (agent: CustomAgent): string[] => {
   const reasons: string[] = []
   const config = agent.config || {}
   
-  // 检查对话模型（Summary Model）
+  // Check conversation model (Summary Model)
   if (!config.model_id || config.model_id.trim() === '') {
     reasons.push(t('input.customAgentMissingSummaryModel'))
   }
-  // 检查重排模型（Rerank Model）- 如果使用知识库则需要
+  // Check rerank model (Rerank Model) - required if using knowledge base
   if (config.kb_selection_mode !== 'none') {
     if (!config.rerank_model_id || config.rerank_model_id.trim() === '') {
       reasons.push(t('input.customAgentMissingRerankModel'))
@@ -1609,9 +1624,9 @@ const getCustomAgentNotReadyReasons = (agent: CustomAgent): string[] => {
   return reasons
 }
 
-// 显示智能体未就绪的消息（统一处理内置和自定义智能体）
+// Show agent not ready message (unified handling for built-in and custom agents)
 const showAgentNotReadyMessage = (agent: CustomAgent, reasons: string[]) => {
-  const reasonsText = reasons.join('、')
+  const reasonsText = reasons.join(', ')
   
   const messageContent = h('div', { style: 'display: flex; flex-direction: column; gap: 8px; max-width: 320px;' }, [
     h('span', { style: 'color: #333; line-height: 1.5;' }, t('input.agentNotReadyDetail', { agentName: agent.name, reasons: reasonsText })),
@@ -1638,12 +1653,12 @@ const showAgentNotReadyMessage = (agent: CustomAgent, reasons: string[]) => {
 }
 
 const toggleWebSearch = () => {
-  // 互斥：虽然不是弹出层，但操作时关闭其他弹出层体验更好
+  // Mutually exclusive: Although not a popup layer, closing other popups when operating provides better experience
   showMention.value = false;
   showModelSelector.value = false;
   showAgentModeSelector.value = false;
 
-  // 如果智能体禁用了网络搜索，不允许开启
+  // If agent disabled web search, don't allow enabling
   if (isWebSearchDisabledByAgent.value) {
     MessagePlugin.warning(t('input.webSearchDisabledByAgent'));
     return;
@@ -1702,7 +1717,7 @@ const handleStop = async () => {
   
   console.log('[Stop] Stopping generation for message:', props.assistantMessageId);
   
-  // 发送 stop 事件，通知父组件立即清除 loading 状态
+  // Send stop event, notify parent component to immediately clear loading state
   emit('stop-generation');
   
   try {
@@ -1722,9 +1737,9 @@ onBeforeRouteUpdate((to, from, next) => {
 </script>
 <template>
   <div class="answers-input">
-    <!-- 富文本输入框容器 -->
+    <!-- Rich text input container -->
     <div class="rich-input-container">
-        <!-- 选中的知识库和文件标签（显示在输入框内顶部） -->
+        <!-- Selected knowledge base and file tags (displayed at top inside input box) -->
       <div v-if="allSelectedItems.length > 0" class="selected-tags-inline">
         <span 
           v-for="item in allSelectedItems" 
@@ -1745,11 +1760,11 @@ onBeforeRouteUpdate((to, from, next) => {
             </span>
           </span>
           <span class="mention-chip__name" :title="item.name">{{ item.name }}</span>
-          <span class="mention-chip__remove" @click.stop="removeSelectedItem(item)" aria-label="移除">×</span>
+          <span class="mention-chip__remove" @click.stop="removeSelectedItem(item)" aria-label="Remove">×</span>
         </span>
       </div>
       
-      <!-- 实际输入框 -->
+      <!-- Actual input box -->
       <t-textarea 
         ref="textareaRef"
         v-model="query" 
@@ -1777,11 +1792,11 @@ onBeforeRouteUpdate((to, from, next) => {
       />
     </Teleport>
     
-    <!-- 控制栏 -->
+    <!-- Control bar -->
     <div class="control-bar">
-      <!-- 左侧控制按钮 -->
+      <!-- Left control buttons -->
       <div class="control-left">
-        <!-- Agent 模式切换按钮 -->
+        <!-- Agent mode toggle button -->
         <div 
           ref="agentModeButtonRef"
           class="control-btn agent-mode-btn"
@@ -1807,7 +1822,7 @@ onBeforeRouteUpdate((to, from, next) => {
           </svg>
         </div>
 
-        <!-- Agent 选择器下拉菜单 -->
+        <!-- Agent selector dropdown menu -->
         <AgentSelector
           :visible="showAgentModeSelector"
           :anchorEl="agentModeButtonRef"
@@ -1817,7 +1832,7 @@ onBeforeRouteUpdate((to, from, next) => {
           @select="handleSelectAgent"
         />
 
-        <!-- WebSearch 开关按钮 -->
+        <!-- WebSearch toggle button -->
         <t-tooltip placement="top" theme="light" :popupProps="{ overlayClassName: 'input-field-tooltip' }">
           <template #content>
             <div v-if="isWebSearchDisabledByAgent" class="tooltip-with-link">
@@ -1856,7 +1871,7 @@ onBeforeRouteUpdate((to, from, next) => {
           </div>
         </t-tooltip>
 
-        <!-- @ 知识库/文件选择按钮 -->
+        <!-- @ Knowledge base/file selection button -->
         <t-tooltip placement="top" theme="light" :popupProps="{ overlayClassName: 'input-field-tooltip' }">
           <template #content>
             <div v-if="isKnowledgeBaseDisabledByAgent" class="tooltip-with-link">
@@ -1880,7 +1895,7 @@ onBeforeRouteUpdate((to, from, next) => {
           </div>
         </t-tooltip>
 
-        <!-- 模型显示 -->
+        <!-- Model display -->
         <t-tooltip :content="isModelLockedByAgent ? $t('input.modelLockedByAgent') : ''" :disabled="!isModelLockedByAgent">
           <div class="model-display" :class="{ 'agent-controlled': isModelLockedByAgent }">
             <div
@@ -1943,9 +1958,9 @@ onBeforeRouteUpdate((to, from, next) => {
         </div>
       </Teleport>
 
-      <!-- 右侧控制按钮组 -->
+      <!-- Right control button group -->
       <div class="control-right">
-        <!-- 停止按钮（仅在回复中时显示） -->
+        <!-- Stop button (only shown when replying) -->
         <t-tooltip 
           v-if="isReplying"
           :content="$t('input.stopGeneration')"
@@ -1961,7 +1976,7 @@ onBeforeRouteUpdate((to, from, next) => {
           </div>
         </t-tooltip>
 
-        <!-- 发送按钮 -->
+        <!-- Send button -->
       <div 
           v-if="!isReplying"
         @click="createSession(query)" 
@@ -1973,7 +1988,7 @@ onBeforeRouteUpdate((to, from, next) => {
       </div>
     </div>
 
-    <!-- 知识库选择下拉（使用 Teleport 传送到 body，避免父容器定位影响） -->
+    <!-- Knowledge base selection dropdown (use Teleport to body to avoid parent container positioning effects) -->
     <Teleport to="body">
     <KnowledgeBaseSelector
       v-model:visible="showKbSelector"
@@ -1997,7 +2012,7 @@ const getImgSrc = (url: string) => {
   transform: translateX(-400px);
 }
 
-/* 富文本输入框容器 */
+/* Rich text input container */
 .rich-input-container {
   position: relative;
   width: 800px;
@@ -2011,7 +2026,7 @@ const getImgSrc = (url: string) => {
   }
 }
 
-/* 选中的知识库/文件标签（mention list 已选项） */
+/* Selected knowledge base/file tags (mention list selected items) */
 .selected-tags-inline {
   display: flex;
   flex-wrap: wrap;
@@ -2114,7 +2129,7 @@ const getImgSrc = (url: string) => {
   color: var(--td-text-color-primary, #1f2937);
 }
 
-/* 知识库：浅绿/青色调 */
+/* Knowledge base: light green/teal tint */
 .mention-chip--kb {
   background: rgba(5, 192, 95, 0.08);
   border-color: rgba(5, 192, 95, 0.25);
@@ -2131,7 +2146,7 @@ const getImgSrc = (url: string) => {
   border-color: rgba(5, 192, 95, 0.35);
 }
 
-/* FAQ：浅紫/靛色调 */
+/* FAQ: light purple/indigo tint */
 .mention-chip--faq {
   background: rgba(107, 114, 228, 0.08);
   border-color: rgba(107, 114, 228, 0.25);
@@ -2148,7 +2163,7 @@ const getImgSrc = (url: string) => {
   border-color: rgba(107, 114, 228, 0.35);
 }
 
-/* 文件：浅灰/中性色 */
+/* File: light gray/neutral */
 .mention-chip--file {
   background: var(--td-bg-color-secondarycontainer, #f3f4f6);
   border-color: var(--td-component-stroke, #e5e7eb);
@@ -2165,7 +2180,7 @@ const getImgSrc = (url: string) => {
   border-color: var(--td-component-stroke, #d1d5db);
 }
 
-/* 智能体预配置：虚线边框区分 */
+/* Agent pre-configured: dashed border to distinguish */
 .mention-chip--agent {
   border-style: dashed;
 }
@@ -2209,13 +2224,13 @@ const getImgSrc = (url: string) => {
   }
 }
 
-/* 当没有选中标签时，textarea 样式 */
+/* textarea styles when no tags selected */
 .rich-input-container:not(:has(.selected-tags-inline)) :deep(.t-textarea__inner) {
   border-radius: 12px;
   padding-top: 16px;
 }
 
-/* 控制栏 */
+/* Control bar */
 .control-bar {
   position: absolute;
   bottom: 12px;
@@ -2278,7 +2293,7 @@ const getImgSrc = (url: string) => {
   transition: background 0.12s, border-color 0.12s;
   position: relative;
   
-  // 内置普通模式 - 绿色
+  // Built-in normal mode - green
   &.is-normal {
     background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0.08) 100%);
     border-color: rgba(16, 185, 129, 0.35);
@@ -2298,7 +2313,7 @@ const getImgSrc = (url: string) => {
     }
   }
   
-  // 内置 Agent 模式 - 紫色
+  // Built-in Agent mode - purple
   &.is-agent {
     background: linear-gradient(135deg, rgba(124, 77, 255, 0.12) 0%, rgba(124, 77, 255, 0.08) 100%);
     border-color: rgba(124, 77, 255, 0.35);
@@ -2318,7 +2333,7 @@ const getImgSrc = (url: string) => {
     }
   }
   
-  // 自定义智能体 - 蓝色
+  // Custom agent - blue
   &.is-custom {
     background: linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(59, 130, 246, 0.08) 100%);
     border-color: rgba(59, 130, 246, 0.35);
@@ -2588,7 +2603,7 @@ const getImgSrc = (url: string) => {
   }
 }
 
-/* 模型显示样式 */
+/* Model display styles */
 .model-display {
   display: flex;
   align-items: center;
@@ -2815,7 +2830,7 @@ const getImgSrc = (url: string) => {
   color: #52575a;
 }
 
-/* Agent 模式选择下拉菜单 */
+/* Agent mode selection dropdown menu */
 .agent-mode-selector-overlay {
   position: fixed;
   inset: 0;
