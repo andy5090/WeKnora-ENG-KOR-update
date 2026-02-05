@@ -271,12 +271,12 @@ definitions:
       by_id:
         additionalProperties:
           $ref: '#/definitions/github_com_Tencent_WeKnora_internal_types.FAQEntryFieldsUpdate'
-        description: ByID 按条目ID更新，key为条目ID
+        description: ByID update by entry ID, key is the entry ID
         type: object
       by_tag:
         additionalProperties:
           $ref: '#/definitions/github_com_Tencent_WeKnora_internal_types.FAQEntryFieldsUpdate'
-        description: ByTag 按Tag批量更新，key为TagID（空字符串表示未分类）
+        description: ByTag batch update by Tag, key is TagID (empty string means uncategorized)
         type: object
     type: object
   github_com_Tencent_WeKnora_internal_types.FAQEntryFieldsUpdate:
@@ -711,20 +711,20 @@ definitions:
     - 8
     type: integer
     x-enum-comments:
-      MatchTypeDirectLoad: 直接加载匹配类型
-      MatchTypeParentChunk: 父Chunk匹配类型
-      MatchTypeRelationChunk: 关系Chunk匹配类型
-      MatchTypeWebSearch: 网络搜索匹配类型
+      MatchTypeDirectLoad: Direct load match type
+      MatchTypeParentChunk: Parent Chunk match type
+      MatchTypeRelationChunk: Relation Chunk match type
+      MatchTypeWebSearch: Web search match type
     x-enum-descriptions:
     - ""
     - ""
     - ""
     - ""
-    - 父Chunk匹配类型
-    - 关系Chunk匹配类型
+    - Parent Chunk match type
+    - Relation Chunk match type
     - ""
-    - 网络搜索匹配类型
-    - 直接加载匹配类型
+    - Web search match type
+    - Direct load match type
     x-enum-varnames:
     - MatchTypeEmbedding
     - MatchTypeKeywords
@@ -969,7 +969,7 @@ definitions:
           type: integer
         type: array
       chunk_type:
-        description: Chunk 类型
+        description: Chunk type
         type: string
       content:
         description: Content
@@ -981,7 +981,7 @@ definitions:
         description: ID
         type: string
       image_info:
-        description: 图片信息 (JSON 格式)
+        description: Image information (JSON format)
         type: string
       knowledge_filename:
         description: |-
@@ -1009,7 +1009,7 @@ definitions:
         description: Metadata
         type: object
       parent_chunk_id:
-        description: 父 Chunk ID
+        description: Parent Chunk ID
         type: string
       score:
         description: Score
@@ -1031,11 +1031,11 @@ definitions:
       agent_config:
         allOf:
         - $ref: '#/definitions/github_com_Tencent_WeKnora_internal_types.SessionAgentConfig'
-        description: Agent 配置（会话级别，仅存储enabled和knowledge_bases）
+        description: Agent configuration (session level, only stores enabled and knowledge_bases)
       context_config:
         allOf:
         - $ref: '#/definitions/github_com_Tencent_WeKnora_internal_types.ContextConfig'
-        description: 上下文管理配置（可选）
+        description: Context management configuration (optional)
       created_at:
         type: string
       deleted_at:
@@ -1044,46 +1044,46 @@ definitions:
         description: Description
         type: string
       embedding_top_k:
-        description: 向量召回TopK
+        description: Vector recall TopK
         type: integer
       enable_rewrite:
-        description: 多轮改写开关
+        description: Multi-turn rewrite switch
         type: boolean
       fallback_response:
-        description: 固定回复内容
+        description: Fixed response content
         type: string
       fallback_strategy:
         allOf:
         - $ref: '#/definitions/github_com_Tencent_WeKnora_internal_types.FallbackStrategy'
-        description: 兜底策略
+        description: Fallback strategy
       id:
         description: ID
         type: string
       keyword_threshold:
-        description: 关键词召回阈值
+        description: Keyword recall threshold
         type: number
       knowledge_base_id:
         description: Strategy configuration
         type: string
       max_rounds:
-        description: 多轮保持轮数
+        description: Multi-turn retention rounds
         type: integer
       rerank_model_id:
-        description: 排序模型ID
+        description: Rerank model ID
         type: string
       rerank_threshold:
-        description: 排序阈值
+        description: Rerank threshold
         type: number
       rerank_top_k:
-        description: 排序TopK
+        description: Rerank TopK
         type: integer
       summary_model_id:
-        description: 总结模型ID
+        description: Summary model ID
         type: string
       summary_parameters:
         allOf:
         - $ref: '#/definitions/github_com_Tencent_WeKnora_internal_types.SummaryConfig'
-        description: 总结模型参数
+        description: Summary model parameters
       tenant_id:
         description: Tenant ID
         type: integer
@@ -1093,7 +1093,7 @@ definitions:
       updated_at:
         type: string
       vector_threshold:
-        description: 向量召回阈值
+        description: Vector recall threshold
         type: number
     type: object
   github_com_Tencent_WeKnora_internal_types.SessionAgentConfig:
@@ -1332,43 +1332,43 @@ definitions:
         type: string
       model_name:
         description: |-
-          兼容老版本
+          Compatible with old version
           Model Name
         type: string
     type: object
   github_com_Tencent_WeKnora_internal_types.WebSearchConfig:
     properties:
       api_key:
-        description: API密钥（如果需要）
+        description: API key (if required)
         type: string
       blacklist:
-        description: 黑名单规则列表
+        description: Blacklist rules list
         items:
           type: string
         type: array
       compression_method:
-        description: 压缩方法：none, summary, extract, rag
+        description: Compression method: none, summary, extract, rag
         type: string
       document_fragments:
-        description: 文档片段数量（用于RAG压缩）
+        description: Number of document fragments (for RAG compression)
         type: integer
       embedding_dimension:
-        description: 嵌入维度（用于RAG压缩）
+        description: Embedding dimension (for RAG compression)
         type: integer
       embedding_model_id:
-        description: RAG压缩相关配置
+        description: RAG compression related configuration
         type: string
       include_date:
-        description: 是否包含日期
+        description: Whether to include date
         type: boolean
       max_results:
-        description: 最大搜索结果数
+        description: Maximum number of search results
         type: integer
       provider:
-        description: 搜索引擎提供商ID
+        description: Search engine provider ID
         type: string
       rerank_model_id:
-        description: 重排模型ID（用于RAG压缩）
+        description: Rerank model ID (for RAG compression)
         type: string
     type: object
   gorm.DeletedAt:
@@ -1452,7 +1452,7 @@ definitions:
   internal_handler.KBModelConfigRequest:
     properties:
       documentSplitting:
-        description: 文档分块配置
+        description: Document chunking configuration
         properties:
           chunkOverlap:
             type: integer
@@ -1468,7 +1468,7 @@ definitions:
       llmModelId:
         type: string
       multimodal:
-        description: 多模态配置
+        description: Multimodal configuration
         properties:
           cos:
             properties:
@@ -1501,7 +1501,7 @@ definitions:
             type: string
         type: object
       nodeExtract:
-        description: 知识图谱配置
+        description: Knowledge graph configuration
         properties:
           enabled:
             type: boolean
@@ -1521,7 +1521,7 @@ definitions:
             type: string
         type: object
       questionGeneration:
-        description: 问题生成配置
+        description: Question generation configuration
         properties:
           enabled:
             type: boolean
@@ -1763,7 +1763,7 @@ info:
   contact:
     name: WeKnora Github
     url: https://github.com/Tencent/WeKnora
-  description: WeKnora 知识库管理系统 API 文档
+  description: WeKnora Knowledge Base Management System API Documentation
   termsOfService: http://swagger.io/terms/
   title: WeKnora API
   version: "1.0"
@@ -1772,9 +1772,9 @@ paths:
     post:
       consumes:
       - application/json
-      description: 修改当前用户的登录密码
+      description: Change the current user's login password
       parameters:
-      - description: 密码修改请求
+      - description: Password change request
         in: body
         name: request
         required: true
@@ -1789,26 +1789,26 @@ paths:
       - application/json
       responses:
         "200":
-          description: 修改成功
+          description: Password changed successfully
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
-      summary: 修改密码
+      summary: Change password
       tags:
-      - 认证
+      - Authentication
   /auth/login:
     post:
       consumes:
       - application/json
-      description: 用户登录并获取访问令牌
+      description: User login and get access token
       parameters:
-      - description: 登录请求参数
+      - description: Login request parameters
         in: body
         name: request
         required: true
@@ -1822,63 +1822,63 @@ paths:
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_types.LoginResponse'
         "401":
-          description: 认证失败
+          description: Authentication failed
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
-      summary: 用户登录
+      summary: User login
       tags:
-      - 认证
+      - Authentication
   /auth/logout:
     post:
       consumes:
       - application/json
-      description: 撤销当前访问令牌并登出
+      description: Revoke current access token and logout
       produces:
       - application/json
       responses:
         "200":
-          description: 登出成功
+          description: Logout successful
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
-      summary: 用户登出
+      summary: User logout
       tags:
-      - 认证
+      - Authentication
   /auth/me:
     get:
       consumes:
       - application/json
-      description: 获取当前登录用户的详细信息
+      description: Get detailed information of the current logged-in user
       produces:
       - application/json
       responses:
         "200":
-          description: 用户信息
+          description: User information
           schema:
             additionalProperties: true
             type: object
         "401":
-          description: 未授权
+          description: Unauthorized
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
-      summary: 获取当前用户信息
+      summary: Get current user information
       tags:
-      - 认证
+      - Authentication
   /auth/refresh:
     post:
       consumes:
       - application/json
-      description: 使用刷新令牌获取新的访问令牌
+      description: Use refresh token to get a new access token
       parameters:
-      - description: 刷新令牌
+      - description: Refresh token
         in: body
         name: request
         required: true
@@ -1891,24 +1891,24 @@ paths:
       - application/json
       responses:
         "200":
-          description: 新令牌
+          description: New token
           schema:
             additionalProperties: true
             type: object
         "401":
-          description: 令牌无效
+          description: Invalid token
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
-      summary: 刷新令牌
+      summary: Refresh token
       tags:
-      - 认证
+      - Authentication
   /auth/register:
     post:
       consumes:
       - application/json
-      description: 注册新用户账号
+      description: Register a new user account
       parameters:
-      - description: 注册请求参数
+      - description: Registration request parameters
         in: body
         name: request
         required: true
@@ -1922,45 +1922,45 @@ paths:
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_types.RegisterResponse'
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
         "403":
-          description: 注册功能已禁用
+          description: Registration feature is disabled
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
-      summary: 用户注册
+      summary: User registration
       tags:
-      - 认证
+      - Authentication
   /auth/validate:
     get:
       consumes:
       - application/json
-      description: 验证访问令牌是否有效
+      description: Verify if the access token is valid
       produces:
       - application/json
       responses:
         "200":
-          description: 令牌有效
+          description: Token is valid
           schema:
             additionalProperties: true
             type: object
         "401":
-          description: 令牌无效
+          description: Invalid token
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
-      summary: 验证令牌
+      summary: Validate token
       tags:
-      - 认证
+      - Authentication
   /chunks/{knowledge_id}:
     delete:
       consumes:
       - application/json
-      description: 删除指定知识下的所有分块
+      description: Delete all chunks under the specified knowledge
       parameters:
-      - description: 知识ID
+      - description: Knowledge ID
         in: path
         name: knowledge_id
         required: true
@@ -1969,37 +1969,37 @@ paths:
       - application/json
       responses:
         "200":
-          description: 删除成功
+          description: Deleted successfully
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 删除知识下所有分块
+      summary: Delete all chunks under knowledge
       tags:
-      - 分块管理
+      - Chunk Management
     get:
       consumes:
       - application/json
-      description: 获取指定知识下的所有分块列表，支持分页
+      description: Get all chunk list under the specified knowledge, supports pagination
       parameters:
-      - description: 知识ID
+      - description: Knowledge ID
         in: path
         name: knowledge_id
         required: true
         type: string
       - default: 1
-        description: 页码
+        description: Page number
         in: query
         name: page
         type: integer
       - default: 10
-        description: 每页数量
+        description: Items per page
         in: query
         name: page_size
         type: integer
@@ -2007,32 +2007,32 @@ paths:
       - application/json
       responses:
         "200":
-          description: 分块列表
+          description: Chunk list
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取知识分块列表
+      summary: Get knowledge chunk list
       tags:
-      - 分块管理
+      - Chunk Management
   /chunks/{knowledge_id}/{id}:
     delete:
       consumes:
       - application/json
-      description: 删除指定的分块
+      description: Delete the specified chunk
       parameters:
-      - description: 知识ID
+      - description: Knowledge ID
         in: path
         name: knowledge_id
         required: true
         type: string
-      - description: 分块ID
+      - description: Chunk ID
         in: path
         name: id
         required: true
@@ -2041,40 +2041,40 @@ paths:
       - application/json
       responses:
         "200":
-          description: 删除成功
+          description: Deleted successfully
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
         "404":
-          description: 分块不存在
+          description: Chunk not found
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 删除分块
+      summary: Delete chunk
       tags:
-      - 分块管理
+      - Chunk Management
     put:
       consumes:
       - application/json
-      description: 更新指定分块的内容和属性
+      description: Update the content and properties of the specified chunk
       parameters:
-      - description: 知识ID
+      - description: Knowledge ID
         in: path
         name: knowledge_id
         required: true
         type: string
-      - description: 分块ID
+      - description: Chunk ID
         in: path
         name: id
         required: true
         type: string
-      - description: 更新请求
+      - description: Update request
         in: body
         name: request
         required: true
@@ -2084,31 +2084,31 @@ paths:
       - application/json
       responses:
         "200":
-          description: 更新后的分块
+          description: Updated chunk
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
         "404":
-          description: 分块不存在
+          description: Chunk not found
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 更新分块
+      summary: Update chunk
       tags:
-      - 分块管理
+      - Chunk Management
   /chunks/by-id/{id}:
     get:
       consumes:
       - application/json
-      description: 仅通过分块ID获取分块详情（不需要knowledge_id）
+      description: Get chunk details by chunk ID only (knowledge_id not required)
       parameters:
-      - description: 分块ID
+      - description: Chunk ID
         in: path
         name: id
         required: true
@@ -2117,36 +2117,36 @@ paths:
       - application/json
       responses:
         "200":
-          description: 分块详情
+          description: Chunk details
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
         "404":
-          description: 分块不存在
+          description: Chunk not found
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 通过ID获取分块
+      summary: Get chunk by ID
       tags:
-      - 分块管理
+      - Chunk Management
   /chunks/by-id/{id}/questions:
     delete:
       consumes:
       - application/json
-      description: 删除分块中生成的问题
+      description: Delete generated questions in chunk
       parameters:
-      - description: 分块ID
+      - description: Chunk ID
         in: path
         name: id
         required: true
         type: string
-      - description: 问题ID
+      - description: Question ID
         in: body
         name: request
         required: true
@@ -2159,31 +2159,31 @@ paths:
       - application/json
       responses:
         "200":
-          description: 删除成功
+          description: Deleted successfully
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
         "404":
-          description: 分块不存在
+          description: Chunk not found
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 删除生成的问题
+      summary: Delete generated questions
       tags:
-      - 分块管理
+      - Chunk Management
   /evaluation/:
     get:
       consumes:
       - application/json
-      description: 根据任务ID获取评估结果
+      description: Get evaluation results by task ID
       parameters:
-      - description: 评估任务ID
+      - description: Evaluation task ID
         in: query
         name: task_id
         required: true
@@ -2192,26 +2192,26 @@ paths:
       - application/json
       responses:
         "200":
-          description: 评估结果
+          description: Evaluation results
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取评估结果
+      summary: Get evaluation results
       tags:
-      - 评估
+      - Evaluation
     post:
       consumes:
       - application/json
-      description: 对知识库进行评估测试
+      description: Evaluate and test the knowledge base
       parameters:
-      - description: 评估请求参数
+      - description: Evaluation request parameters
         in: body
         name: request
         required: true
@@ -2221,27 +2221,27 @@ paths:
       - application/json
       responses:
         "200":
-          description: 评估任务
+          description: Evaluation task
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 执行评估
+      summary: Execute evaluation
       tags:
-      - 评估
+      - Evaluation
   /faq/import/progress/{task_id}:
     get:
       consumes:
       - application/json
-      description: 获取FAQ导入任务的进度
+      description: Get FAQ import task progress
       parameters:
-      - description: 任务ID
+      - description: Task ID
         in: path
         name: task_id
         required: true
@@ -2250,27 +2250,27 @@ paths:
       - application/json
       responses:
         "200":
-          description: 导入进度
+          description: Import progress
           schema:
             additionalProperties: true
             type: object
         "404":
-          description: 任务不存在
+          description: Task not found
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取FAQ导入进度
+      summary: Get FAQ import progress
       tags:
-      - FAQ管理
+      - FAQ Management
   /initialization/extract/relations:
     post:
       consumes:
       - application/json
-      description: 从文本中提取实体和关系
+      description: Extract entities and relations from text
       parameters:
-      - description: 提取请求
+      - description: Extraction request
         in: body
         name: request
         required: true
@@ -2280,43 +2280,43 @@ paths:
       - application/json
       responses:
         "200":
-          description: 提取结果
+          description: Extraction results
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 提取文本关系
+      summary: Extract text relations
       tags:
-      - 初始化
+      - Initialization
   /initialization/fabri/tag:
     get:
       consumes:
       - application/json
-      description: 随机生成一组标签
+      description: Randomly generate a set of tags
       produces:
       - application/json
       responses:
         "200":
-          description: 生成的标签
+          description: Generated tags
           schema:
             additionalProperties: true
             type: object
-      summary: 生成随机标签
+      summary: Generate random tags
       tags:
-      - 初始化
+      - Initialization
   /initialization/fabri/text:
     post:
       consumes:
       - application/json
-      description: 根据标签生成示例文本
+      description: Generate example text based on tags
       parameters:
-      - description: 生成请求
+      - description: Generation request
         in: body
         name: request
         required: true
@@ -2326,32 +2326,32 @@ paths:
       - application/json
       responses:
         "200":
-          description: 生成的文本
+          description: Generated text
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 生成示例文本
+      summary: Generate example text
       tags:
-      - 初始化
+      - Initialization
   /initialization/kb/{kbId}:
     post:
       consumes:
       - application/json
-      description: 根据知识库ID执行完整配置更新
+      description: Execute complete configuration update based on knowledge base ID
       parameters:
-      - description: 知识库ID
+      - description: Knowledge base ID
         in: path
         name: kbId
         required: true
         type: string
-      - description: 初始化请求
+      - description: Initialization request
         in: body
         name: request
         required: true
@@ -2361,27 +2361,27 @@ paths:
       - application/json
       responses:
         "200":
-          description: 初始化成功
+          description: Initialization successful
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 初始化知识库配置
+      summary: Initialize knowledge base configuration
       tags:
-      - 初始化
+      - Initialization
   /initialization/kb/{kbId}/config:
     get:
       consumes:
       - application/json
-      description: 根据知识库ID获取当前配置信息
+      description: Get current configuration information based on knowledge base ID
       parameters:
-      - description: 知识库ID
+      - description: Knowledge base ID
         in: path
         name: kbId
         required: true
@@ -2390,31 +2390,31 @@ paths:
       - application/json
       responses:
         "200":
-          description: 配置信息
+          description: Configuration information
           schema:
             additionalProperties: true
             type: object
         "404":
-          description: 知识库不存在
+          description: Knowledge base not found
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取知识库配置
+      summary: Get knowledge base configuration
       tags:
-      - 初始化
+      - Initialization
     put:
       consumes:
       - application/json
-      description: 根据知识库ID更新模型和分块配置
+      description: Update model and chunking configuration based on knowledge base ID
       parameters:
-      - description: 知识库ID
+      - description: Knowledge base ID
         in: path
         name: kbId
         required: true
         type: string
-      - description: 配置请求
+      - description: Configuration request
         in: body
         name: request
         required: true
@@ -2424,31 +2424,31 @@ paths:
       - application/json
       responses:
         "200":
-          description: 更新成功
+          description: Updated successfully
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
         "404":
-          description: 知识库不存在
+          description: Knowledge base not found
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 更新知识库配置
+      summary: Update knowledge base configuration
       tags:
-      - 初始化
+      - Initialization
   /initialization/models/embedding/test:
     post:
       consumes:
       - application/json
-      description: 测试Embedding接口是否可用并返回向量维度
+      description: Test if Embedding interface is available and return vector dimension
       parameters:
-      - description: Embedding测试请求
+      - description: Embedding test request
         in: body
         name: request
         required: true
@@ -2458,27 +2458,27 @@ paths:
       - application/json
       responses:
         "200":
-          description: 测试结果
+          description: Test results
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 测试Embedding模型
+      summary: Test Embedding model
       tags:
-      - 初始化
+      - Initialization
   /initialization/models/remote/check:
     post:
       consumes:
       - application/json
-      description: 检查远程API模型连接是否正常
+      description: Check if remote API model connection is normal
       parameters:
-      - description: 模型检查请求
+      - description: Model check request
         in: body
         name: request
         required: true
@@ -2488,27 +2488,27 @@ paths:
       - application/json
       responses:
         "200":
-          description: 检查结果
+          description: Check results
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 检查远程模型
+      summary: Check remote model
       tags:
-      - 初始化
+      - Initialization
   /initialization/models/rerank/check:
     post:
       consumes:
       - application/json
-      description: 检查Rerank模型连接和功能是否正常
+      description: Check if Rerank model connection and functionality are normal
       parameters:
-      - description: Rerank检查请求
+      - description: Rerank check request
         in: body
         name: request
         required: true
@@ -2518,32 +2518,32 @@ paths:
       - application/json
       responses:
         "200":
-          description: 检查结果
+          description: Check results
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 检查Rerank模型
+      summary: Check Rerank model
       tags:
-      - 初始化
+      - Initialization
   /initialization/multimodal/test:
     post:
       consumes:
       - multipart/form-data
-      description: 上传图片测试多模态处理功能
+      description: Upload image to test multimodal processing functionality
       parameters:
-      - description: 测试图片
+      - description: Test image
         in: formData
         name: image
         required: true
         type: file
-      - description: VLM模型名称
+      - description: VLM model name
         in: formData
         name: vlm_model
         required: true
@@ -2557,11 +2557,11 @@ paths:
         in: formData
         name: vlm_api_key
         type: string
-      - description: VLM接口类型
+      - description: VLM interface type
         in: formData
         name: vlm_interface_type
         type: string
-      - description: 存储类型(cos/minio)
+      - description: Storage type (cos/minio)
         in: formData
         name: storage_type
         required: true
@@ -2570,27 +2570,27 @@ paths:
       - application/json
       responses:
         "200":
-          description: 测试结果
+          description: Test results
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 测试多模态功能
+      summary: Test multimodal functionality
       tags:
-      - 初始化
+      - Initialization
   /initialization/ollama/download/{taskId}:
     get:
       consumes:
       - application/json
-      description: 获取Ollama模型下载任务的进度
+      description: Get Ollama model download task progress
       parameters:
-      - description: 任务ID
+      - description: Task ID
         in: path
         name: taskId
         required: true
@@ -2599,69 +2599,69 @@ paths:
       - application/json
       responses:
         "200":
-          description: 下载进度
+          description: Download progress
           schema:
             additionalProperties: true
             type: object
         "404":
-          description: 任务不存在
+          description: Task not found
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取下载进度
+      summary: Get download progress
       tags:
-      - 初始化
+      - Initialization
   /initialization/ollama/download/tasks:
     get:
       consumes:
       - application/json
-      description: 列出所有Ollama模型下载任务
+      description: List all Ollama model download tasks
       produces:
       - application/json
       responses:
         "200":
-          description: 任务列表
+          description: Task list
           schema:
             additionalProperties: true
             type: object
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 列出下载任务
+      summary: List download tasks
       tags:
-      - 初始化
+      - Initialization
   /initialization/ollama/models:
     get:
       consumes:
       - application/json
-      description: 列出已安装的Ollama模型
+      description: List installed Ollama models
       produces:
       - application/json
       responses:
         "200":
-          description: 模型列表
+          description: Model list
           schema:
             additionalProperties: true
             type: object
         "500":
-          description: 服务器错误
+          description: Server error
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 列出Ollama模型
+      summary: List Ollama models
       tags:
-      - 初始化
+      - Initialization
   /initialization/ollama/models/check:
     post:
       consumes:
       - application/json
-      description: 检查指定的Ollama模型是否已安装
+      description: Check if the specified Ollama model is installed
       parameters:
-      - description: 模型名称列表
+      - description: Model name list
         in: body
         name: request
         required: true
@@ -2676,27 +2676,27 @@ paths:
       - application/json
       responses:
         "200":
-          description: 模型状态
+          description: Model status
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 检查Ollama模型状态
+      summary: Check Ollama model status
       tags:
-      - 初始化
+      - Initialization
   /initialization/ollama/models/download:
     post:
       consumes:
       - application/json
-      description: 异步下载指定的Ollama模型
+      description: Asynchronously download the specified Ollama model
       parameters:
-      - description: 模型名称
+      - description: Model name
         in: body
         name: request
         required: true
@@ -2709,65 +2709,65 @@ paths:
       - application/json
       responses:
         "200":
-          description: 下载任务信息
+          description: Download task information
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 下载Ollama模型
+      summary: Download Ollama model
       tags:
-      - 初始化
+      - Initialization
   /initialization/ollama/status:
     get:
       consumes:
       - application/json
-      description: 检查Ollama服务是否可用
+      description: Check if Ollama service is available
       produces:
       - application/json
       responses:
         "200":
-          description: Ollama状态
+          description: Ollama status
           schema:
             additionalProperties: true
             type: object
-      summary: 检查Ollama服务状态
+      summary: Check Ollama service status
       tags:
-      - 初始化
+      - Initialization
   /knowledge-bases:
     get:
       consumes:
       - application/json
-      description: 获取当前租户的所有知识库
+      description: Get all knowledge bases of the current tenant
       produces:
       - application/json
       responses:
         "200":
-          description: 知识库列表
+          description: Knowledge base list
           schema:
             additionalProperties: true
             type: object
         "500":
-          description: 服务器错误
+          description: Server error
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取知识库列表
+      summary: Get knowledge base list
       tags:
-      - 知识库
+      - Knowledge Base
     post:
       consumes:
       - application/json
-      description: 创建新的知识库
+      description: Create a new knowledge base
       parameters:
-      - description: 知识库信息
+      - description: Knowledge base information
         in: body
         name: request
         required: true
@@ -2777,27 +2777,27 @@ paths:
       - application/json
       responses:
         "201":
-          description: 创建的知识库
+          description: Created knowledge base
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 创建知识库
+      summary: Create knowledge base
       tags:
-      - 知识库
+      - Knowledge Base
   /knowledge-bases/{id}:
     delete:
       consumes:
       - application/json
-      description: 删除指定的知识库及其所有内容
+      description: Delete the specified knowledge base and all its content
       parameters:
-      - description: 知识库ID
+      - description: Knowledge base ID
         in: path
         name: id
         required: true
@@ -2806,26 +2806,26 @@ paths:
       - application/json
       responses:
         "200":
-          description: 删除成功
+          description: Deleted successfully
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 删除知识库
+      summary: Delete knowledge base
       tags:
-      - 知识库
+      - Knowledge Base
     get:
       consumes:
       - application/json
-      description: 根据ID获取知识库详情
+      description: Get knowledge base details by ID
       parameters:
-      - description: 知识库ID
+      - description: Knowledge base ID
         in: path
         name: id
         required: true
@@ -2834,35 +2834,35 @@ paths:
       - application/json
       responses:
         "200":
-          description: 知识库详情
+          description: Knowledge base details
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
         "404":
-          description: 知识库不存在
+          description: Knowledge base not found
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取知识库详情
+      summary: Get knowledge base details
       tags:
-      - 知识库
+      - Knowledge Base
     put:
       consumes:
       - application/json
-      description: 更新知识库的名称、描述和配置
+      description: Update knowledge base name, description and configuration
       parameters:
-      - description: 知识库ID
+      - description: Knowledge base ID
         in: path
         name: id
         required: true
         type: string
-      - description: 更新请求
+      - description: Update request
         in: body
         name: request
         required: true
@@ -2872,32 +2872,32 @@ paths:
       - application/json
       responses:
         "200":
-          description: 更新后的知识库
+          description: Updated knowledge base
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 更新知识库
+      summary: Update knowledge base
       tags:
-      - 知识库
+      - Knowledge Base
   /knowledge-bases/{id}/faq/entries:
     delete:
       consumes:
       - application/json
-      description: 批量删除指定的FAQ条目
+      description: Batch delete specified FAQ entries
       parameters:
-      - description: 知识库ID
+      - description: Knowledge base ID
         in: path
         name: id
         required: true
         type: string
-      - description: 要删除的FAQ ID列表
+      - description: List of FAQ IDs to delete
         in: body
         name: request
         required: true
@@ -2912,52 +2912,52 @@ paths:
       - application/json
       responses:
         "200":
-          description: 删除成功
+          description: Deleted successfully
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 批量删除FAQ条目
+      summary: Batch delete FAQ entries
       tags:
-      - FAQ管理
+      - FAQ Management
     get:
       consumes:
       - application/json
-      description: 获取知识库下的FAQ条目列表，支持分页和筛选
+      description: Get FAQ entry list under knowledge base, supports pagination and filtering
       parameters:
-      - description: 知识库ID
+      - description: Knowledge base ID
         in: path
         name: id
         required: true
         type: string
-      - description: 页码
+      - description: Page number
         in: query
         name: page
         type: integer
-      - description: 每页数量
+      - description: Items per page
         in: query
         name: page_size
         type: integer
-      - description: 标签ID筛选
+      - description: Tag ID filter
         in: query
         name: tag_id
         type: string
-      - description: 关键词搜索
+      - description: Keyword search
         in: query
         name: keyword
         type: string
-      - description: '搜索字段: standard_question(标准问题), similar_questions(相似问法), answers(答案),
-          默认搜索全部'
+      - description: 'Search fields: standard_question (standard question), similar_questions (similar questions), answers (answers),
+          default searches all'
         in: query
         name: search_field
         type: string
-      - description: '排序方式: asc(按更新时间正序), 默认按更新时间倒序'
+      - description: 'Sort order: asc (ascending by update time), default is descending by update time'
         in: query
         name: sort_order
         type: string
@@ -2965,31 +2965,31 @@ paths:
       - application/json
       responses:
         "200":
-          description: FAQ列表
+          description: FAQ list
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取FAQ条目列表
+      summary: Get FAQ entry list
       tags:
-      - FAQ管理
+      - FAQ Management
     post:
       consumes:
       - application/json
-      description: 异步批量更新或插入FAQ条目
+      description: Asynchronously batch update or insert FAQ entries
       parameters:
-      - description: 知识库ID
+      - description: Knowledge base ID
         in: path
         name: id
         required: true
         type: string
-      - description: 批量操作请求
+      - description: Batch operation request
         in: body
         name: request
         required: true
@@ -2999,32 +2999,32 @@ paths:
       - application/json
       responses:
         "200":
-          description: 任务ID
+          description: Task ID
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 批量更新/插入FAQ条目
+      summary: Batch update/insert FAQ entries
       tags:
-      - FAQ管理
+      - FAQ Management
   /knowledge-bases/{id}/faq/entries/{entry_id}:
     get:
       consumes:
       - application/json
-      description: 根据ID获取单个FAQ条目的详情
+      description: Get single FAQ entry details by ID
       parameters:
-      - description: 知识库ID
+      - description: Knowledge base ID
         in: path
         name: id
         required: true
         type: string
-      - description: FAQ条目ID
+      - description: FAQ entry ID
         in: path
         name: entry_id
         required: true
@@ -3033,40 +3033,40 @@ paths:
       - application/json
       responses:
         "200":
-          description: FAQ条目详情
+          description: FAQ entry details
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
         "404":
-          description: 条目不存在
+          description: Entry not found
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取FAQ条目详情
+      summary: Get FAQ entry details
       tags:
-      - FAQ管理
+      - FAQ Management
     put:
       consumes:
       - application/json
-      description: 更新指定的FAQ条目
+      description: Update the specified FAQ entry
       parameters:
-      - description: 知识库ID
+      - description: Knowledge base ID
         in: path
         name: id
         required: true
         type: string
-      - description: FAQ条目ID
+      - description: FAQ entry ID
         in: path
         name: entry_id
         required: true
         type: string
-      - description: FAQ条目
+      - description: FAQ entry
         in: body
         name: request
         required: true
@@ -3076,27 +3076,27 @@ paths:
       - application/json
       responses:
         "200":
-          description: 更新成功
+          description: Updated successfully
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 更新FAQ条目
+      summary: Update FAQ entry
       tags:
-      - FAQ管理
+      - FAQ Management
   /knowledge-bases/{id}/faq/entries/export:
     get:
       consumes:
       - application/json
-      description: 将所有FAQ条目导出为CSV文件
+      description: Export all FAQ entries as CSV file
       parameters:
-      - description: 知识库ID
+      - description: Knowledge base ID
         in: path
         name: id
         required: true
@@ -3105,31 +3105,31 @@ paths:
       - text/csv
       responses:
         "200":
-          description: CSV文件
+          description: CSV file
           schema:
             type: file
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 导出FAQ条目
+      summary: Export FAQ entries
       tags:
-      - FAQ管理
+      - FAQ Management
   /knowledge-bases/{id}/faq/entries/fields:
     put:
       consumes:
       - application/json
-      description: 批量更新FAQ条目的多个字段（is_enabled, is_recommended, tag_id）
+      description: Batch update multiple fields of FAQ entries (is_enabled, is_recommended, tag_id)
       parameters:
-      - description: 知识库ID
+      - description: Knowledge base ID
         in: path
         name: id
         required: true
         type: string
-      - description: 字段更新请求
+      - description: Field update request
         in: body
         name: request
         required: true
@@ -3139,32 +3139,32 @@ paths:
       - application/json
       responses:
         "200":
-          description: 更新成功
+          description: Updated successfully
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 批量更新FAQ字段
+      summary: Batch update FAQ fields
       tags:
-      - FAQ管理
+      - FAQ Management
   /knowledge-bases/{id}/faq/entries/tags:
     put:
       consumes:
       - application/json
-      description: 批量更新FAQ条目的标签
+      description: Batch update FAQ entry tags
       parameters:
-      - description: 知识库ID
+      - description: Knowledge base ID
         in: path
         name: id
         required: true
         type: string
-      - description: 标签更新请求
+      - description: Tag update request
         in: body
         name: request
         required: true
@@ -3174,32 +3174,32 @@ paths:
       - application/json
       responses:
         "200":
-          description: 更新成功
+          description: Updated successfully
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 批量更新FAQ标签
+      summary: Batch update FAQ tags
       tags:
-      - FAQ管理
+      - FAQ Management
   /knowledge-bases/{id}/faq/entry:
     post:
       consumes:
       - application/json
-      description: 同步创建单个FAQ条目
+      description: Synchronously create a single FAQ entry
       parameters:
-      - description: 知识库ID
+      - description: Knowledge base ID
         in: path
         name: id
         required: true
         type: string
-      - description: FAQ条目
+      - description: FAQ entry
         in: body
         name: request
         required: true
@@ -3209,32 +3209,32 @@ paths:
       - application/json
       responses:
         "200":
-          description: 创建的FAQ条目
+          description: Created FAQ entry
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 创建单个FAQ条目
+      summary: Create single FAQ entry
       tags:
-      - FAQ管理
+      - FAQ Management
   /knowledge-bases/{id}/faq/search:
     post:
       consumes:
       - application/json
-      description: 使用混合搜索在FAQ中搜索
+      description: Search in FAQ using hybrid search
       parameters:
-      - description: 知识库ID
+      - description: Knowledge base ID
         in: path
         name: id
         required: true
         type: string
-      - description: 搜索请求
+      - description: Search request
         in: body
         name: request
         required: true
@@ -3244,32 +3244,32 @@ paths:
       - application/json
       responses:
         "200":
-          description: 搜索结果
+          description: Search results
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 搜索FAQ
+      summary: Search FAQ
       tags:
-      - FAQ管理
+      - FAQ Management
   /knowledge-bases/{id}/hybrid-search:
     get:
       consumes:
       - application/json
-      description: 在知识库中执行向量和关键词混合搜索
+      description: Execute vector and keyword hybrid search in knowledge base
       parameters:
-      - description: 知识库ID
+      - description: Knowledge base ID
         in: path
         name: id
         required: true
         type: string
-      - description: 搜索参数
+      - description: Search parameters
         in: body
         name: request
         required: true
@@ -3279,48 +3279,48 @@ paths:
       - application/json
       responses:
         "200":
-          description: 搜索结果
+          description: Search results
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 混合搜索
+      summary: Hybrid search
       tags:
-      - 知识库
+      - Knowledge Base
   /knowledge-bases/{id}/knowledge:
     get:
       consumes:
       - application/json
-      description: 获取知识库下的知识列表，支持分页和筛选
+      description: Get knowledge list under knowledge base, supports pagination and filtering
       parameters:
-      - description: 知识库ID
+      - description: Knowledge base ID
         in: path
         name: id
         required: true
         type: string
-      - description: 页码
+      - description: Page number
         in: query
         name: page
         type: integer
-      - description: 每页数量
+      - description: Items per page
         in: query
         name: page_size
         type: integer
-      - description: 标签ID筛选
+      - description: Tag ID filter
         in: query
         name: tag_id
         type: string
-      - description: 关键词搜索
+      - description: Keyword search
         in: query
         name: keyword
         type: string
-      - description: 文件类型筛选
+      - description: File type filter
         in: query
         name: file_type
         type: string
@@ -3328,45 +3328,45 @@ paths:
       - application/json
       responses:
         "200":
-          description: 知识列表
+          description: Knowledge list
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取知识列表
+      summary: Get knowledge list
       tags:
-      - 知识管理
+      - Knowledge Management
   /knowledge-bases/{id}/knowledge/file:
     post:
       consumes:
       - multipart/form-data
-      description: 上传文件并创建知识条目
+      description: Upload file and create knowledge entry
       parameters:
-      - description: 知识库ID
+      - description: Knowledge base ID
         in: path
         name: id
         required: true
         type: string
-      - description: 上传的文件
+      - description: Uploaded file
         in: formData
         name: file
         required: true
         type: file
-      - description: 自定义文件名
+      - description: Custom file name
         in: formData
         name: fileName
         type: string
-      - description: 元数据JSON
+      - description: Metadata JSON
         in: formData
         name: metadata
         type: string
-      - description: 启用多模态处理
+      - description: Enable multimodal processing
         in: formData
         name: enable_multimodel
         type: boolean
@@ -3374,37 +3374,37 @@ paths:
       - application/json
       responses:
         "200":
-          description: 创建的知识
+          description: Created knowledge
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
         "409":
-          description: 文件重复
+          description: File duplicate
           schema:
             additionalProperties: true
             type: object
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 从文件创建知识
+      summary: Create knowledge from file
       tags:
-      - 知识管理
+      - Knowledge Management
   /knowledge-bases/{id}/knowledge/manual:
     post:
       consumes:
       - application/json
-      description: 手工录入Markdown格式的知识内容
+      description: Manually enter knowledge content in Markdown format
       parameters:
-      - description: 知识库ID
+      - description: Knowledge base ID
         in: path
         name: id
         required: true
         type: string
-      - description: 手工知识内容
+      - description: Manual knowledge content
         in: body
         name: request
         required: true
@@ -3414,32 +3414,32 @@ paths:
       - application/json
       responses:
         "200":
-          description: 创建的知识
+          description: Created knowledge
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 手工创建知识
+      summary: Manually create knowledge
       tags:
-      - 知识管理
+      - Knowledge Management
   /knowledge-bases/{id}/knowledge/url:
     post:
       consumes:
       - application/json
-      description: 从指定URL抓取内容并创建知识条目
+      description: Fetch content from specified URL and create knowledge entry
       parameters:
-      - description: 知识库ID
+      - description: Knowledge base ID
         in: path
         name: id
         required: true
         type: string
-      - description: URL请求
+      - description: URL request
         in: body
         name: request
         required: true
@@ -3456,45 +3456,45 @@ paths:
       - application/json
       responses:
         "201":
-          description: 创建的知识
+          description: Created knowledge
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
         "409":
-          description: URL重复
+          description: URL duplicate
           schema:
             additionalProperties: true
             type: object
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 从URL创建知识
+      summary: Create knowledge from URL
       tags:
-      - 知识管理
+      - Knowledge Management
   /knowledge-bases/{id}/tags:
     get:
       consumes:
       - application/json
-      description: 获取知识库下的所有标签及统计信息
+      description: Get all tags and statistics under knowledge base
       parameters:
-      - description: 知识库ID
+      - description: Knowledge base ID
         in: path
         name: id
         required: true
         type: string
-      - description: 页码
+      - description: Page number
         in: query
         name: page
         type: integer
-      - description: 每页数量
+      - description: Items per page
         in: query
         name: page_size
         type: integer
-      - description: 关键词搜索
+      - description: Keyword search
         in: query
         name: keyword
         type: string
@@ -3502,31 +3502,31 @@ paths:
       - application/json
       responses:
         "200":
-          description: 标签列表
+          description: Tag list
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取标签列表
+      summary: Get tag list
       tags:
-      - 标签管理
+      - Tag Management
     post:
       consumes:
       - application/json
-      description: 在知识库下创建新标签
+      description: Create new tag under knowledge base
       parameters:
-      - description: 知识库ID
+      - description: Knowledge base ID
         in: path
         name: id
         required: true
         type: string
-      - description: 标签信息
+      - description: Tag information
         in: body
         name: request
         required: true
@@ -3543,41 +3543,41 @@ paths:
       - application/json
       responses:
         "200":
-          description: 创建的标签
+          description: Created tag
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 创建标签
+      summary: Create tag
       tags:
-      - 标签管理
+      - Tag Management
   /knowledge-bases/{id}/tags/{tag_id}:
     delete:
       consumes:
       - application/json
-      description: 删除标签，可使用force=true强制删除被引用的标签，content_only=true仅删除标签下的内容而保留标签本身
+      description: Delete tag, use force=true to force delete referenced tags, content_only=true to only delete content under tag while keeping the tag itself
       parameters:
-      - description: 知识库ID
+      - description: Knowledge base ID
         in: path
         name: id
         required: true
         type: string
-      - description: 标签ID
+      - description: Tag ID
         in: path
         name: tag_id
         required: true
         type: string
-      - description: 强制删除
+      - description: Force delete
         in: query
         name: force
         type: boolean
-      - description: 仅删除内容，保留标签
+      - description: Delete content only, keep tag
         in: query
         name: content_only
         type: boolean
@@ -3585,36 +3585,36 @@ paths:
       - application/json
       responses:
         "200":
-          description: 删除成功
+          description: Deleted successfully
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 删除标签
+      summary: Delete tag
       tags:
-      - 标签管理
+      - Tag Management
     put:
       consumes:
       - application/json
-      description: 更新标签信息
+      description: Update tag information
       parameters:
-      - description: 知识库ID
+      - description: Knowledge base ID
         in: path
         name: id
         required: true
         type: string
-      - description: 标签ID
+      - description: Tag ID
         in: path
         name: tag_id
         required: true
         type: string
-      - description: 标签更新信息
+      - description: Tag update information
         in: body
         name: request
         required: true
@@ -3624,27 +3624,27 @@ paths:
       - application/json
       responses:
         "200":
-          description: 更新后的标签
+          description: Updated tag
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 更新标签
+      summary: Update tag
       tags:
-      - 标签管理
+      - Tag Management
   /knowledge-bases/copy:
     post:
       consumes:
       - application/json
-      description: 将一个知识库的内容复制到另一个知识库（异步任务）
+      description: Copy content from one knowledge base to another (async task)
       parameters:
-      - description: 复制请求
+      - description: Copy request
         in: body
         name: request
         required: true
@@ -3654,27 +3654,27 @@ paths:
       - application/json
       responses:
         "200":
-          description: 任务ID
+          description: Task ID
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 复制知识库
+      summary: Copy knowledge base
       tags:
-      - 知识库
+      - Knowledge Base
   /knowledge-bases/copy/progress/{task_id}:
     get:
       consumes:
       - application/json
-      description: 获取知识库复制任务的进度
+      description: Get knowledge base copy task progress
       parameters:
-      - description: 任务ID
+      - description: Task ID
         in: path
         name: task_id
         required: true
@@ -3683,27 +3683,27 @@ paths:
       - application/json
       responses:
         "200":
-          description: 进度信息
+          description: Progress information
           schema:
             additionalProperties: true
             type: object
         "404":
-          description: 任务不存在
+          description: Task not found
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取知识库复制进度
+      summary: Get knowledge base copy progress
       tags:
-      - 知识库
+      - Knowledge Base
   /knowledge/{id}:
     delete:
       consumes:
       - application/json
-      description: 根据ID删除知识条目
+      description: Delete knowledge entry by ID
       parameters:
-      - description: 知识ID
+      - description: Knowledge ID
         in: path
         name: id
         required: true
@@ -3712,26 +3712,26 @@ paths:
       - application/json
       responses:
         "200":
-          description: 删除成功
+          description: Deleted successfully
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 删除知识
+      summary: Delete knowledge
       tags:
-      - 知识管理
+      - Knowledge Management
     get:
       consumes:
       - application/json
-      description: 根据ID获取知识条目详情
+      description: Get knowledge entry details by ID
       parameters:
-      - description: 知识ID
+      - description: Knowledge ID
         in: path
         name: id
         required: true
@@ -3740,35 +3740,35 @@ paths:
       - application/json
       responses:
         "200":
-          description: 知识详情
+          description: Knowledge details
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
         "404":
-          description: 知识不存在
+          description: Knowledge not found
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取知识详情
+      summary: Get knowledge details
       tags:
-      - 知识管理
+      - Knowledge Management
     put:
       consumes:
       - application/json
-      description: 更新知识条目信息
+      description: Update knowledge entry information
       parameters:
-      - description: 知识ID
+      - description: Knowledge ID
         in: path
         name: id
         required: true
         type: string
-      - description: 知识信息
+      - description: Knowledge information
         in: body
         name: request
         required: true
@@ -3778,27 +3778,27 @@ paths:
       - application/json
       responses:
         "200":
-          description: 更新成功
+          description: Updated successfully
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 更新知识
+      summary: Update knowledge
       tags:
-      - 知识管理
+      - Knowledge Management
   /knowledge/{id}/download:
     get:
       consumes:
       - application/json
-      description: 下载知识条目关联的原始文件
+      description: Download original file associated with knowledge entry
       parameters:
-      - description: 知识ID
+      - description: Knowledge ID
         in: path
         name: id
         required: true
@@ -3807,27 +3807,27 @@ paths:
       - application/octet-stream
       responses:
         "200":
-          description: 文件内容
+          description: File content
           schema:
             type: file
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 下载知识文件
+      summary: Download knowledge file
       tags:
-      - 知识管理
+      - Knowledge Management
   /knowledge/batch:
     get:
       consumes:
       - application/json
-      description: 根据ID列表批量获取知识条目
+      description: Batch get knowledge entries by ID list
       parameters:
       - collectionFormat: csv
-        description: 知识ID列表
+        description: Knowledge ID list
         in: query
         items:
           type: string
@@ -3838,37 +3838,37 @@ paths:
       - application/json
       responses:
         "200":
-          description: 知识列表
+          description: Knowledge list
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 批量获取知识
+      summary: Batch get knowledge
       tags:
-      - 知识管理
+      - Knowledge Management
   /knowledge/image/{id}/{chunk_id}:
     put:
       consumes:
       - application/json
-      description: 更新知识分块的图像信息
+      description: Update image information of knowledge chunk
       parameters:
-      - description: 知识ID
+      - description: Knowledge ID
         in: path
         name: id
         required: true
         type: string
-      - description: 分块ID
+      - description: Chunk ID
         in: path
         name: chunk_id
         required: true
         type: string
-      - description: 图像信息
+      - description: Image information
         in: body
         name: request
         required: true
@@ -3881,32 +3881,32 @@ paths:
       - application/json
       responses:
         "200":
-          description: 更新成功
+          description: Updated successfully
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 更新图像信息
+      summary: Update image information
       tags:
-      - 知识管理
+      - Knowledge Management
   /knowledge/manual/{id}:
     put:
       consumes:
       - application/json
-      description: 更新手工录入的Markdown知识内容
+      description: Update manually entered Markdown knowledge content
       parameters:
-      - description: 知识ID
+      - description: Knowledge ID
         in: path
         name: id
         required: true
         type: string
-      - description: 手工知识内容
+      - description: Manual knowledge content
         in: body
         name: request
         required: true
@@ -3916,20 +3916,20 @@ paths:
       - application/json
       responses:
         "200":
-          description: 更新后的知识
+          description: Updated knowledge
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 更新手工知识
+      summary: Update manual knowledge
       tags:
-      - 知识管理
+      - Knowledge Management
   /knowledge/search:
     get:
       consumes:
@@ -3970,9 +3970,9 @@ paths:
     put:
       consumes:
       - application/json
-      description: 批量更新知识条目的标签
+      description: Batch update knowledge entry tags
       parameters:
-      - description: 标签更新请求
+      - description: Tag update request
         in: body
         name: request
         required: true
@@ -3982,49 +3982,49 @@ paths:
       - application/json
       responses:
         "200":
-          description: 更新成功
+          description: Updated successfully
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 批量更新知识标签
+      summary: Batch update knowledge tags
       tags:
-      - 知识管理
+      - Knowledge Management
   /mcp-services:
     get:
       consumes:
       - application/json
-      description: 获取当前租户的所有MCP服务
+      description: Get all MCP services of the current tenant
       produces:
       - application/json
       responses:
         "200":
-          description: MCP服务列表
+          description: MCP service list
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取MCP服务列表
+      summary: Get MCP service list
       tags:
-      - MCP服务
+      - MCP Service
     post:
       consumes:
       - application/json
-      description: 创建新的MCP服务配置
+      description: Create new MCP service configuration
       parameters:
-      - description: MCP服务配置
+      - description: MCP service configuration
         in: body
         name: request
         required: true
@@ -4034,27 +4034,27 @@ paths:
       - application/json
       responses:
         "200":
-          description: 创建的MCP服务
+          description: Created MCP service
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 创建MCP服务
+      summary: Create MCP service
       tags:
-      - MCP服务
+      - MCP Service
   /mcp-services/{id}:
     delete:
       consumes:
       - application/json
-      description: 删除指定的MCP服务
+      description: Delete the specified MCP service
       parameters:
-      - description: MCP服务ID
+      - description: MCP service ID
         in: path
         name: id
         required: true
@@ -4063,26 +4063,26 @@ paths:
       - application/json
       responses:
         "200":
-          description: 删除成功
+          description: Deleted successfully
           schema:
             additionalProperties: true
             type: object
         "500":
-          description: 服务器错误
+          description: Server error
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 删除MCP服务
+      summary: Delete MCP service
       tags:
-      - MCP服务
+      - MCP Service
     get:
       consumes:
       - application/json
-      description: 根据ID获取MCP服务详情
+      description: Get MCP service details by ID
       parameters:
-      - description: MCP服务ID
+      - description: MCP service ID
         in: path
         name: id
         required: true
@@ -4091,31 +4091,31 @@ paths:
       - application/json
       responses:
         "200":
-          description: MCP服务详情
+          description: MCP service details
           schema:
             additionalProperties: true
             type: object
         "404":
-          description: 服务不存在
+          description: Service not found
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取MCP服务详情
+      summary: Get MCP service details
       tags:
-      - MCP服务
+      - MCP Service
     put:
       consumes:
       - application/json
-      description: 更新MCP服务配置
+      description: Update MCP service configuration
       parameters:
-      - description: MCP服务ID
+      - description: MCP service ID
         in: path
         name: id
         required: true
         type: string
-      - description: 更新字段
+      - description: Update fields
         in: body
         name: request
         required: true
@@ -4125,27 +4125,27 @@ paths:
       - application/json
       responses:
         "200":
-          description: 更新后的MCP服务
+          description: Updated MCP service
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 更新MCP服务
+      summary: Update MCP service
       tags:
-      - MCP服务
+      - MCP Service
   /mcp-services/{id}/resources:
     get:
       consumes:
       - application/json
-      description: 获取MCP服务提供的资源列表
+      description: Get resource list provided by MCP service
       parameters:
-      - description: MCP服务ID
+      - description: MCP service ID
         in: path
         name: id
         required: true
@@ -4154,27 +4154,27 @@ paths:
       - application/json
       responses:
         "200":
-          description: 资源列表
+          description: Resource list
           schema:
             additionalProperties: true
             type: object
         "500":
-          description: 服务器错误
+          description: Server error
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取MCP服务资源列表
+      summary: Get MCP service resource list
       tags:
-      - MCP服务
+      - MCP Service
   /mcp-services/{id}/test:
     post:
       consumes:
       - application/json
-      description: 测试MCP服务是否可以正常连接
+      description: Test if MCP service can connect normally
       parameters:
-      - description: MCP服务ID
+      - description: MCP service ID
         in: path
         name: id
         required: true
@@ -4183,27 +4183,27 @@ paths:
       - application/json
       responses:
         "200":
-          description: 测试结果
+          description: Test results
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 测试MCP服务连接
+      summary: Test MCP service connection
       tags:
-      - MCP服务
+      - MCP Service
   /mcp-services/{id}/tools:
     get:
       consumes:
       - application/json
-      description: 获取MCP服务提供的工具列表
+      description: Get tool list provided by MCP service
       parameters:
-      - description: MCP服务ID
+      - description: MCP service ID
         in: path
         name: id
         required: true
@@ -4212,32 +4212,32 @@ paths:
       - application/json
       responses:
         "200":
-          description: 工具列表
+          description: Tool list
           schema:
             additionalProperties: true
             type: object
         "500":
-          description: 服务器错误
+          description: Server error
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取MCP服务工具列表
+      summary: Get MCP service tool list
       tags:
-      - MCP服务
+      - MCP Service
   /messages/{session_id}/{id}:
     delete:
       consumes:
       - application/json
-      description: 从会话中删除指定消息
+      description: Delete specified message from session
       parameters:
-      - description: 会话ID
+      - description: Session ID
         in: path
         name: session_id
         required: true
         type: string
-      - description: 消息ID
+      - description: Message ID
         in: path
         name: id
         required: true
@@ -4246,37 +4246,37 @@ paths:
       - application/json
       responses:
         "200":
-          description: 删除成功
+          description: Deleted successfully
           schema:
             additionalProperties: true
             type: object
         "500":
-          description: 服务器错误
+          description: Server error
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 删除消息
+      summary: Delete message
       tags:
-      - 消息
+      - Message
   /messages/{session_id}/load:
     get:
       consumes:
       - application/json
-      description: 加载会话的消息历史，支持分页和时间筛选
+      description: Load session message history, supports pagination and time filtering
       parameters:
-      - description: 会话ID
+      - description: Session ID
         in: path
         name: session_id
         required: true
         type: string
       - default: 20
-        description: 返回数量
+        description: Return count
         in: query
         name: limit
         type: integer
-      - description: 在此时间之前的消息（RFC3339Nano格式）
+      - description: Messages before this time (RFC3339Nano format)
         in: query
         name: before_time
         type: string
@@ -4284,49 +4284,49 @@ paths:
       - application/json
       responses:
         "200":
-          description: 消息列表
+          description: Message list
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 加载消息历史
+      summary: Load message history
       tags:
-      - 消息
+      - Message
   /models:
     get:
       consumes:
       - application/json
-      description: 获取当前租户的所有模型
+      description: Get all models of the current tenant
       produces:
       - application/json
       responses:
         "200":
-          description: 模型列表
+          description: Model list
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取模型列表
+      summary: Get model list
       tags:
-      - 模型管理
+      - Model Management
     post:
       consumes:
       - application/json
-      description: 创建新的模型配置
+      description: Create new model configuration
       parameters:
-      - description: 模型信息
+      - description: Model information
         in: body
         name: request
         required: true
@@ -4336,27 +4336,27 @@ paths:
       - application/json
       responses:
         "201":
-          description: 创建的模型
+          description: Created model
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 创建模型
+      summary: Create model
       tags:
-      - 模型管理
+      - Model Management
   /models/{id}:
     delete:
       consumes:
       - application/json
-      description: 删除指定的模型
+      description: Delete the specified model
       parameters:
-      - description: 模型ID
+      - description: Model ID
         in: path
         name: id
         required: true
@@ -4365,26 +4365,26 @@ paths:
       - application/json
       responses:
         "200":
-          description: 删除成功
+          description: Deleted successfully
           schema:
             additionalProperties: true
             type: object
         "404":
-          description: 模型不存在
+          description: Model not found
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 删除模型
+      summary: Delete model
       tags:
-      - 模型管理
+      - Model Management
     get:
       consumes:
       - application/json
-      description: 根据ID获取模型详情
+      description: Get model details by ID
       parameters:
-      - description: 模型ID
+      - description: Model ID
         in: path
         name: id
         required: true
@@ -4393,31 +4393,31 @@ paths:
       - application/json
       responses:
         "200":
-          description: 模型详情
+          description: Model details
           schema:
             additionalProperties: true
             type: object
         "404":
-          description: 模型不存在
+          description: Model not found
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取模型详情
+      summary: Get model details
       tags:
-      - 模型管理
+      - Model Management
     put:
       consumes:
       - application/json
-      description: 更新模型配置信息
+      description: Update model configuration information
       parameters:
-      - description: 模型ID
+      - description: Model ID
         in: path
         name: id
         required: true
         type: string
-      - description: 更新信息
+      - description: Update information
         in: body
         name: request
         required: true
@@ -4427,31 +4427,31 @@ paths:
       - application/json
       responses:
         "200":
-          description: 更新后的模型
+          description: Updated model
           schema:
             additionalProperties: true
             type: object
         "404":
-          description: 模型不存在
+          description: Model not found
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 更新模型
+      summary: Update model
       tags:
-      - 模型管理
+      - Model Management
   /sessions:
     get:
       consumes:
       - application/json
-      description: 获取当前租户的会话列表，支持分页
+      description: Get current tenant's session list, supports pagination
       parameters:
-      - description: 页码
+      - description: Page number
         in: query
         name: page
         type: integer
-      - description: 每页数量
+      - description: Items per page
         in: query
         name: page_size
         type: integer
@@ -4459,26 +4459,26 @@ paths:
       - application/json
       responses:
         "200":
-          description: 会话列表
+          description: Session list
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取会话列表
+      summary: Get session list
       tags:
-      - 会话
+      - Session
     post:
       consumes:
       - application/json
-      description: 创建新的对话会话
+      description: Create new conversation session
       parameters:
-      - description: 会话创建请求
+      - description: Session creation request
         in: body
         name: request
         required: true
@@ -4488,27 +4488,27 @@ paths:
       - application/json
       responses:
         "201":
-          description: 创建的会话
+          description: Created session
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 创建会话
+      summary: Create session
       tags:
-      - 会话
+      - Session
   /sessions/{id}:
     delete:
       consumes:
       - application/json
-      description: 删除指定的会话
+      description: Delete the specified session
       parameters:
-      - description: 会话ID
+      - description: Session ID
         in: path
         name: id
         required: true
@@ -4517,26 +4517,26 @@ paths:
       - application/json
       responses:
         "200":
-          description: 删除成功
+          description: Deleted successfully
           schema:
             additionalProperties: true
             type: object
         "404":
-          description: 会话不存在
+          description: Session not found
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 删除会话
+      summary: Delete session
       tags:
-      - 会话
+      - Session
     get:
       consumes:
       - application/json
-      description: 根据ID获取会话详情
+      description: Get session details by ID
       parameters:
-      - description: 会话ID
+      - description: Session ID
         in: path
         name: id
         required: true
@@ -4545,31 +4545,31 @@ paths:
       - application/json
       responses:
         "200":
-          description: 会话详情
+          description: Session details
           schema:
             additionalProperties: true
             type: object
         "404":
-          description: 会话不存在
+          description: Session not found
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取会话详情
+      summary: Get session details
       tags:
-      - 会话
+      - Session
     put:
       consumes:
       - application/json
-      description: 更新会话属性
+      description: Update session properties
       parameters:
-      - description: 会话ID
+      - description: Session ID
         in: path
         name: id
         required: true
         type: string
-      - description: 会话信息
+      - description: Session information
         in: body
         name: request
         required: true
@@ -4579,32 +4579,32 @@ paths:
       - application/json
       responses:
         "200":
-          description: 更新后的会话
+          description: Updated session
           schema:
             additionalProperties: true
             type: object
         "404":
-          description: 会话不存在
+          description: Session not found
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 更新会话
+      summary: Update session
       tags:
-      - 会话
+      - Session
   /sessions/{session_id}/agent-qa:
     post:
       consumes:
       - application/json
-      description: 基于Agent的智能问答，支持多轮对话和SSE流式响应
+      description: Agent-based intelligent Q&A, supports multi-turn conversation and SSE streaming response
       parameters:
-      - description: 会话ID
+      - description: Session ID
         in: path
         name: session_id
         required: true
         type: string
-      - description: 问答请求
+      - description: Q&A request
         in: body
         name: request
         required: true
@@ -4614,32 +4614,32 @@ paths:
       - text/event-stream
       responses:
         "200":
-          description: 问答结果（SSE流）
+          description: Q&A result (SSE stream)
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: Agent问答
+      summary: Agent Q&A
       tags:
-      - 问答
+      - Q&A
   /sessions/{session_id}/continue:
     get:
       consumes:
       - application/json
-      description: 继续获取正在进行的流式响应
+      description: Continue getting ongoing streaming response
       parameters:
-      - description: 会话ID
+      - description: Session ID
         in: path
         name: session_id
         required: true
         type: string
-      - description: 消息ID
+      - description: Message ID
         in: query
         name: message_id
         required: true
@@ -4648,32 +4648,32 @@ paths:
       - text/event-stream
       responses:
         "200":
-          description: 流式响应
+          description: Streaming response
           schema:
             additionalProperties: true
             type: object
         "404":
-          description: 会话或消息不存在
+          description: Session or message not found
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 继续流式响应
+      summary: Continue streaming response
       tags:
-      - 问答
+      - Q&A
   /sessions/{session_id}/knowledge-qa:
     post:
       consumes:
       - application/json
-      description: 基于知识库的问答（使用LLM总结），支持SSE流式响应
+      description: Knowledge base-based Q&A (using LLM summary), supports SSE streaming response
       parameters:
-      - description: 会话ID
+      - description: Session ID
         in: path
         name: session_id
         required: true
         type: string
-      - description: 问答请求
+      - description: Q&A request
         in: body
         name: request
         required: true
@@ -4683,32 +4683,32 @@ paths:
       - text/event-stream
       responses:
         "200":
-          description: 问答结果（SSE流）
+          description: Q&A result (SSE stream)
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 知识问答
+      summary: Knowledge Q&A
       tags:
-      - 问答
+      - Q&A
   /sessions/{session_id}/stop:
     post:
       consumes:
       - application/json
-      description: 停止当前正在进行的生成任务
+      description: Stop the currently ongoing generation task
       parameters:
-      - description: 会话ID
+      - description: Session ID
         in: path
         name: session_id
         required: true
         type: string
-      - description: 停止请求
+      - description: Stop request
         in: body
         name: request
         required: true
@@ -4718,32 +4718,32 @@ paths:
       - application/json
       responses:
         "200":
-          description: 停止成功
+          description: Stop successful
           schema:
             additionalProperties: true
             type: object
         "404":
-          description: 会话或消息不存在
+          description: Session or message not found
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 停止生成
+      summary: Stop generation
       tags:
-      - 问答
+      - Q&A
   /sessions/{session_id}/title:
     post:
       consumes:
       - application/json
-      description: 根据消息内容自动生成会话标题
+      description: Automatically generate session title based on message content
       parameters:
-      - description: 会话ID
+      - description: Session ID
         in: path
         name: session_id
         required: true
         type: string
-      - description: 生成请求
+      - description: Generation request
         in: body
         name: request
         required: true
@@ -4753,27 +4753,27 @@ paths:
       - application/json
       responses:
         "200":
-          description: 生成的标题
+          description: Generated title
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 生成会话标题
+      summary: Generate session title
       tags:
-      - 会话
+      - Session
   /sessions/search:
     post:
       consumes:
       - application/json
-      description: 在知识库中搜索（不使用LLM总结）
+      description: Search in knowledge base (without LLM summary)
       parameters:
-      - description: 搜索请求
+      - description: Search request
         in: body
         name: request
         required: true
@@ -4783,63 +4783,63 @@ paths:
       - application/json
       responses:
         "200":
-          description: 搜索结果
+          description: Search results
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 知识搜索
+      summary: Knowledge search
       tags:
-      - 问答
+      - Q&A
   /system/info:
     get:
       consumes:
       - application/json
-      description: 获取系统版本、构建信息和引擎配置
+      description: Get system version, build information and engine configuration
       produces:
       - application/json
       responses:
         "200":
-          description: 系统信息
+          description: System information
           schema:
             $ref: '#/definitions/internal_handler.GetSystemInfoResponse'
-      summary: 获取系统信息
+      summary: Get system information
       tags:
-      - 系统
+      - System
   /tenants:
     get:
       consumes:
       - application/json
-      description: 获取当前用户可访问的租户列表
+      description: Get list of tenants accessible by current user
       produces:
       - application/json
       responses:
         "200":
-          description: 租户列表
+          description: Tenant list
           schema:
             additionalProperties: true
             type: object
         "500":
-          description: 服务器错误
+          description: Server error
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
-      summary: 获取租户列表
+      summary: Get tenant list
       tags:
-      - 租户管理
+      - Tenant Management
     post:
       consumes:
       - application/json
-      description: 创建新的租户
+      description: Create new tenant
       parameters:
-      - description: 租户信息
+      - description: Tenant information
         in: body
         name: request
         required: true
@@ -4849,26 +4849,26 @@ paths:
       - application/json
       responses:
         "201":
-          description: 创建的租户
+          description: Created tenant
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
-      summary: 创建租户
+      summary: Create tenant
       tags:
-      - 租户管理
+      - Tenant Management
   /tenants/{id}:
     delete:
       consumes:
       - application/json
-      description: 删除指定的租户
+      description: Delete the specified tenant
       parameters:
-      - description: 租户ID
+      - description: Tenant ID
         in: path
         name: id
         required: true
@@ -4877,25 +4877,25 @@ paths:
       - application/json
       responses:
         "200":
-          description: 删除成功
+          description: Deleted successfully
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
-      summary: 删除租户
+      summary: Delete tenant
       tags:
-      - 租户管理
+      - Tenant Management
     get:
       consumes:
       - application/json
-      description: 根据ID获取租户详情
+      description: Get tenant details by ID
       parameters:
-      - description: 租户ID
+      - description: Tenant ID
         in: path
         name: id
         required: true
@@ -4904,35 +4904,35 @@ paths:
       - application/json
       responses:
         "200":
-          description: 租户详情
+          description: Tenant details
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
         "404":
-          description: 租户不存在
+          description: Tenant not found
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取租户详情
+      summary: Get tenant details
       tags:
-      - 租户管理
+      - Tenant Management
     put:
       consumes:
       - application/json
-      description: 更新租户信息
+      description: Update tenant information
       parameters:
-      - description: 租户ID
+      - description: Tenant ID
         in: path
         name: id
         required: true
         type: integer
-      - description: 租户信息
+      - description: Tenant information
         in: body
         name: request
         required: true
@@ -4942,48 +4942,48 @@ paths:
       - application/json
       responses:
         "200":
-          description: 更新后的租户
+          description: Updated tenant
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
-      summary: 更新租户
+      summary: Update tenant
       tags:
-      - 租户管理
+      - Tenant Management
   /tenants/all:
     get:
       consumes:
       - application/json
-      description: 获取系统中所有租户（需要跨租户访问权限）
+      description: Get all tenants in the system (requires cross-tenant access permission)
       produces:
       - application/json
       responses:
         "200":
-          description: 所有租户列表
+          description: All tenant list
           schema:
             additionalProperties: true
             type: object
         "403":
-          description: 权限不足
+          description: Insufficient permissions
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
-      summary: 获取所有租户列表
+      summary: Get all tenant list
       tags:
-      - 租户管理
+      - Tenant Management
   /tenants/kv/{key}:
     get:
       consumes:
       - application/json
-      description: 获取租户级别的KV配置（支持agent-config、web-search-config、conversation-config）
+      description: Get tenant-level KV configuration (supports agent-config, web-search-config, conversation-config)
       parameters:
-      - description: 配置键名
+      - description: Configuration key name
         in: path
         name: key
         required: true
@@ -4992,31 +4992,31 @@ paths:
       - application/json
       responses:
         "200":
-          description: 配置值
+          description: Configuration value
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 不支持的键
+          description: Unsupported key
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取租户KV配置
+      summary: Get tenant KV configuration
       tags:
-      - 租户管理
+      - Tenant Management
     put:
       consumes:
       - application/json
-      description: 更新租户级别的KV配置（支持agent-config、web-search-config、conversation-config）
+      description: Update tenant-level KV configuration (supports agent-config, web-search-config, conversation-config)
       parameters:
-      - description: 配置键名
+      - description: Configuration key name
         in: path
         name: key
         required: true
         type: string
-      - description: 配置值
+      - description: Configuration value
         in: body
         name: request
         required: true
@@ -5026,110 +5026,110 @@ paths:
       - application/json
       responses:
         "200":
-          description: 更新成功
+          description: Updated successfully
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 不支持的键
+          description: Unsupported key
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 更新租户KV配置
+      summary: Update tenant KV configuration
       tags:
-      - 租户管理
+      - Tenant Management
   /tenants/kv/agent-config:
     get:
       consumes:
       - application/json
-      description: 获取租户的全局Agent配置（默认应用于所有会话）
+      description: Get tenant's global Agent configuration (applied to all sessions by default)
       produces:
       - application/json
       responses:
         "200":
-          description: Agent配置
+          description: Agent configuration
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取租户Agent配置
+      summary: Get tenant Agent configuration
       tags:
-      - 租户管理
+      - Tenant Management
   /tenants/kv/conversation-config:
     get:
       consumes:
       - application/json
-      description: 获取租户的全局对话配置（默认应用于普通模式会话）
+      description: Get tenant's global conversation configuration (applied to normal mode sessions by default)
       produces:
       - application/json
       responses:
         "200":
-          description: 对话配置
+          description: Conversation configuration
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取租户对话配置
+      summary: Get tenant conversation configuration
       tags:
-      - 租户管理
+      - Tenant Management
   /tenants/kv/web-search-config:
     get:
       consumes:
       - application/json
-      description: 获取租户的网络搜索配置
+      description: Get tenant's web search configuration
       produces:
       - application/json
       responses:
         "200":
-          description: 网络搜索配置
+          description: Web search configuration
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 请求参数错误
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 获取租户网络搜索配置
+      summary: Get tenant web search configuration
       tags:
-      - 租户管理
+      - Tenant Management
   /tenants/search:
     get:
       consumes:
       - application/json
-      description: 分页搜索租户（需要跨租户访问权限）
+      description: Paginated search tenants (requires cross-tenant access permission)
       parameters:
-      - description: 搜索关键词
+      - description: Search keyword
         in: query
         name: keyword
         type: string
-      - description: 租户ID筛选
+      - description: Tenant ID filter
         in: query
         name: tenant_id
         type: integer
       - default: 1
-        description: 页码
+        description: Page number
         in: query
         name: page
         type: integer
       - default: 20
-        description: 每页数量
+        description: Items per page
         in: query
         name: page_size
         type: integer
@@ -5137,20 +5137,20 @@ paths:
       - application/json
       responses:
         "200":
-          description: 搜索结果
+          description: Search results
           schema:
             additionalProperties: true
             type: object
         "403":
-          description: 权限不足
+          description: Insufficient permissions
           schema:
             $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
       security:
       - Bearer: []
       - ApiKeyAuth: []
-      summary: 搜索租户
+      summary: Search tenants
       tags:
-      - 租户管理
+      - Tenant Management
   /web-search/providers:
     get:
       consumes:
@@ -5172,12 +5172,12 @@ paths:
       - web-search
 securityDefinitions:
   ApiKeyAuth:
-    description: 租户身份认证：输入 sk- 开头的 API Key
+    description: Tenant authentication: Enter API Key starting with sk-
     in: header
     name: X-API-Key
     type: apiKey
   Bearer:
-    description: 用户登录认证：输入 Bearer {token} 格式的 JWT 令牌
+    description: User login authentication: Enter JWT token in Bearer {token} format
     in: header
     name: Authorization
     type: apiKey

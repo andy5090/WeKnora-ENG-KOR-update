@@ -1,98 +1,98 @@
-# 更新日志
+# Changelog
 
-所有重要的项目更改都将记录在此文件中。
+All notable changes to this project will be documented in this file.
 
-格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
-并且本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [1.0.0] - 2024-01-XX
 
-### 新增
-- 初始版本发布
-- WeKnora MCP Server 核心功能
-- 完整的 WeKnora API 集成
-- 租户管理工具
-- 知识库管理工具
-- 知识管理工具
-- 模型管理工具
-- 会话管理工具
-- 聊天功能工具
-- 块管理工具
-- 多种启动方式支持
-- 命令行参数支持
-- 环境变量配置
-- 完整的包安装支持
-- 开发和生产模式
-- 详细的文档和安装指南
+### Added
+- Initial version release
+- WeKnora MCP Server core functionality
+- Complete WeKnora API integration
+- Tenant management tools
+- Knowledge base management tools
+- Knowledge management tools
+- Model management tools
+- Session management tools
+- Chat functionality tools
+- Chunk management tools
+- Multiple startup method support
+- Command line argument support
+- Environment variable configuration
+- Complete package installation support
+- Development and production modes
+- Detailed documentation and installation guide
 
-### 工具列表
-- `create_tenant` - 创建新租户
-- `list_tenants` - 列出所有租户
-- `create_knowledge_base` - 创建知识库
-- `list_knowledge_bases` - 列出知识库
-- `get_knowledge_base` - 获取知识库详情
-- `delete_knowledge_base` - 删除知识库
-- `hybrid_search` - 混合搜索
-- `create_knowledge_from_url` - 从 URL 创建知识
-- `list_knowledge` - 列出知识
-- `get_knowledge` - 获取知识详情
-- `delete_knowledge` - 删除知识
-- `create_model` - 创建模型
-- `list_models` - 列出模型
-- `get_model` - 获取模型详情
-- `create_session` - 创建聊天会话
-- `get_session` - 获取会话详情
-- `list_sessions` - 列出会话
-- `delete_session` - 删除会话
-- `chat` - 发送聊天消息
-- `list_chunks` - 列出知识块
-- `delete_chunk` - 删除知识块
+### Tool List
+- `create_tenant` - Create a new tenant
+- `list_tenants` - List all tenants
+- `create_knowledge_base` - Create a knowledge base
+- `list_knowledge_bases` - List knowledge bases
+- `get_knowledge_base` - Get knowledge base details
+- `delete_knowledge_base` - Delete a knowledge base
+- `hybrid_search` - Hybrid search
+- `create_knowledge_from_url` - Create knowledge from URL
+- `list_knowledge` - List knowledge
+- `get_knowledge` - Get knowledge details
+- `delete_knowledge` - Delete knowledge
+- `create_model` - Create a model
+- `list_models` - List models
+- `get_model` - Get model details
+- `create_session` - Create a chat session
+- `get_session` - Get session details
+- `list_sessions` - List sessions
+- `delete_session` - Delete a session
+- `chat` - Send a chat message
+- `list_chunks` - List knowledge chunks
+- `delete_chunk` - Delete a knowledge chunk
 
-### 文件结构
+### File Structure
 ```
 WeKnoraMCP/
-├── __init__.py              # 包初始化文件
-├── main.py                  # 主入口点 (推荐)
-├── run.py                   # 便捷启动脚本
-├── run_server.py           # 原始启动脚本
-├── weknora_mcp_server.py   # MCP 服务器实现
-├── test_module.py          # 模组测试脚本
-├── requirements.txt        # 依赖列表
-├── setup.py               # 安装脚本 (传统)
-├── pyproject.toml         # 现代项目配置
-├── MANIFEST.in            # 包含文件清单
-├── LICENSE                # MIT 许可证
-├── README.md              # 项目说明
-├── INSTALL.md             # 详细安装指南
-└── CHANGELOG.md           # 更新日志
+├── __init__.py              # Package initialization file
+├── main.py                  # Main entry point (Recommended)
+├── run.py                   # Convenience startup script
+├── run_server.py           # Original startup script
+├── weknora_mcp_server.py   # MCP server implementation
+├── test_module.py          # Module test script
+├── requirements.txt        # Dependency list
+├── setup.py               # Installation script (Traditional)
+├── pyproject.toml         # Modern project configuration
+├── MANIFEST.in            # Include file manifest
+├── LICENSE                # MIT License
+├── README.md              # Project description
+├── INSTALL.md             # Detailed installation guide
+└── CHANGELOG.md           # Changelog
 ```
 
-### 启动方式
-1. `python main.py` - 主入口点 (推荐)
-2. `python run_server.py` - 原始启动脚本
-3. `python run.py` - 便捷启动脚本
-4. `python weknora_mcp_server.py` - 直接运行
-5. `python -m weknora_mcp_server` - 模块运行
-6. `weknora-mcp-server` - 安装后命令行工具
-7. `weknora-server` - 安装后命令行工具 (别名)
+### Startup Methods
+1. `python main.py` - Main entry point (Recommended)
+2. `python run_server.py` - Original startup script
+3. `python run.py` - Convenience startup script
+4. `python weknora_mcp_server.py` - Run directly
+5. `python -m weknora_mcp_server` - Run as module
+6. `weknora-mcp-server` - Command line tool after installation
+7. `weknora-server` - Command line tool after installation (alias)
 
-### 技术特性
-- 基于 Model Context Protocol (MCP) 1.0.0+
-- 异步 I/O 支持
-- 完整的错误处理
-- 详细的日志记录
-- 环境变量配置
-- 命令行参数支持
-- 多种安装方式
-- 开发和生产模式
-- 完整的测试覆盖
+### Technical Features
+- Based on Model Context Protocol (MCP) 1.0.0+
+- Async I/O support
+- Complete error handling
+- Detailed logging
+- Environment variable configuration
+- Command line argument support
+- Multiple installation methods
+- Development and production modes
+- Complete test coverage
 
-### 依赖
+### Dependencies
 - Python 3.10+
 - mcp >= 1.0.0
 - requests >= 2.31.0
 
-### 兼容性
-- 支持 Windows、macOS、Linux
-- 支持 Python 3.10-3.12
-- 兼容现代 Python 包管理工具
+### Compatibility
+- Supports Windows, macOS, Linux
+- Supports Python 3.10-3.12
+- Compatible with modern Python package management tools

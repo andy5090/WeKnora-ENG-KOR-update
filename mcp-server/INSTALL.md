@@ -1,13 +1,13 @@
-# WeKnora MCP Server 安装和使用指南
+# WeKnora MCP Server Installation and Usage Guide
 
-## 快速开始
+## Quick Start
 
-### 1. 安装依赖
+### 1. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. 设置环境变量
+### 2. Set Environment Variables
 ```bash
 # Linux/macOS
 export WEKNORA_BASE_URL="http://localhost:8080/api/v1"
@@ -22,141 +22,141 @@ set WEKNORA_BASE_URL=http://localhost:8080/api/v1
 set WEKNORA_API_KEY=your_api_key_here
 ```
 
-### 3. 运行服务器
+### 3. Run the Server
 
-有多种方式运行服务器：
+There are multiple ways to run the server:
 
-#### 方式 1: 使用主入口点 (推荐)
+#### Method 1: Using the main entry point (Recommended)
 ```bash
 python main.py
 ```
 
-#### 方式 2: 使用原始启动脚本
+#### Method 2: Using the original startup script
 ```bash
 python run_server.py
 ```
 
-#### 方式 3: 直接运行服务器模块
+#### Method 3: Run the server module directly
 ```bash
 python weknora_mcp_server.py
 ```
 
-#### 方式 4: 作为 Python 模块运行
+#### Method 4: Run as a Python module
 ```bash
 python -m weknora_mcp_server
 ```
 
-## 作为 Python 包安装
+## Install as Python Package
 
-### 开发模式安装
+### Development Mode Installation
 ```bash
 pip install -e .
 ```
 
-安装后可以使用命令行工具：
+After installation, you can use the command line tools:
 ```bash
 weknora-mcp-server
-# 或
+# or
 weknora-server
 ```
 
-### 生产模式安装
+### Production Mode Installation
 ```bash
 pip install .
 ```
 
-### 构建分发包
+### Build Distribution Package
 ```bash
-# 构建源码分发包和轮子
+# Build source distribution and wheel
 python setup.py sdist bdist_wheel
 
-# 或使用 build 工具
+# Or use build tool
 pip install build
 python -m build
 ```
 
-## 命令行选项
+## Command Line Options
 
-主入口点 `main.py` 支持以下选项：
+The main entry point `main.py` supports the following options:
 
 ```bash
-python main.py --help                 # 显示帮助信息
-python main.py --check-only           # 仅检查环境配置
-python main.py --verbose              # 启用详细日志
-python main.py --version              # 显示版本信息
+python main.py --help                 # Show help information
+python main.py --check-only           # Only check environment configuration
+python main.py --verbose              # Enable verbose logging
+python main.py --version              # Show version information
 ```
 
-## 环境检查
+## Environment Check
 
-运行以下命令检查环境配置：
+Run the following command to check environment configuration:
 ```bash
 python main.py --check-only
 ```
 
-这将显示：
-- WeKnora API 基础 URL 配置
-- API 密钥设置状态
-- 依赖包安装状态
+This will display:
+- WeKnora API base URL configuration
+- API key setting status
+- Dependency package installation status
 
-## 故障排除
+## Troubleshooting
 
-### 1. 导入错误
-如果遇到 `ImportError`，请确保：
-- 已安装所有依赖：`pip install -r requirements.txt`
-- Python 版本兼容（推荐 3.10+）
-- 没有文件名冲突
+### 1. Import Error
+If you encounter `ImportError`, please ensure:
+- All dependencies are installed: `pip install -r requirements.txt`
+- Python version is compatible (recommended 3.10+)
+- No filename conflicts
 
-### 2. 连接错误
-如果无法连接到 WeKnora API：
-- 检查 `WEKNORA_BASE_URL` 是否正确
-- 确认 WeKnora 服务正在运行
-- 验证网络连接
+### 2. Connection Error
+If you cannot connect to the WeKnora API:
+- Check if `WEKNORA_BASE_URL` is correct
+- Confirm that the WeKnora service is running
+- Verify network connection
 
-### 3. 认证错误
-如果遇到认证问题：
-- 检查 `WEKNORA_API_KEY` 是否设置
-- 确认 API 密钥有效
-- 验证权限设置
+### 3. Authentication Error
+If you encounter authentication issues:
+- Check if `WEKNORA_API_KEY` is set
+- Confirm that the API key is valid
+- Verify permission settings
 
-## 开发模式
+## Development Mode
 
-### 项目结构
+### Project Structure
 ```
 WeKnoraMCP/
-├── __init__.py              # 包初始化文件
-├── main.py                  # 主入口点
-├── run_server.py           # 原始启动脚本
-├── weknora_mcp_server.py   # MCP 服务器实现
-├── requirements.txt        # 依赖列表
-├── setup.py               # 安装脚本
-├── MANIFEST.in            # 包含文件清单
-├── LICENSE                # 许可证
-├── README.md              # 项目说明
-└── INSTALL.md             # 安装指南
+├── __init__.py              # Package initialization file
+├── main.py                  # Main entry point
+├── run_server.py           # Original startup script
+├── weknora_mcp_server.py   # MCP server implementation
+├── requirements.txt        # Dependency list
+├── setup.py               # Installation script
+├── MANIFEST.in            # Include file manifest
+├── LICENSE                # License
+├── README.md              # Project description
+└── INSTALL.md             # Installation guide
 ```
 
-### 添加新功能
-1. 在 `WeKnoraClient` 类中添加新的 API 方法
-2. 在 `handle_list_tools()` 中注册新工具
-3. 在 `handle_call_tool()` 中实现工具逻辑
-4. 更新文档和测试
+### Adding New Features
+1. Add new API methods to the `WeKnoraClient` class
+2. Register new tools in `handle_list_tools()`
+3. Implement tool logic in `handle_call_tool()`
+4. Update documentation and tests
 
-### 测试
+### Testing
 ```bash
-# 运行基本测试
+# Run basic tests
 python test_imports.py
 
-# 测试环境配置
+# Test environment configuration
 python main.py --check-only
 
-# 测试服务器启动
+# Test server startup
 python main.py --verbose
 ```
 
-## 部署
+## Deployment
 
-### Docker 部署
-创建 `Dockerfile`：
+### Docker Deployment
+Create a `Dockerfile`:
 ```dockerfile
 FROM python:3.11-slim
 
@@ -173,8 +173,8 @@ EXPOSE 8000
 CMD ["weknora-mcp-server"]
 ```
 
-### 系统服务
-创建 systemd 服务文件 `/etc/systemd/system/weknora-mcp.service`：
+### System Service
+Create a systemd service file `/etc/systemd/system/weknora-mcp.service`:
 ```ini
 [Unit]
 Description=WeKnora MCP Server
@@ -193,16 +193,16 @@ Restart=always
 WantedBy=multi-user.target
 ```
 
-启用服务：
+Enable the service:
 ```bash
 sudo systemctl enable weknora-mcp
 sudo systemctl start weknora-mcp
 ```
 
-## 支持
+## Support
 
-如果遇到问题，请：
-1. 查看日志输出
-2. 检查环境配置
-3. 参考故障排除部分
-4. 提交 Issue 到项目仓库: https://github.com/NannaOlympicBroadcast/WeKnoraMCP/issues
+If you encounter issues, please:
+1. Check log output
+2. Check environment configuration
+3. Refer to the troubleshooting section
+4. Submit an Issue to the project repository: https://github.com/NannaOlympicBroadcast/WeKnoraMCP/issues
